@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MyHobitApplication</string>
+    <string name="button_ent">Enter</string>
+    <string name="home_text">Welcome to the page of magic</string>
 </resources>
