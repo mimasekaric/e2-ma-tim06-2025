@@ -4,12 +4,13 @@ import com.example.myhobitapplication.enums.OneTimeTaskStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class OneTimeTask extends Task{
 
     private OneTimeTaskStatus status;
 
-    public OneTimeTask(Integer id, String name, String description, Integer difficulty, Integer importance, Integer categoryId, LocalDateTime executionTime, OneTimeTaskStatus status) {
+    public OneTimeTask(Integer id, String name, String description, Integer difficulty, Integer importance, Integer categoryId, LocalTime executionTime, OneTimeTaskStatus status) {
         super(id, name, description, difficulty, importance, categoryId, executionTime);
         this.status = status;
     }

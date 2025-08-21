@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">MyHobitApplication</string>
+    <string-array name="recurrence_units">
+            <item>Day</item>
+            <item>Week</item>
+            <item>Month</item>
+    </string-array>
 </resources>

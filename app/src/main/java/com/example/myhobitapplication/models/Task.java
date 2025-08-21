@@ -1,6 +1,7 @@
 package com.example.myhobitapplication.models;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public abstract class Task {
 
@@ -15,10 +16,18 @@ public abstract class Task {
 
     private Integer CategoryId;
 
-    private LocalDateTime executionTime;
+    private LocalTime executionTime;
 
-    public Task(Integer id, String name, String description, Integer difficulty, Integer importance, Integer categoryId, LocalDateTime executionTime) {
+    public Task(Integer id, String name, String description, Integer difficulty, Integer importance, Integer categoryId, LocalTime executionTime) {
         Id = id;
+        Name = name;
+        Description = description;
+        Difficulty = difficulty;
+        Importance = importance;
+        CategoryId = categoryId;
+        this.executionTime = executionTime;
+    }
+    public Task(String name, String description, Integer difficulty, Integer importance, Integer categoryId, LocalTime executionTime) {
         Name = name;
         Description = description;
         Difficulty = difficulty;
@@ -51,7 +60,7 @@ public abstract class Task {
         return CategoryId;
     }
 
-    public LocalDateTime getExecutionTime() {
+    public LocalTime getExecutionTime() {
         return executionTime;
     }
 
@@ -80,7 +89,7 @@ public abstract class Task {
         CategoryId = categoryId;
     }
 
-    public void setExecutionTime(LocalDateTime executionTime) {
+    public void setExecutionTime(LocalTime executionTime) {
         this.executionTime = executionTime;
     }
 }
