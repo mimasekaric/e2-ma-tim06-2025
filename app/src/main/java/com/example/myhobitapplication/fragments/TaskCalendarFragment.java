@@ -1,0 +1,160 @@
+package com.example.myhobitapplication.fragments;
+
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.example.myhobitapplication.R;
+import com.example.myhobitapplication.activities.TaskDetailActivity;
+import com.example.myhobitapplication.databases.DataBaseRecurringTaskHelper;
+import com.example.myhobitapplication.databinding.FragmentTaskCalendarBinding;
+import com.example.myhobitapplication.services.TaskService;
+import com.example.myhobitapplication.viewModels.TaskCalendarViewModel;
+import com.example.myhobitapplication.viewModels.TaskViewModel;
+import com.kizitonwose.calendar.core.CalendarDay;
+import com.kizitonwose.calendar.core.CalendarMonth;
+import com.kizitonwose.calendar.view.CalendarView;
+import com.kizitonwose.calendar.view.MonthDayBinder;
+import com.kizitonwose.calendar.view.MonthHeaderFooterBinder;
+import com.kizitonwose.calendar.view.ViewContainer;
+
+import java.time.DayOfWeek;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+
+
+public class TaskCalendarFragment extends Fragment {
+
+    private TaskCalendarViewModel calendarViewModel;
+
+    private FragmentTaskCalendarBinding calendarBinding;
+
+    private CalendarDay selectedDate = null;
+    private CalendarView calendarView;
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+
+    }
+
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        calendarBinding = FragmentTaskCalendarBinding.inflate(inflater, container, false);
+        return calendarBinding.getRoot();
+
+
+
+    }
+
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        calendarView = calendarBinding.calendarView;
+
+        final YearMonth currentMonth = YearMonth.now();
+        calendarView.setup(currentMonth.minusMonths(12), currentMonth.plusMonths(12), DayOfWeek.MONDAY);
+        calendarView.scrollToMonth(currentMonth);
+        calendarView.setDayBinder(new MonthDayBinder<DayViewContainer>() {
+            @NonNull
+            @Override
+            public DayViewContainer create(@NonNull View view) {
+                return new DayViewContainer(view);
+            }
+
+            @Override
+            public void bind(@NonNull DayViewContainer container, @NonNull CalendarDay day) {
+
+                container.getCalendarDayText().setText(String.valueOf(day.getDate().getDayOfMonth()));
+                container.getCalendarDayText().setTextColor(Color.YELLOW);
+                container.getView().setOnClickListener(v -> {
+                    CalendarDay oldDate = selectedDate;
+                    selectedDate = day;
+                    calendarView.notifyDateChanged(day.getDate());
+
+                    if (oldDate != null) {
+                        calendarView.notifyDateChanged(oldDate.getDate());
+                    }
+
+                    showTaskSlots(day);
+                });
+
+
+                if (day.equals(selectedDate)) {
+                    container.getCalendarDayText().setBackgroundColor(Color.WHITE);
+                } else {
+                    container.getCalendarDayText().setBackgroundColor(Color.TRANSPARENT);
+                }
+            }
+        });
+
+        calendarView.setMonthHeaderBinder(new MonthHeaderFooterBinder<MonthViewContainer>() {
+            @NonNull
+            @Override
+            public MonthViewContainer create(@NonNull View view) {
+                return new MonthViewContainer(view);
+            }
+
+            @Override
+            public void bind(@NonNull MonthViewContainer container, @NonNull CalendarMonth month) {
+                String header = month.getYearMonth().getMonth().getDisplayName(java.time.format.TextStyle.FULL, Locale.getDefault()) + " " + month.getYearMonth();
+                container.getCalendarMonthText().setText(header);
+            }
+        });
+    }
+
+
+    private void showTaskSlots(CalendarDay day) {
+
+        Intent intent = new Intent(getContext(), TaskDetailActivity.class);
+        intent.putExtra("selected_date", day.getDate());
+        startActivity(intent);
+    }
+
+    private static class DayViewContainer extends ViewContainer {
+        private final TextView calendarDayText;
+
+        public DayViewContainer(@NonNull View view) {
+            super(view);
+            calendarDayText = view.findViewById(com.example.myhobitapplication.R.id.calendarDayText);
+        }
+
+        public TextView getCalendarDayText() {
+            return calendarDayText;
+        }
+    }
+
+    private static class MonthViewContainer extends ViewContainer {
+        private final TextView calendarMonthText;
+
+        public MonthViewContainer(@NonNull View view) {
+            super(view);
+            calendarMonthText = view.findViewById(R.id.calendarMonthText);
+        }
+
+        public TextView getCalendarMonthText() {
+            return calendarMonthText;
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        calendarBinding = null;
+    }
+}

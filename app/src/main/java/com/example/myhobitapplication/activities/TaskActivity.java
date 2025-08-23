@@ -29,8 +29,15 @@ public class TaskActivity extends AppCompatActivity {
                 (tab, position) -> {
                     if (position == 0) {
                         tab.setText("OneTimeTask");
-                    } else {
+                    } else if(position ==1) {
                         tab.setText("RecurringTask");
+                    }
+                    else if(position == 2){
+                        tab.setText("Calendar");
+                    }
+                    else
+                    {
+                        tab.setText("Category");
                     }
                 }).attach();
     }

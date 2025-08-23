@@ -2,16 +2,21 @@ package com.example.myhobitapplication.databases;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.myhobitapplication.enums.RecurrenceUnit;
 import com.example.myhobitapplication.models.RecurringTask;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DataBaseRecurringTaskHelper extends SQLiteOpenHelper {
 
-    private static final String DATABASE_NAME = "recurrencyTasksNew.db";
+    private static final String DATABASE_NAME = "recurrencyTasksNeww.db";
     private static final int DATABASE_VERSION = 1;
     private static final String TABLE_RECURRING_TASKS = "recurring_tasks";
     private static final String COLUMN_ID = "id";
@@ -49,6 +54,49 @@ public class DataBaseRecurringTaskHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_RECURRING_TASKS);
         onCreate(db);
+    }
+
+    public List<RecurringTask> getAllRecurringTasks() {
+        List<RecurringTask> taskList = new ArrayList<>();
+        // SQL upit za dobijanje svih redova iz tabele
+        String selectQuery = "SELECT * FROM " + TABLE_RECURRING_TASKS;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // Iteriranje kroz sve redove i dodavanje u listu
+        if (cursor.moveToFirst()) {
+            do {
+                RecurringTask task = new RecurringTask();
+                task.setId(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)));
+                task.setName(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITLE)));
+                task.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION)));
+                task.setDifficulty(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_DIFFICULTY_XP)));
+                task.setRecurrenceInterval(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_RECURRENCE_INTERVAL)));
+
+                // Konverzija String u RecurrenceUnit enum
+                String recurrenceUnitString = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_RECURRENCE_UNIT));
+                task.setRecurrenceUnit(RecurrenceUnit.valueOf(recurrenceUnitString));
+
+                // Konverzija String u LocalTime
+                String executionTimeString = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EXECUTION_TIME));
+                task.setExecutionTime(LocalTime.parse(executionTimeString));
+
+                // Konverzija String u LocalDate
+                String startDateString = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_START_DATE));
+                task.setStartDate(LocalDate.parse(startDateString));
+
+                String endDateString = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_END_DATE));
+                task.setEndDate(LocalDate.parse(endDateString));
+
+                taskList.add(task);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+
+        return taskList;
     }
 
     // Metoda za dodavanje zadatka u bazu

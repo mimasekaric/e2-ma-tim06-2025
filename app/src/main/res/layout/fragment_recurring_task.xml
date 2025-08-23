@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rt_scroll_view"
     android:layout_width="match_parent"
+    android:descendantFocusability="beforeDescendants"
     android:layout_height="match_parent">
 
     <LinearLayout
@@ -194,6 +196,15 @@
             android:layout_height="wrap_content"
             android:entries="@array/recurrence_units" />
 
+        <DatePicker
+            android:id="@+id/rt_date_start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <DatePicker
+            android:id="@+id/rt_date_end"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
         <Button
             android:id="@+id/btn_rtask"

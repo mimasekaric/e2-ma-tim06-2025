@@ -25,6 +25,12 @@ public class RecurringTask extends Task {
         this.status = status;
     }
 
+    public RecurringTask(){
+
+        super();
+    }
+
+
 
     public RecurringTask(String name, String description, Integer difficulty, Integer importance, Integer categoryId, LocalTime executionTime, int recurrenceInterval, RecurrenceUnit recurrenceUnit, LocalDate startDate, LocalDate endDate, RecurringTaskStatus status) {
         super(name, description, difficulty, importance, categoryId, executionTime);

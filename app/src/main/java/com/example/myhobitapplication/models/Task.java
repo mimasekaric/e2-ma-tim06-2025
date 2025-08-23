@@ -18,6 +18,7 @@ public abstract class Task {
 
     private LocalTime executionTime;
 
+    public Task(){}
     public Task(Integer id, String name, String description, Integer difficulty, Integer importance, Integer categoryId, LocalTime executionTime) {
         Id = id;
         Name = name;

@@ -8,6 +8,8 @@ public class Category {
     private String Colour;
 
 
+    public Category(){}
+
     public Category(String name, String colour) {
         Name = name;
         Colour = colour;

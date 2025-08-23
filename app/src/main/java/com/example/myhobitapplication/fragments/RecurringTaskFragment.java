@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,6 +24,7 @@ import com.example.myhobitapplication.enums.RecurrenceUnit;
 import com.example.myhobitapplication.services.TaskService;
 import com.example.myhobitapplication.viewModels.TaskViewModel;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class RecurringTaskFragment extends Fragment {
@@ -60,6 +62,12 @@ public class RecurringTaskFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
+        ScrollView scrollView = recurringTaskBinding.rtScrollView;
+        scrollView.setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
+        scrollView.setFocusable(false);
+
+
         recurringTaskBinding.rgDifficultyOptions.setOnCheckedChangeListener((group, checkedId) -> {
             View radioButton = group.findViewById(checkedId);
             if (radioButton != null && radioButton.getTag() != null) {
@@ -75,6 +83,7 @@ public class RecurringTaskFragment extends Fragment {
                 taskViewModel.setImportanceXp(xpValue);
             }
         });
+
 
 
         recurringTaskBinding.rtaskName.addTextChangedListener(new TextWatcher() {
@@ -143,6 +152,31 @@ public class RecurringTaskFragment extends Fragment {
 
             }
         });
+
+        recurringTaskBinding.rtDateEnd.init(
+                // Godina, mesec i dan se automatski postavljaju
+                recurringTaskBinding.rtDateEnd.getYear(),
+                recurringTaskBinding.rtDateEnd.getMonth(),
+                recurringTaskBinding.rtDateEnd.getDayOfMonth(),
+                (picker, year, month, day) -> {
+                    // Zapamti da je mesec u DatePickeru 0-baziran (0-11)
+                    // Stoga dodajemo +1 da bismo ga konvertovali u LocalDate format (1-12)
+                    LocalDate selectedDate = LocalDate.of(year, month + 1, day);
+                    taskViewModel.setEndDate(selectedDate);
+                }
+        );
+
+        // Listener za krajnji datum
+        recurringTaskBinding.rtDateStart.init(
+                // Godina, mesec i dan se automatski postavljaju
+                recurringTaskBinding.rtDateStart.getYear(),
+                recurringTaskBinding.rtDateStart.getMonth(),
+                recurringTaskBinding.rtDateStart.getDayOfMonth(),
+                (picker, year, month, day) -> {
+                    LocalDate selectedDate = LocalDate.of(year, month + 1, day);
+                    taskViewModel.setStartDate(selectedDate);
+                }
+        );
 
         recurringTaskBinding.btnRtask.setOnClickListener(v -> {
 

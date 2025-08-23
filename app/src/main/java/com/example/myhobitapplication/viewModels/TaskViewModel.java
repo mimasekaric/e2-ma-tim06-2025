@@ -24,6 +24,8 @@ public class TaskViewModel extends ViewModel {
     private final MutableLiveData<Integer> importanceXp = new MutableLiveData<>(0);
     private final MutableLiveData<LocalTime> executionTime = new MutableLiveData<>(LocalTime.now());
 
+    private final MutableLiveData<LocalDate> startDate = new MutableLiveData<LocalDate>();
+    private final MutableLiveData<LocalDate> endDate = new MutableLiveData<LocalDate>();
 
     // LiveData za ponavljajuće zadatke
     private final MutableLiveData<Integer> recurrenceInterval = new MutableLiveData<>(0);
@@ -40,6 +42,8 @@ public class TaskViewModel extends ViewModel {
     public MutableLiveData<Integer> getImportanceXp() {  return importanceXp; }
 
     public MutableLiveData<LocalTime> getExecutionTime() {  return executionTime;}
+    public MutableLiveData<LocalTime> getStartDate() {  return executionTime;}
+    public MutableLiveData<LocalTime> getEndDate() {  return executionTime;}
 
     // Metode za ažuriranje podataka iz fragmenata
     public void setTitle(String newTitle) { title.setValue(newTitle); }
@@ -49,6 +53,8 @@ public class TaskViewModel extends ViewModel {
     public void setRecurrenceInterval(int interval) { recurrenceInterval.setValue(interval); }
     public void setRecurrenceUnit(RecurrenceUnit unit) { recurrenceUnit.setValue(unit); }
     public void setExecutionTime(LocalTime time) { executionTime.setValue(time); }
+    public void setStartDate(LocalDate date) { startDate.setValue(date); }
+    public void setEndDate(LocalDate date) { endDate.setValue(date); }
 
 
 
@@ -67,10 +73,10 @@ public class TaskViewModel extends ViewModel {
                 importanceXp.getValue(),
                 0,
                 executionTime.getValue(),
-                recurrenceInterval.getValue(),
+                6,
                 recurrenceUnit.getValue(),
-                LocalDate.now(),
-                LocalDate.now(),
+                startDate.getValue(),
+                endDate.getValue(),
                 RecurringTaskStatus.ACTIVE
         );
         taskService.saveRecurringTask(task);
