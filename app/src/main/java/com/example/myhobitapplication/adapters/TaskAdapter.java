@@ -1,6 +1,7 @@
 package com.example.myhobitapplication.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +39,20 @@ public class TaskAdapter extends ArrayAdapter<RecurringTask> {
         if (recurringTask != null) {
             taskName.setText(recurringTask.getName());
             taskTime.setText(recurringTask.getExecutionTime().toString());
+
+            View taskContainer = convertView.findViewById(R.id.task_container); // Pretpostavimo da imate taj ID
+
+
+            String taskColor = recurringTask.getCategoryColour(); // Ovo je samo primer
+
+            try {
+                int color = Color.parseColor(taskColor);
+
+                convertView.setBackgroundColor(color);
+
+            } catch (IllegalArgumentException e) {
+                convertView.setBackgroundColor(Color.GRAY);
+            }
         }
 
         return convertView;

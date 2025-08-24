@@ -1,6 +1,5 @@
 package com.example.myhobitapplication.models;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public abstract class Task {
@@ -14,26 +13,26 @@ public abstract class Task {
 
     private Integer Importance;
 
-    private Integer CategoryId;
+    private String CategoryColour;
 
     private LocalTime executionTime;
 
     public Task(){}
-    public Task(Integer id, String name, String description, Integer difficulty, Integer importance, Integer categoryId, LocalTime executionTime) {
+    public Task(Integer id, String name, String description, Integer difficulty, Integer importance, String categoryColour, LocalTime executionTime) {
         Id = id;
         Name = name;
         Description = description;
         Difficulty = difficulty;
         Importance = importance;
-        CategoryId = categoryId;
+        CategoryColour = categoryColour;
         this.executionTime = executionTime;
     }
-    public Task(String name, String description, Integer difficulty, Integer importance, Integer categoryId, LocalTime executionTime) {
+    public Task(String name, String description, Integer difficulty, Integer importance, String categoryColour, LocalTime executionTime) {
         Name = name;
         Description = description;
         Difficulty = difficulty;
         Importance = importance;
-        CategoryId = categoryId;
+        CategoryColour = categoryColour;
         this.executionTime = executionTime;
     }
 
@@ -57,8 +56,8 @@ public abstract class Task {
         return Importance;
     }
 
-    public Integer getCategoryId() {
-        return CategoryId;
+    public String getCategoryColour() {
+        return CategoryColour;
     }
 
     public LocalTime getExecutionTime() {
@@ -86,8 +85,8 @@ public abstract class Task {
         Importance = importance;
     }
 
-    public void setCategoryId(Integer categoryId) {
-        CategoryId = categoryId;
+    public void setCategoryColour(String categoryColour) {
+        CategoryColour = categoryColour;
     }
 
     public void setExecutionTime(LocalTime executionTime) {

@@ -1,6 +1,7 @@
 package com.example.myhobitapplication.services;
 
 import com.example.myhobitapplication.databases.DataBaseRecurringTaskHelper;
+import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.enums.RecurrenceUnit;
 import com.example.myhobitapplication.models.RecurringTask;
 import com.example.myhobitapplication.models.Task;
@@ -13,26 +14,26 @@ import java.util.Map;
 
 public class TaskService {
 
-    private final DataBaseRecurringTaskHelper db;
+    private final TaskRepository repository;
     private RecurringTask task;
     private final Map<LocalDate, List<RecurringTask>> scheduledTasks;
-    public TaskService(DataBaseRecurringTaskHelper db){
-        this.db = db;
+    public TaskService(TaskRepository repository){
+        this.repository = repository;
         scheduledTasks = new HashMap<>();
         generateSchedule();
 
     }
     public long saveRecurringTask(RecurringTask task){
-       return db.insertRecurringTask(task);
+       return repository.insertRecurringTask(task);
     }
-    public List<RecurringTask> getRecurringTasks(){ return db.getAllRecurringTasks();}
+    public List<RecurringTask> getRecurringTasks(){ return repository.getAllRecurringTasks();}
 
     public void generateSchedule() {
 
         scheduledTasks.clear();
 
 
-        List<RecurringTask> allTasks = db.getAllRecurringTasks();
+        List<RecurringTask> allTasks = repository.getAllRecurringTasks();
 
 
         for (RecurringTask task : allTasks) {
@@ -71,5 +72,12 @@ public class TaskService {
     public Map<LocalDate, List<RecurringTask>> getScheduledTasks() {
         return scheduledTasks;
     }
+
+    public RecurringTask getTaskById(long id) {
+        return repository.getTaskById(id);
+    }
+
+
+
 
 }

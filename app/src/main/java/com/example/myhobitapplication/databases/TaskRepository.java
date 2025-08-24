@@ -1,0 +1,151 @@
+package com.example.myhobitapplication.databases;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+
+import com.example.myhobitapplication.enums.RecurrenceUnit;
+import com.example.myhobitapplication.enums.RecurringTaskStatus;
+import com.example.myhobitapplication.models.RecurringTask;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+
+public class TaskRepository {
+
+    private final AppDataBaseHelper dbHelper;
+    private SQLiteDatabase database;
+
+    public TaskRepository(Context context){
+
+        dbHelper = new AppDataBaseHelper(context);
+
+    }
+
+    public void open() throws SQLException {
+        database = dbHelper.getWritableDatabase();
+    }
+
+    public void close() {
+        dbHelper.close();
+    }
+
+
+    public long insertRecurringTask(RecurringTask recurringTask){
+
+        database = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(AppDataBaseHelper.COLUMN_TITLE, recurringTask.getName());
+        values.put(AppDataBaseHelper.COLUMN_DESCRIPTION, recurringTask.getDescription());
+        values.put(AppDataBaseHelper.COLUMN_DIFFICULTY_XP, recurringTask.getDifficulty());
+        values.put(AppDataBaseHelper.COLUMN_IMPORTANCE_XP, recurringTask.getImportance());
+        values.put(AppDataBaseHelper.COLUMN_CTG_ID, recurringTask.getCategoryColour());
+        values.put(AppDataBaseHelper.COLUMN_RECURRENCE_INTERVAL, recurringTask.getRecurrenceInterval());
+        values.put(AppDataBaseHelper.COLUMN_RECURRENCE_UNIT, recurringTask.getRecurrenceUnit().name());
+        values.put(AppDataBaseHelper.COLUMN_EXECUTION_TIME, recurringTask.getExecutionTime().toString());
+        values.put(AppDataBaseHelper.COLUMN_STATUS, recurringTask.getStatus().toString());
+        values.put(AppDataBaseHelper.COLUMN_START_DATE, recurringTask.getStartDate().toString());
+        values.put(AppDataBaseHelper.COLUMN_END_DATE, recurringTask.getEndDate().toString());
+
+        long newRowId = database.insert(AppDataBaseHelper.TABLE_RECURRING_TASKS, null, values);
+        database.close();
+        return newRowId;
+
+    }
+
+    public List<RecurringTask> getAllRecurringTasks() {
+        List<RecurringTask> taskList = new ArrayList<>();
+
+        String selectQuery = "SELECT * FROM " + AppDataBaseHelper.TABLE_RECURRING_TASKS;
+
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                RecurringTask task = new RecurringTask();
+                task.setId(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_RECURRING_TASK_ID)));
+                task.setName(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_TITLE)));
+                task.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DESCRIPTION)));
+                task.setDifficulty(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DIFFICULTY_XP)));
+                task.setImportance(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IMPORTANCE_XP)));
+                task.setCategoryColour(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CTG_ID)));
+                task.setRecurrenceInterval(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_RECURRENCE_INTERVAL)));
+
+                String status = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_STATUS));
+                task.setStatus(RecurringTaskStatus.valueOf(status));
+
+                String recurrenceUnitString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_RECURRENCE_UNIT));
+                task.setRecurrenceUnit(RecurrenceUnit.valueOf(recurrenceUnitString));
+
+                String executionTimeString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_EXECUTION_TIME));
+                task.setExecutionTime(LocalTime.parse(executionTimeString));
+
+                String startDateString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_START_DATE));
+                task.setStartDate(LocalDate.parse(startDateString));
+
+                String endDateString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_END_DATE));
+                task.setEndDate(LocalDate.parse(endDateString));
+
+                taskList.add(task);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+
+        return taskList;
+    }
+
+    public RecurringTask getTaskById(long id) {
+        RecurringTask task = null;
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query(
+                AppDataBaseHelper.TABLE_RECURRING_TASKS,
+                null,
+                AppDataBaseHelper.COLUMN_RECURRING_TASK_ID + "=?",
+                new String[]{String.valueOf(id)},
+                null, null, null
+        );
+
+        if (cursor != null && cursor.moveToFirst()) {
+
+            task = new RecurringTask();
+
+            task.setId(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_RECURRING_TASK_ID)));
+            task.setName(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_TITLE)));
+            task.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DESCRIPTION)));
+            task.setDifficulty(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DIFFICULTY_XP)));
+            task.setImportance(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IMPORTANCE_XP)));
+            task.setCategoryColour(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CTG_ID)));
+            task.setRecurrenceInterval(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_RECURRENCE_INTERVAL)));
+
+            String recurrenceUnitString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_RECURRENCE_UNIT));
+            task.setRecurrenceUnit(RecurrenceUnit.valueOf(recurrenceUnitString));
+
+            String executionTimeString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_EXECUTION_TIME));
+            task.setExecutionTime(LocalTime.parse(executionTimeString));
+
+            String startDateString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_START_DATE));
+            task.setStartDate(LocalDate.parse(startDateString));
+
+            String endDateString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_END_DATE));
+            task.setEndDate(LocalDate.parse(endDateString));
+
+
+            String status = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_STATUS));
+            task.setStatus(RecurringTaskStatus.valueOf(status));
+
+            cursor.close();
+        }
+        db.close();
+        return task;
+    }
+
+    //TODO:IMPORTANCE DODATI
+    //TODO:DODAJ CATEGORY ID
+}

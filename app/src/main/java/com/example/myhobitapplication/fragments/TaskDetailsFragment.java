@@ -1,0 +1,121 @@
+package com.example.myhobitapplication.fragments;
+
+import android.graphics.Color;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.example.myhobitapplication.databases.CategoryRepository;
+import com.example.myhobitapplication.databases.TaskRepository;
+import com.example.myhobitapplication.databinding.FragmentTaskDetailsBinding;
+import com.example.myhobitapplication.services.CategoryService;
+import com.example.myhobitapplication.services.TaskService;
+import com.example.myhobitapplication.viewModels.TaskDetailsViewModel;
+
+public class TaskDetailsFragment extends Fragment {
+
+
+    String categoryColour;
+    String taskColour;
+    TaskService taskService;
+    TaskRepository taskRepository;
+
+    CategoryService categoryService;
+    CategoryRepository categoryRepository;
+
+    TaskDetailsViewModel taskDetailsViewModel;
+
+    FragmentTaskDetailsBinding binding;
+
+
+
+    private static final String ARG_TASK_ID = "taskId";
+
+    private int taskId;
+    public static TaskDetailsFragment newInstance(int taskId) {
+        TaskDetailsFragment fragment = new TaskDetailsFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_TASK_ID, taskId);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            taskId = getArguments().getInt(ARG_TASK_ID);
+
+        }
+
+        taskRepository = new TaskRepository(getContext());
+        categoryRepository = new CategoryRepository(getContext());
+        taskService = new TaskService(taskRepository);
+
+        taskDetailsViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
+            @NonNull
+            @Override
+            public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+                return (T) new TaskDetailsViewModel(taskService,categoryRepository);
+            }
+        }).get(TaskDetailsViewModel.class);
+
+        if (taskId != -1) {
+            taskDetailsViewModel.loadTaskDetails(taskId);
+        }
+
+
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        binding = FragmentTaskDetailsBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        taskDetailsViewModel.getTaskDetails().observe(getViewLifecycleOwner(), task -> {
+            if (task != null) {
+
+
+                binding.taskTitleTextView.setText(task.getName());
+                binding.taskDescriptionTextView.setText(task.getDescription());
+                binding.difficultyTextView.setText(String.valueOf(task.getDifficulty()));
+                binding.importanceTextView.setText("");
+                binding.recurrenceTextView.setText(String.valueOf(task.getRecurrenceInterval()));
+                binding.endDateTextView.setText(task.getEndDate().toString());
+                binding.startDateTextView.setText(task.getStartDate().toString());
+                binding.timeTextView.setText(task.getExecutionTime().toString());
+
+                try {
+                   int color = Color.parseColor(task.getCategoryColour());
+
+                  binding.categoryColorView.setBackgroundColor(color);
+
+               } catch (IllegalArgumentException e) {
+                   binding.categoryColorView.setBackgroundColor(Color.BLACK);
+             }
+           }
+        });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
+
+}

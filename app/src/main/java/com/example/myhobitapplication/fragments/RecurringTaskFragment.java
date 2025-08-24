@@ -18,18 +18,27 @@ import androidx.lifecycle.ViewModelProvider;
 
 
 import com.example.myhobitapplication.R;
+import com.example.myhobitapplication.adapters.CategorySpinnerAdapter;
+import com.example.myhobitapplication.databases.CategoryRepository;
 import com.example.myhobitapplication.databases.DataBaseRecurringTaskHelper;
+import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.FragmentRecurringTaskBinding;
 import com.example.myhobitapplication.enums.RecurrenceUnit;
+import com.example.myhobitapplication.models.Category;
+import com.example.myhobitapplication.services.CategoryService;
 import com.example.myhobitapplication.services.TaskService;
+import com.example.myhobitapplication.viewModels.CategoryViewModel;
 import com.example.myhobitapplication.viewModels.TaskViewModel;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RecurringTaskFragment extends Fragment {
 
     private TaskViewModel taskViewModel;
+    private CategoryViewModel categoryViewModel;
     private FragmentRecurringTaskBinding recurringTaskBinding;
 
 
@@ -37,8 +46,10 @@ public class RecurringTaskFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        DataBaseRecurringTaskHelper db = new DataBaseRecurringTaskHelper(requireContext());
-        TaskService taskService = new TaskService(db);
+        TaskRepository repository = new TaskRepository(requireContext());
+        CategoryRepository categoryRepository = new CategoryRepository(requireContext());
+        TaskService taskService = new TaskService(repository);
+        CategoryService categoryService = new CategoryService(categoryRepository);
 
 
 
@@ -49,6 +60,14 @@ public class RecurringTaskFragment extends Fragment {
                 return (T) new TaskViewModel(taskService);
             }
         }).get(TaskViewModel.class);
+
+        categoryViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
+            @NonNull
+            @Override
+            public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+                return (T) new CategoryViewModel(categoryService);
+            }
+        }).get(CategoryViewModel.class);
     }
 
     @Nullable
@@ -154,21 +173,18 @@ public class RecurringTaskFragment extends Fragment {
         });
 
         recurringTaskBinding.rtDateEnd.init(
-                // Godina, mesec i dan se automatski postavljaju
+
                 recurringTaskBinding.rtDateEnd.getYear(),
                 recurringTaskBinding.rtDateEnd.getMonth(),
                 recurringTaskBinding.rtDateEnd.getDayOfMonth(),
                 (picker, year, month, day) -> {
-                    // Zapamti da je mesec u DatePickeru 0-baziran (0-11)
-                    // Stoga dodajemo +1 da bismo ga konvertovali u LocalDate format (1-12)
                     LocalDate selectedDate = LocalDate.of(year, month + 1, day);
                     taskViewModel.setEndDate(selectedDate);
                 }
         );
 
-        // Listener za krajnji datum
+
         recurringTaskBinding.rtDateStart.init(
-                // Godina, mesec i dan se automatski postavljaju
                 recurringTaskBinding.rtDateStart.getYear(),
                 recurringTaskBinding.rtDateStart.getMonth(),
                 recurringTaskBinding.rtDateStart.getDayOfMonth(),
@@ -185,6 +201,31 @@ public class RecurringTaskFragment extends Fragment {
 
             Toast.makeText(requireContext(), "Zadatak je uspešno kreiran!", Toast.LENGTH_SHORT).show();
         });
+
+
+        CategorySpinnerAdapter adapter = new CategorySpinnerAdapter(requireContext(), new ArrayList<>());
+        recurringTaskBinding.categorySpinner.setAdapter(adapter);
+
+
+        categoryViewModel.getAllCategories().observe(getViewLifecycleOwner(), newCategories -> {
+            adapter.clear();
+            adapter.addAll(newCategories);
+            adapter.notifyDataSetChanged();
+        });
+
+        recurringTaskBinding.categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Category selectedCategory = (Category) parent.getItemAtPosition(position);
+                taskViewModel.setCategory(selectedCategory);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+
 
 
     }

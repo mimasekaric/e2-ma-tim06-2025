@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.myhobitapplication.enums.RecurrenceUnit;
 import com.example.myhobitapplication.enums.RecurringTaskStatus;
+import com.example.myhobitapplication.models.Category;
 import com.example.myhobitapplication.models.RecurringTask;
 import com.example.myhobitapplication.services.TaskService;
 
@@ -31,7 +32,7 @@ public class TaskViewModel extends ViewModel {
     private final MutableLiveData<Integer> recurrenceInterval = new MutableLiveData<>(0);
     private final MutableLiveData<RecurrenceUnit> recurrenceUnit = new MutableLiveData<>(RecurrenceUnit.DAY);
 
-
+    private final MutableLiveData<Category> category = new MutableLiveData<>();
     // Expose LiveData za fragmente
     public LiveData<String> getTitle() { return title; }
     public LiveData<String> getDescription() { return description; }
@@ -45,6 +46,8 @@ public class TaskViewModel extends ViewModel {
     public MutableLiveData<LocalTime> getStartDate() {  return executionTime;}
     public MutableLiveData<LocalTime> getEndDate() {  return executionTime;}
 
+    public MutableLiveData<Category> getCategory() {  return category;}
+
     // Metode za ažuriranje podataka iz fragmenata
     public void setTitle(String newTitle) { title.setValue(newTitle); }
     public void setDescription(String newDescription) { description.setValue(newDescription); }
@@ -55,6 +58,7 @@ public class TaskViewModel extends ViewModel {
     public void setExecutionTime(LocalTime time) { executionTime.setValue(time); }
     public void setStartDate(LocalDate date) { startDate.setValue(date); }
     public void setEndDate(LocalDate date) { endDate.setValue(date); }
+    public void setCategory(Category categoryData) { category.setValue(categoryData); }
 
 
 
@@ -71,7 +75,7 @@ public class TaskViewModel extends ViewModel {
                 description.getValue(),
                 difficultyXp.getValue(),
                 importanceXp.getValue(),
-                0,
+                category.getValue().getColour(),
                 executionTime.getValue(),
                 6,
                 recurrenceUnit.getValue(),

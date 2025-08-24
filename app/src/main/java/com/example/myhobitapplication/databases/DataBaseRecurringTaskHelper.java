@@ -16,7 +16,7 @@ import java.util.List;
 
 public class DataBaseRecurringTaskHelper extends SQLiteOpenHelper {
 
-    private static final String DATABASE_NAME = "recurrencyTasksNeww.db";
+    private static final String DATABASE_NAME = "MyHobitApplication.db";
     private static final int DATABASE_VERSION = 1;
     private static final String TABLE_RECURRING_TASKS = "recurring_tasks";
     private static final String COLUMN_ID = "id";
