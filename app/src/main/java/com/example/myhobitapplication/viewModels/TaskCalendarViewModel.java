@@ -1,6 +1,9 @@
 package com.example.myhobitapplication.viewModels;
 
+import android.util.Log;
+
 import androidx.collection.MutableObjectList;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -21,6 +24,8 @@ public class TaskCalendarViewModel extends ViewModel {
 
     private final Map<LocalDate, List<RecurringTask>> scheduledTasks;
 
+    private final MutableLiveData<LocalDate> _selectedDate = new MutableLiveData<>();
+
     public TaskCalendarViewModel(TaskService taskService){
         this.taskService = taskService;
         this.allTasks = new MutableLiveData<>();
@@ -35,8 +40,23 @@ public class TaskCalendarViewModel extends ViewModel {
         allTasks.setValue(taskService.getRecurringTasks());
     }
 
-    public List<RecurringTask> getTasksForDate(LocalDate date) {
+    public LiveData<LocalDate> getSelectedDate() {
+        return _selectedDate;
+    }
+    public void selectDate(LocalDate date) {
+        _selectedDate.setValue(date);
+    }
 
+
+    public void refreshScheduledTasks() {
+        this.scheduledTasks.clear();
+
+        Map<LocalDate, List<RecurringTask>> freshTasks = taskService.getScheduledTasks();
+        this.scheduledTasks.putAll(freshTasks);
+    }
+
+
+    public List<RecurringTask> getTasksForDate(LocalDate date) {
         List<RecurringTask> tasks = scheduledTasks.get(date);
         if (tasks != null) {
             return tasks;
@@ -44,14 +64,5 @@ public class TaskCalendarViewModel extends ViewModel {
             return Collections.emptyList();
         }
     }
-
-
-
-
-
-
-
-
-
 
 }

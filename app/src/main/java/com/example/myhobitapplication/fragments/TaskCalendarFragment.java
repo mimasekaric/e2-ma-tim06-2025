@@ -18,9 +18,11 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.activities.TaskDetailActivity;
 import com.example.myhobitapplication.databases.DataBaseRecurringTaskHelper;
+import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.FragmentTaskCalendarBinding;
 import com.example.myhobitapplication.services.TaskService;
 import com.example.myhobitapplication.viewModels.TaskCalendarViewModel;
+import com.example.myhobitapplication.viewModels.TaskCalendarViewModelFactory;
 import com.example.myhobitapplication.viewModels.TaskViewModel;
 import com.kizitonwose.calendar.core.CalendarDay;
 import com.kizitonwose.calendar.core.CalendarMonth;
@@ -67,6 +69,32 @@ public class TaskCalendarFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         calendarView = calendarBinding.calendarView;
 
+        TaskRepository repository = new TaskRepository(getContext());
+
+        TaskService taskService = new TaskService(repository);
+
+        TaskCalendarViewModelFactory factory = new TaskCalendarViewModelFactory(taskService);
+
+
+        calendarViewModel = new ViewModelProvider(requireActivity(), factory).get(TaskCalendarViewModel.class);
+
+
+
+//        getParentFragmentManager().setFragmentResultListener("taskAddedRequest", getViewLifecycleOwner(), (requestKey, bundle) -> {
+//            // Ovaj kod će se izvršiti KADA RecurringTaskFragment pošalje signal
+//
+//
+//
+//            // 2. KORAK: Naredi UI-ju (kalendaru) da se ponovo iscrta sa svežim podacima
+//            if (calendarView != null) {
+//                calendarView.notifyCalendarChanged();
+//            }
+//
+//            Toast.makeText(getContext(), "Kalendar osvežen!", Toast.LENGTH_SHORT).show();
+//        });
+
+
+
         final YearMonth currentMonth = YearMonth.now();
         calendarView.setup(currentMonth.minusMonths(12), currentMonth.plusMonths(12), DayOfWeek.MONDAY);
         calendarView.scrollToMonth(currentMonth);
@@ -91,7 +119,21 @@ public class TaskCalendarFragment extends Fragment {
                         calendarView.notifyDateChanged(oldDate.getDate());
                     }
 
-                    showTaskSlots(day);
+
+                    calendarViewModel.selectDate(day.getDate());
+
+                    getParentFragmentManager().beginTransaction()
+
+                            .replace(R.id.fragment_container, new TaskSlotCalendarFragment())
+
+                            .setCustomAnimations(
+                                    android.R.anim.slide_in_left,
+                                    android.R.anim.fade_out,
+                                    android.R.anim.fade_in,
+                                    android.R.anim.slide_out_right
+                            )
+                            .addToBackStack(null)
+                            .commit();
                 });
 
 
@@ -100,6 +142,10 @@ public class TaskCalendarFragment extends Fragment {
                 } else {
                     container.getCalendarDayText().setBackgroundColor(Color.TRANSPARENT);
                 }
+
+
+
+
             }
         });
 
@@ -116,6 +162,8 @@ public class TaskCalendarFragment extends Fragment {
                 container.getCalendarMonthText().setText(header);
             }
         });
+
+
     }
 
 

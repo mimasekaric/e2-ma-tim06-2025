@@ -1,6 +1,7 @@
 package com.example.myhobitapplication.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,14 +9,17 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myhobitapplication.R;
+import com.example.myhobitapplication.activities.TaskDetailActivity;
 import com.example.myhobitapplication.adapters.TaskAdapter;
 import com.example.myhobitapplication.databases.CategoryRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
@@ -23,6 +27,7 @@ import com.example.myhobitapplication.models.RecurringTask;
 import com.example.myhobitapplication.services.CategoryService;
 import com.example.myhobitapplication.services.TaskService;
 import com.example.myhobitapplication.viewModels.TaskCalendarViewModel;
+import com.example.myhobitapplication.viewModels.TaskCalendarViewModelFactory;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -36,16 +41,19 @@ public class TaskSlotCalendarFragment extends Fragment {
     CategoryRepository categoryRepository;
 
 
+    private TaskAdapter adapter;
+    private List<RecurringTask> tasks;
+
 
     private TaskCalendarViewModel taskCalendarViewModel;
 
-    public static TaskSlotCalendarFragment newInstance(LocalDate date) {
-        TaskSlotCalendarFragment fragment = new TaskSlotCalendarFragment();
-        Bundle args = new Bundle();
-        args.putSerializable(ARG_DATE, date);
-        fragment.setArguments(args);
-        return fragment;
-    }
+//    public static TaskSlotCalendarFragment newInstance(LocalDate date) {
+//        TaskSlotCalendarFragment fragment = new TaskSlotCalendarFragment();
+//        Bundle args = new Bundle();
+//        args.putSerializable(ARG_DATE, date);
+//        fragment.setArguments(args);
+//        return fragment;
+//    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,13 +66,10 @@ public class TaskSlotCalendarFragment extends Fragment {
 
 
 
-        taskCalendarViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
-            @NonNull
-            @Override
-            public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-                return (T) new TaskCalendarViewModel(taskService);
-            }
-        }).get(TaskCalendarViewModel.class);
+        TaskCalendarViewModelFactory factory = new TaskCalendarViewModelFactory(taskService);
+
+
+        taskCalendarViewModel = new ViewModelProvider(requireActivity(), factory).get(TaskCalendarViewModel.class);
     }
 
     @Nullable
@@ -77,74 +82,141 @@ public class TaskSlotCalendarFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        LocalDate selectedDate = null;
-        if (getArguments() != null) {
-            selectedDate = (LocalDate) getArguments().getSerializable(ARG_DATE);
-        }
+//        LocalDate selectedDate = null;
+//        if (getArguments() != null) {
+//            selectedDate = (LocalDate) getArguments().getSerializable(ARG_DATE);
+//        }
 
-        if (selectedDate != null) {
+        ListView taskListView = view.findViewById(R.id.task_list_view);
 
-            TextView dateTextView = view.findViewById(R.id.task_slot_time);
-
-            List<RecurringTask> tasks = taskCalendarViewModel.getTasksForDate(selectedDate);
-
-            ListView taskListView = view.findViewById(R.id.task_list_view);
-            TaskAdapter adapter = new TaskAdapter(getContext(), tasks);
-            taskListView.setAdapter(adapter);
-
-            taskListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                    RecurringTask selectedTask = tasks.get(position);
+        tasks = new java.util.ArrayList<>();
+        adapter = new TaskAdapter(getContext(), tasks);
+        taskListView.setAdapter(adapter);
 
 
-                    if (listener != null) {
-                        listener.onTaskSelected(selectedTask.getId());
-                    }
+        getParentFragmentManager().setFragmentResultListener("taskAddedRequest", getViewLifecycleOwner(), (requestKey, bundle) -> {
+
+
+            taskCalendarViewModel.refreshScheduledTasks();
+
+            // 3. NATERAJ POSTOJEĆI OBSERVER DA SE PONOVO AKTIVIRA!
+            //    Kako? Tako što ćemo ponovo "gurnuti" poslednju poznatu vrednost datuma u LiveData.
+            //    Ovo će pokrenuti onChanged metodu i osvežiti listu.
+            LocalDate currentDate = taskCalendarViewModel.getSelectedDate().getValue();
+            if (currentDate != null) {
+                taskCalendarViewModel.selectDate(currentDate); // Trik: ponovo postavi istu vrednost!
+            }
+        });
+
+
+
+
+
+        taskCalendarViewModel.getSelectedDate().observe(getViewLifecycleOwner(), new Observer<LocalDate>() {
+            @Override
+            public void onChanged(LocalDate selectedDate) {
+                // Ova metoda će se automatski pozvati svaki put kada se datum u ViewModelu promeni.
+                if (selectedDate != null) {
+                    // 1. Dobavi nove zadatke za taj datum
+                    List<RecurringTask> newTasks = taskCalendarViewModel.getTasksForDate(selectedDate);
+
+                    // 2. Očisti staru listu i dodaj nove podatke
+                    tasks.clear();
+                    tasks.addAll(newTasks);
+
+                    // 3. Obavesti adapter da su se podaci promenili kako bi osvežio prikaz
+                    adapter.notifyDataSetChanged();
+
                 }
+            }
+        });
+
+
+        taskListView.setOnItemClickListener((parent, view1, position, id) -> {
+               RecurringTask selectedTask = (RecurringTask) parent.getItemAtPosition(position);
+
+               if (selectedTask != null) {
+
+                   int taskId = selectedTask.getId();
+                   Intent intent = new Intent(getActivity(), TaskDetailActivity.class);
+
+                   intent.putExtra("TASK_ID_EXTRA", taskId);
+
+
+                   startActivity(intent);
+               }
             });
 
-//            taskListView.setOnItemClickListener((parent, view1, position, id) -> {
-//                RecurringTask selectedTask = (RecurringTask) parent.getItemAtPosition(position);
+
+
+    }
+
+
+
+
+//        if (selectedDate != null) {
 //
-//                if (selectedTask != null) {
+//            TextView dateTextView = view.findViewById(R.id.task_slot_time);
 //
-//                    long taskId = selectedTask.getId();
-//                    //String categoryColour = categoryService.getCategoryById(selectedTask.getCategoryId()).getColour();
-//                    Bundle bundle = new Bundle();
-//                    bundle.putLong("taskId", taskId);
-//                   // bundle.putString("taskColour", categoryColour);
+//            List<RecurringTask> tasks = taskCalendarViewModel.getTasksForDate(selectedDate);
 //
-//                    TaskDetailsFragment taskDetailsFragment = new TaskDetailsFragment();
-//                    taskDetailsFragment.setArguments(bundle);
+//            ListView taskListView = view.findViewById(R.id.task_list_view);
+//            TaskAdapter adapter = new TaskAdapter(getContext(), tasks);
+//            taskListView.setAdapter(adapter);
 //
-//                    getParentFragmentManager().beginTransaction()
-//                            .replace(R.id.fragment_container, taskDetailsFragment)
-//                            .addToBackStack(null)
-//                            .commit();
+//            taskListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                @Override
+//                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//                    RecurringTask selectedTask = tasks.get(position);
+//
+//
+//                    if (listener != null) {
+//                        listener.onTaskSelected(selectedTask.getId());
+//                    }
 //                }
 //            });
-        }
+//
+////            taskListView.setOnItemClickListener((parent, view1, position, id) -> {
+////                RecurringTask selectedTask = (RecurringTask) parent.getItemAtPosition(position);
+////
+////                if (selectedTask != null) {
+////
+////                    long taskId = selectedTask.getId();
+////                    //String categoryColour = categoryService.getCategoryById(selectedTask.getCategoryId()).getColour();
+////                    Bundle bundle = new Bundle();
+////                    bundle.putLong("taskId", taskId);
+////                   // bundle.putString("taskColour", categoryColour);
+////
+////                    TaskDetailsFragment taskDetailsFragment = new TaskDetailsFragment();
+////                    taskDetailsFragment.setArguments(bundle);
+////
+////                    getParentFragmentManager().beginTransaction()
+////                            .replace(R.id.fragment_container, taskDetailsFragment)
+////                            .addToBackStack(null)
+////                            .commit();
+////                }
+////            });
+//        }
 
 
 
     }
 
-    public interface OnTaskSelectedListener {
-        void onTaskSelected(int taskId);
-    }
+//    public interface OnTaskSelectedListener {
+//        void onTaskSelected(int taskId);
+//    }
 
-    OnTaskSelectedListener listener;
+//    OnTaskSelectedListener listener;
+//
+//    @Override
+//    public void onAttach(@NonNull Context context) {
+//        super.onAttach(context);
+//        if (context instanceof OnTaskSelectedListener) {
+//            listener = (OnTaskSelectedListener) context;
+//        } else {
+//            throw new RuntimeException(context.toString() + " mora implementirati OnTaskSelectedListener");
+//        }
+//    }
 
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        if (context instanceof OnTaskSelectedListener) {
-            listener = (OnTaskSelectedListener) context;
-        } else {
-            throw new RuntimeException(context.toString() + " mora implementirati OnTaskSelectedListener");
-        }
-    }
 
-}

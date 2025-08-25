@@ -12,32 +12,37 @@ import com.example.myhobitapplication.fragments.TaskSlotCalendarFragment;
 import java.time.LocalDate;
 
 public class TaskDetailActivity extends AppCompatActivity
-        implements TaskSlotCalendarFragment.OnTaskSelectedListener {
+        {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_detail);
 
-        LocalDate selectedDate = (LocalDate) getIntent().getSerializableExtra("selected_date");
+        int taskId = getIntent().getIntExtra("TASK_ID_EXTRA", -1);
 
-        if (selectedDate != null) {
-            TaskSlotCalendarFragment fragment = TaskSlotCalendarFragment.newInstance(selectedDate);
+        if (savedInstanceState == null && taskId != -1L) {
+
+            // 3. Kreiraj instancu TaskDetailsFragment-a koristeći ID.
+            //    Ovo pretpostavlja da TaskDetailsFragment ima newInstance metodu.
+            TaskDetailsFragment taskDetailsFragment = TaskDetailsFragment.newInstance(taskId);
+
+            // 4. Prikaži fragment unutar kontejnera ove aktivnosti.
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.task_detail_container, fragment)
+                    .replace(R.id.task_detail_container, taskDetailsFragment) // task_detail_container je ID FrameLayout-a u tvom XML-u
                     .commit();
         }
     }
 
-    @Override
-    public void onTaskSelected(int taskId) {
-
-        TaskDetailsFragment taskFragment = TaskDetailsFragment.newInstance(taskId);
-
-
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.task_detail_container, taskFragment)
-                .addToBackStack(null) // Dodavanje u "back stack" za povratak pritiskom na dugme
-                .commit();
-    }
+//    @Override
+//    public void onTaskSelected(int taskId) {
+//
+//        TaskDetailsFragment taskFragment = TaskDetailsFragment.newInstance(taskId);
+//
+//
+//        getSupportFragmentManager().beginTransaction()
+//                .replace(R.id.task_detail_container, taskFragment)
+//                .addToBackStack(null) // Dodavanje u "back stack" za povratak pritiskom na dugme
+//                .commit();
+//    }
 }

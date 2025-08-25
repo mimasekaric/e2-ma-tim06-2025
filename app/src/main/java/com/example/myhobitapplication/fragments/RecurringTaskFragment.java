@@ -1,5 +1,6 @@
 package com.example.myhobitapplication.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -200,6 +201,9 @@ public class RecurringTaskFragment extends Fragment {
             taskViewModel.saveRecurringTask();
 
             Toast.makeText(requireContext(), "Zadatak je uspešno kreiran!", Toast.LENGTH_SHORT).show();
+
+            getParentFragmentManager().setFragmentResult("taskAddedRequest", new Bundle());
+
         });
 
 
@@ -228,5 +232,13 @@ public class RecurringTaskFragment extends Fragment {
 
 
 
+
+
     }
+
+
+
+
+
+
 }

@@ -20,7 +20,6 @@ public class TaskService {
     public TaskService(TaskRepository repository){
         this.repository = repository;
         scheduledTasks = new HashMap<>();
-        generateSchedule();
 
     }
     public long saveRecurringTask(RecurringTask task){
@@ -28,33 +27,28 @@ public class TaskService {
     }
     public List<RecurringTask> getRecurringTasks(){ return repository.getAllRecurringTasks();}
 
-    public void generateSchedule() {
+    // Ovu metodu smo preimenovali i sada vraća novu, svežu mapu
+    public Map<LocalDate, List<RecurringTask>> getScheduledTasks() {
+        // Svaki put kada neko zatraži raspored, mi ga pravimo iz početka sa najnovijim podacima iz baze.
 
-        scheduledTasks.clear();
-
-
+        Map<LocalDate, List<RecurringTask>> newScheduledTasks = new HashMap<>();
         List<RecurringTask> allTasks = repository.getAllRecurringTasks();
-
 
         for (RecurringTask task : allTasks) {
             LocalDate currentDate = task.getStartDate();
             LocalDate endDate = task.getEndDate();
-
-
             LocalDate maxDate = LocalDate.now().plusMonths(12);
 
             while (!currentDate.isAfter(endDate) && !currentDate.isAfter(maxDate)) {
-
-                List<RecurringTask> tasksForDate = scheduledTasks.getOrDefault(currentDate, new ArrayList<>());
+                List<RecurringTask> tasksForDate = newScheduledTasks.getOrDefault(currentDate, new ArrayList<>());
                 tasksForDate.add(task);
-                scheduledTasks.put(currentDate, tasksForDate);
-
-
+                newScheduledTasks.put(currentDate, tasksForDate);
                 currentDate = calculateNextDate(currentDate, task.getRecurrenceInterval(), task.getRecurrenceUnit());
             }
         }
-    }
 
+        return newScheduledTasks;
+    }
 
     private LocalDate calculateNextDate(LocalDate date, int interval, RecurrenceUnit unit) {
         switch (unit) {
@@ -69,9 +63,9 @@ public class TaskService {
         }
     }
 
-    public Map<LocalDate, List<RecurringTask>> getScheduledTasks() {
-        return scheduledTasks;
-    }
+//    public Map<LocalDate, List<RecurringTask>> getScheduledTasks() {
+//        return scheduledTasks;
+//    }
 
     public RecurringTask getTaskById(long id) {
         return repository.getTaskById(id);
