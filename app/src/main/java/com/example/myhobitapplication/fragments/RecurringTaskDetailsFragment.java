@@ -98,6 +98,7 @@ public class TaskDetailsFragment extends Fragment {
                 binding.endDateTextView.setText(task.getEndDate().toString());
                 binding.startDateTextView.setText(task.getStartDate().toString());
                 binding.timeTextView.setText(task.getExecutionTime().toString());
+                binding.rctStatus.setText(String.valueOf(task.getStatus()));
 
                 try {
                    int color = Color.parseColor(task.getCategoryColour());
@@ -109,6 +110,9 @@ public class TaskDetailsFragment extends Fragment {
              }
            }
         });
+
+
+       // int recurren
     }
 
     @Override
