@@ -146,6 +146,36 @@ public class TaskRepository {
         return task;
     }
 
-    //TODO:IMPORTANCE DODATI
-    //TODO:DODAJ CATEGORY ID
+
+    public long updateRecurringTask(RecurringTask task) {
+
+        database = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(AppDataBaseHelper.COLUMN_TITLE, task.getName());
+        values.put(AppDataBaseHelper.COLUMN_DESCRIPTION, task.getDescription());
+        values.put(AppDataBaseHelper.COLUMN_DIFFICULTY_XP, task.getDifficulty());
+        values.put(AppDataBaseHelper.COLUMN_IMPORTANCE_XP, task.getImportance());
+        values.put(AppDataBaseHelper.COLUMN_CTG_ID, task.getCategoryColour());
+        values.put(AppDataBaseHelper.COLUMN_RECURRENCE_INTERVAL, task.getRecurrenceInterval());
+        values.put(AppDataBaseHelper.COLUMN_RECURRENCE_UNIT, task.getRecurrenceUnit().name());
+        values.put(AppDataBaseHelper.COLUMN_EXECUTION_TIME, task.getExecutionTime().toString());
+        values.put(AppDataBaseHelper.COLUMN_STATUS, task.getStatus().toString());
+        values.put(AppDataBaseHelper.COLUMN_START_DATE, task.getStartDate().toString());
+        values.put(AppDataBaseHelper.COLUMN_END_DATE, task.getEndDate().toString());
+
+        String selection = AppDataBaseHelper.COLUMN_RECURRING_TASK_ID + " = ?";
+        String[] selectionArgs = { String.valueOf(task.getId()) };
+
+        int count = database.update(
+                AppDataBaseHelper.TABLE_RECURRING_TASKS,
+                values,
+                selection,
+                selectionArgs);
+
+        database.close();
+        return count;
+
+    }
+
 }

@@ -1,15 +1,11 @@
 package com.example.myhobitapplication.activities;
 
-import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myhobitapplication.R;
-import com.example.myhobitapplication.fragments.TaskDetailsFragment;
-import com.example.myhobitapplication.fragments.TaskSlotCalendarFragment;
-
-import java.time.LocalDate;
+import com.example.myhobitapplication.fragments.RecurringTaskDetailsFragment;
 
 public class TaskDetailActivity extends AppCompatActivity
         {
@@ -25,11 +21,11 @@ public class TaskDetailActivity extends AppCompatActivity
 
             // 3. Kreiraj instancu TaskDetailsFragment-a koristeći ID.
             //    Ovo pretpostavlja da TaskDetailsFragment ima newInstance metodu.
-            TaskDetailsFragment taskDetailsFragment = TaskDetailsFragment.newInstance(taskId);
+            RecurringTaskDetailsFragment recurringTaskDetailsFragment = RecurringTaskDetailsFragment.newInstance(taskId);
 
             // 4. Prikaži fragment unutar kontejnera ove aktivnosti.
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.task_detail_container, taskDetailsFragment) // task_detail_container je ID FrameLayout-a u tvom XML-u
+                    .replace(R.id.task_detail_container, recurringTaskDetailsFragment) // task_detail_container je ID FrameLayout-a u tvom XML-u
                     .commit();
         }
     }

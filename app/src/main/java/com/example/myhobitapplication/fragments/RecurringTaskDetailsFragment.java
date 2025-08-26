@@ -1,5 +1,6 @@
 package com.example.myhobitapplication.fragments;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.myhobitapplication.activities.RecurringTaskEditActivity;
 import com.example.myhobitapplication.databases.CategoryRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.FragmentTaskDetailsBinding;
@@ -19,7 +21,7 @@ import com.example.myhobitapplication.services.CategoryService;
 import com.example.myhobitapplication.services.TaskService;
 import com.example.myhobitapplication.viewModels.TaskDetailsViewModel;
 
-public class TaskDetailsFragment extends Fragment {
+public class RecurringTaskDetailsFragment extends Fragment {
 
 
     String categoryColour;
@@ -39,8 +41,8 @@ public class TaskDetailsFragment extends Fragment {
     private static final String ARG_TASK_ID = "taskId";
 
     private int taskId;
-    public static TaskDetailsFragment newInstance(int taskId) {
-        TaskDetailsFragment fragment = new TaskDetailsFragment();
+    public static RecurringTaskDetailsFragment newInstance(int taskId) {
+        RecurringTaskDetailsFragment fragment = new RecurringTaskDetailsFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_TASK_ID, taskId);
         fragment.setArguments(args);
@@ -112,7 +114,36 @@ public class TaskDetailsFragment extends Fragment {
         });
 
 
-       // int recurren
+//        binding.editTaskButton.setOnClickListener(v -> {
+//
+//            Intent intent = new Intent(getActivity(), RecurringTaskEditActivity.class);
+//            intent.putExtra("TASK_ID_TO_EDIT", taskId);
+//            startActivity(intent);
+//
+//        });
+
+        binding.btnRctaskDone.setOnClickListener(v -> {
+
+            taskDetailsViewModel.markTaskAsDone();
+        });
+
+        binding.btnRctaskCancel.setOnClickListener(v -> {
+
+            taskDetailsViewModel.markTaskAsCanceled();
+        });
+
+        binding.btnRctaskPause.setOnClickListener(v -> {
+
+            taskDetailsViewModel.markTaskAsPaused();
+        });
+
+
+
+
+
+
+
+
     }
 
     @Override

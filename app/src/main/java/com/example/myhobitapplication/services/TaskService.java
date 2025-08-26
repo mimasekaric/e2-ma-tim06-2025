@@ -1,7 +1,9 @@
 package com.example.myhobitapplication.services;
 
+import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.databases.DataBaseRecurringTaskHelper;
 import com.example.myhobitapplication.databases.TaskRepository;
+import com.example.myhobitapplication.dto.RecurringTaskDTO;
 import com.example.myhobitapplication.enums.RecurrenceUnit;
 import com.example.myhobitapplication.models.RecurringTask;
 import com.example.myhobitapplication.models.Task;
@@ -27,9 +29,8 @@ public class TaskService {
     }
     public List<RecurringTask> getRecurringTasks(){ return repository.getAllRecurringTasks();}
 
-    // Ovu metodu smo preimenovali i sada vraća novu, svežu mapu
+
     public Map<LocalDate, List<RecurringTask>> getScheduledTasks() {
-        // Svaki put kada neko zatraži raspored, mi ga pravimo iz početka sa najnovijim podacima iz baze.
 
         Map<LocalDate, List<RecurringTask>> newScheduledTasks = new HashMap<>();
         List<RecurringTask> allTasks = repository.getAllRecurringTasks();
@@ -67,11 +68,36 @@ public class TaskService {
 //        return scheduledTasks;
 //    }
 
-    public RecurringTask getTaskById(long id) {
-        return repository.getTaskById(id);
+    public RecurringTaskDTO getTaskById(long id) {
+        RecurringTask taskModel =  repository.getTaskById(id);
+
+        RecurringTaskDTO taskDto = new RecurringTaskDTO(taskModel);
+
+        return taskDto;
     }
 
 
+    public long editRecurringTask(RecurringTaskDTO recurringTaskDTO){
+
+
+        RecurringTask recurringTask = new RecurringTask(
+
+                recurringTaskDTO.getId(),
+                recurringTaskDTO.getName(),
+                recurringTaskDTO.getDescription(),
+                recurringTaskDTO.getDifficulty(),
+                recurringTaskDTO.getImportance(),
+                recurringTaskDTO.getCategoryColour(),
+                recurringTaskDTO.getExecutionTime(),
+                recurringTaskDTO.getRecurrenceInterval(),
+                recurringTaskDTO.getRecurrenceUnit(),
+                recurringTaskDTO.getStartDate(),
+                recurringTaskDTO.getEndDate(),
+                recurringTaskDTO.getStatus()
+        );
+
+        return repository.updateRecurringTask(recurringTask);
+    }
 
 
 }
