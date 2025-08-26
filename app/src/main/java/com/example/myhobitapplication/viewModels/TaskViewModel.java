@@ -81,9 +81,10 @@ public class TaskViewModel extends ViewModel {
                 recurrenceUnit.getValue(),
                 startDate.getValue(),
                 endDate.getValue(),
-                RecurringTaskStatus.ACTIVE
+                RecurringTaskStatus.ACTIVE,
+                -1
         );
-        taskService.saveRecurringTask(task);
+        taskService.createRecurringTaskSeries(task);
     }
 
 

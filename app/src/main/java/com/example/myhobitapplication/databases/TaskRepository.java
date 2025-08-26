@@ -50,11 +50,34 @@ public class TaskRepository {
         values.put(AppDataBaseHelper.COLUMN_STATUS, recurringTask.getStatus().toString());
         values.put(AppDataBaseHelper.COLUMN_START_DATE, recurringTask.getStartDate().toString());
         values.put(AppDataBaseHelper.COLUMN_END_DATE, recurringTask.getEndDate().toString());
+        values.put(AppDataBaseHelper.COLUMN_FIRST_REC_TASK_ID, recurringTask.getFirstRecurringTaskId().toString());
 
         long newRowId = database.insert(AppDataBaseHelper.TABLE_RECURRING_TASKS, null, values);
         database.close();
         return newRowId;
 
+    }
+
+    public long insertSingleRecurringTask(RecurringTask recurringTask) {
+        database = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(AppDataBaseHelper.COLUMN_TITLE, recurringTask.getName());
+        values.put(AppDataBaseHelper.COLUMN_DESCRIPTION, recurringTask.getDescription());
+        values.put(AppDataBaseHelper.COLUMN_DIFFICULTY_XP, recurringTask.getDifficulty());
+        values.put(AppDataBaseHelper.COLUMN_IMPORTANCE_XP, recurringTask.getImportance());
+        values.put(AppDataBaseHelper.COLUMN_CTG_ID, recurringTask.getCategoryColour());
+        values.put(AppDataBaseHelper.COLUMN_RECURRENCE_INTERVAL, recurringTask.getRecurrenceInterval());
+        values.put(AppDataBaseHelper.COLUMN_RECURRENCE_UNIT, recurringTask.getRecurrenceUnit().name());
+        values.put(AppDataBaseHelper.COLUMN_EXECUTION_TIME, recurringTask.getExecutionTime().toString());
+        values.put(AppDataBaseHelper.COLUMN_STATUS, recurringTask.getStatus().toString());
+        values.put(AppDataBaseHelper.COLUMN_START_DATE, recurringTask.getStartDate().toString());
+        values.put(AppDataBaseHelper.COLUMN_END_DATE, recurringTask.getEndDate().toString());
+        values.put(AppDataBaseHelper.COLUMN_FIRST_REC_TASK_ID, recurringTask.getFirstRecurringTaskId().toString());
+
+        long newRowId = database.insert(AppDataBaseHelper.TABLE_RECURRING_TASKS, null, values);
+        dbHelper.close();
+        return newRowId;
     }
 
     public List<RecurringTask> getAllRecurringTasks() {
@@ -75,6 +98,7 @@ public class TaskRepository {
                 task.setImportance(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IMPORTANCE_XP)));
                 task.setCategoryColour(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CTG_ID)));
                 task.setRecurrenceInterval(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_RECURRENCE_INTERVAL)));
+                task.setFirstRecurringTaskId(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_FIRST_REC_TASK_ID)));
 
                 String status = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_STATUS));
                 task.setStatus(RecurringTaskStatus.valueOf(status));
@@ -122,6 +146,7 @@ public class TaskRepository {
             task.setDifficulty(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DIFFICULTY_XP)));
             task.setImportance(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IMPORTANCE_XP)));
             task.setCategoryColour(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CTG_ID)));
+            task.setFirstRecurringTaskId(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_FIRST_REC_TASK_ID)));
             task.setRecurrenceInterval(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_RECURRENCE_INTERVAL)));
 
             String recurrenceUnitString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_RECURRENCE_UNIT));
@@ -163,6 +188,7 @@ public class TaskRepository {
         values.put(AppDataBaseHelper.COLUMN_STATUS, task.getStatus().toString());
         values.put(AppDataBaseHelper.COLUMN_START_DATE, task.getStartDate().toString());
         values.put(AppDataBaseHelper.COLUMN_END_DATE, task.getEndDate().toString());
+        values.put(AppDataBaseHelper.COLUMN_FIRST_REC_TASK_ID, task.getFirstRecurringTaskId().toString());
 
         String selection = AppDataBaseHelper.COLUMN_RECURRING_TASK_ID + " = ?";
         String[] selectionArgs = { String.valueOf(task.getId()) };
@@ -176,6 +202,67 @@ public class TaskRepository {
         database.close();
         return count;
 
+    }
+
+    public void insertRecurringTaskBatch(List<RecurringTask> instances) {
+        database = dbHelper.getWritableDatabase();
+       // ContentValues values = new ContentValues();
+        database.beginTransaction();
+        try {
+            for (RecurringTask recurringTask : instances) {
+                ContentValues values = new ContentValues();
+                values.put(AppDataBaseHelper.COLUMN_TITLE, recurringTask.getName());
+                values.put(AppDataBaseHelper.COLUMN_DESCRIPTION, recurringTask.getDescription());
+                values.put(AppDataBaseHelper.COLUMN_DIFFICULTY_XP, recurringTask.getDifficulty());
+                values.put(AppDataBaseHelper.COLUMN_IMPORTANCE_XP, recurringTask.getImportance());
+                values.put(AppDataBaseHelper.COLUMN_CTG_ID, recurringTask.getCategoryColour());
+                values.put(AppDataBaseHelper.COLUMN_RECURRENCE_INTERVAL, recurringTask.getRecurrenceInterval());
+                values.put(AppDataBaseHelper.COLUMN_RECURRENCE_UNIT, recurringTask.getRecurrenceUnit().name());
+                values.put(AppDataBaseHelper.COLUMN_EXECUTION_TIME, recurringTask.getExecutionTime().toString());
+                values.put(AppDataBaseHelper.COLUMN_STATUS, recurringTask.getStatus().toString());
+                values.put(AppDataBaseHelper.COLUMN_START_DATE, recurringTask.getStartDate().toString());
+                values.put(AppDataBaseHelper.COLUMN_END_DATE, recurringTask.getEndDate().toString());
+                values.put(AppDataBaseHelper.COLUMN_FIRST_REC_TASK_ID, recurringTask.getFirstRecurringTaskId().toString());
+                database.insert(AppDataBaseHelper.TABLE_RECURRING_TASKS, null, values);
+            }
+            database.setTransactionSuccessful();
+        } finally {
+            database.endTransaction();
+        }
+        database.close();
+    }
+
+    // Metoda 3: Ažuriraj samo jedno polje
+    public void updateFirstRecurringTaskId(long taskId, long firstId) {
+        database = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(AppDataBaseHelper.COLUMN_FIRST_REC_TASK_ID, firstId);
+        database.update(AppDataBaseHelper.TABLE_RECURRING_TASKS, values, AppDataBaseHelper.COLUMN_RECURRING_TASK_ID + " = ?", new String[]{String.valueOf(taskId)});
+        database.close();
+    }
+
+    public int updateOutdatedTasksToNotDone() {
+        database = dbHelper.getWritableDatabase();
+
+        LocalDate threeDaysAgo = LocalDate.now().minusDays(3);
+        String threeDaysAgoString = threeDaysAgo.toString();
+
+        ContentValues values = new ContentValues();
+        values.put(AppDataBaseHelper.COLUMN_STATUS, RecurringTaskStatus.INCOMPLETE.name());
+
+        String selection = AppDataBaseHelper.COLUMN_STATUS + " = ? AND " + AppDataBaseHelper.COLUMN_START_DATE + " < ?";
+
+        String[] selectionArgs = { RecurringTaskStatus.ACTIVE.name(), threeDaysAgoString };
+
+        int count = database.update(
+                AppDataBaseHelper.TABLE_RECURRING_TASKS,
+                values,
+                selection,
+                selectionArgs);
+
+        database.close();
+
+        return count;
     }
 
 }

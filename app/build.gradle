@@ -45,4 +45,5 @@ dependencies {
     implementation 'com.journeyapps:zxing-android-embedded:4.1.0'
     implementation "com.kizitonwose.calendar:view:2.8.0"
     implementation "com.github.yukuku:ambilwarna:2.0.1"
+    implementation "androidx.work:work-runtime:2.9.0"
 }

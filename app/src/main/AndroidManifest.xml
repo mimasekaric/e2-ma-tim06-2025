@@ -22,6 +22,7 @@
 
         </activity>
         <activity android:name=".activities.TaskDetailActivity" />
+        <activity android:name=".activities.RecurringTaskEditActivity" />
     </application>
 
 </manifest>

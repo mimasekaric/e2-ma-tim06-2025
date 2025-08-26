@@ -16,13 +16,16 @@ public class RecurringTask extends Task {
 
     private RecurringTaskStatus status;
 
-    public RecurringTask(Integer id, String name, String description, Integer difficulty, Integer importance, String categoryId, LocalTime executionTime, int recurrenceInterval, RecurrenceUnit recurrenceUnit, LocalDate startDate, LocalDate endDate, RecurringTaskStatus status) {
+    private Integer FirstRecurringTaskId;
+
+    public RecurringTask(Integer id, String name, String description, Integer difficulty, Integer importance, String categoryId, LocalTime executionTime, int recurrenceInterval, RecurrenceUnit recurrenceUnit, LocalDate startDate, LocalDate endDate, RecurringTaskStatus status, Integer firstRecurringTaskId) {
         super(id, name, description, difficulty, importance, categoryId, executionTime);
         this.recurrenceInterval = recurrenceInterval;
         this.recurrenceUnit = recurrenceUnit;
         this.startDate = startDate;
         this.endDate = endDate;
         this.status = status;
+        FirstRecurringTaskId = firstRecurringTaskId;
     }
 
     public RecurringTask(){
@@ -32,13 +35,14 @@ public class RecurringTask extends Task {
 
 
 
-    public RecurringTask(String name, String description, Integer difficulty, Integer importance, String categoryId, LocalTime executionTime, int recurrenceInterval, RecurrenceUnit recurrenceUnit, LocalDate startDate, LocalDate endDate, RecurringTaskStatus status) {
+    public RecurringTask(String name, String description, Integer difficulty, Integer importance, String categoryId, LocalTime executionTime, int recurrenceInterval, RecurrenceUnit recurrenceUnit, LocalDate startDate, LocalDate endDate, RecurringTaskStatus status, Integer firstRecurringTaskId ) {
         super(name, description, difficulty, importance, categoryId, executionTime);
         this.recurrenceInterval = recurrenceInterval;
         this.recurrenceUnit = recurrenceUnit;
         this.startDate = startDate;
         this.endDate = endDate;
         this.status = status;
+        FirstRecurringTaskId = firstRecurringTaskId;
     }
 
     public int getRecurrenceInterval() {
@@ -79,5 +83,13 @@ public class RecurringTask extends Task {
 
     public void setStatus(RecurringTaskStatus status) {
         this.status = status;
+    }
+
+    public Integer getFirstRecurringTaskId() {
+        return FirstRecurringTaskId;
+    }
+
+    public void setFirstRecurringTaskId(Integer firstRecurringTaskId) {
+        FirstRecurringTaskId = firstRecurringTaskId;
     }
 }

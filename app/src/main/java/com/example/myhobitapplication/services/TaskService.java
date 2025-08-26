@@ -5,6 +5,7 @@ import com.example.myhobitapplication.databases.DataBaseRecurringTaskHelper;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.dto.RecurringTaskDTO;
 import com.example.myhobitapplication.enums.RecurrenceUnit;
+import com.example.myhobitapplication.enums.RecurringTaskStatus;
 import com.example.myhobitapplication.models.RecurringTask;
 import com.example.myhobitapplication.models.Task;
 
@@ -28,6 +29,59 @@ public class TaskService {
        return repository.insertRecurringTask(task);
     }
     public List<RecurringTask> getRecurringTasks(){ return repository.getAllRecurringTasks();}
+
+    public void createRecurringTaskSeries(RecurringTask taskTemplate) {
+
+        taskTemplate.setStatus(RecurringTaskStatus.ACTIVE);
+
+        long firstTaskId = repository.insertSingleRecurringTask(taskTemplate);
+
+
+        if (firstTaskId == -1) {
+
+            return;
+        }
+
+        List<RecurringTask> remainingInstances = new ArrayList<>();
+        LocalDate currentDate = calculateNextDate(taskTemplate.getStartDate(),
+                taskTemplate.getRecurrenceInterval(),
+                taskTemplate.getRecurrenceUnit());
+
+        LocalDate endDate = taskTemplate.getEndDate();
+
+        while (!currentDate.isAfter(endDate)) {
+            RecurringTask instance = new RecurringTask(
+                    null,
+                    taskTemplate.getName(),
+                    taskTemplate.getDescription(),
+                    taskTemplate.getDifficulty(),
+                    taskTemplate.getImportance(),
+                    taskTemplate.getCategoryColour(),
+                    taskTemplate.getExecutionTime(),
+                    taskTemplate.getRecurrenceInterval(),
+                    taskTemplate.getRecurrenceUnit(),
+                    currentDate,
+                    taskTemplate.getEndDate(),
+                    RecurringTaskStatus.ACTIVE,
+                    (int) firstTaskId
+            );
+
+            remainingInstances.add(instance);
+
+            currentDate = calculateNextDate(currentDate, taskTemplate.getRecurrenceInterval(), taskTemplate.getRecurrenceUnit());
+        }
+
+        if (!remainingInstances.isEmpty()) {
+            repository.insertRecurringTaskBatch(remainingInstances);
+        }
+
+
+        repository.updateFirstRecurringTaskId(firstTaskId, firstTaskId);
+    }
+
+
+
+
 
 
     public Map<LocalDate, List<RecurringTask>> getScheduledTasks() {
@@ -64,9 +118,10 @@ public class TaskService {
         }
     }
 
-//    public Map<LocalDate, List<RecurringTask>> getScheduledTasks() {
-//        return scheduledTasks;
-//    }
+
+    public List<RecurringTask> getAllTasks() {
+        return repository.getAllRecurringTasks();
+    }
 
     public RecurringTaskDTO getTaskById(long id) {
         RecurringTask taskModel =  repository.getTaskById(id);
@@ -93,11 +148,34 @@ public class TaskService {
                 recurringTaskDTO.getRecurrenceUnit(),
                 recurringTaskDTO.getStartDate(),
                 recurringTaskDTO.getEndDate(),
-                recurringTaskDTO.getStatus()
+                recurringTaskDTO.getStatus(),
+                recurringTaskDTO.getFirstRecurringTaskId()
         );
 
-        return repository.updateRecurringTask(recurringTask);
+        long editedRow = repository.updateRecurringTask(recurringTask);
+
+
+
+            return editedRow;
+
+
+
+
+
     }
 
+    public int updateOutdatedTasksToNotDone() {
+
+        return repository.updateOutdatedTasksToNotDone();
+    }
+
+    public void updateUserXP(RecurringTaskStatus status){
+
+        if(status.equals(RecurringTaskStatus.COMPLETED)){
+
+            //TODO:apdejtuj XP useru
+        }
+
+    }
 
 }

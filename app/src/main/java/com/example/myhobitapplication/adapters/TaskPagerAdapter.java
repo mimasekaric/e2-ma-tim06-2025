@@ -34,7 +34,7 @@ public class TaskPagerAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return 4; // Sada imamo 3 taba
+        return 4;
     }
 
 }

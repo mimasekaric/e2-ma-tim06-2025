@@ -1,12 +1,16 @@
 package com.example.myhobitapplication.fragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -41,6 +45,25 @@ public class RecurringTaskDetailsFragment extends Fragment {
     private static final String ARG_TASK_ID = "taskId";
 
     private int taskId;
+
+    private final ActivityResultLauncher<Intent> editTaskLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                // OVAJ KOD SE IZVRŠAVA KADA SE VRATIMO IZ EditTaskActivity
+
+                // Proveravamo da li je rezultat "USPEŠAN"
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    // To je naš signal da su podaci promenjeni!
+                    Toast.makeText(getContext(), "Ažuriranje detalja...", Toast.LENGTH_SHORT).show();
+
+                    // Ponovo učitaj podatke da bi se prikaz osvežio
+                    taskDetailsViewModel.loadTaskDetails(taskId);
+
+                    requireActivity().getSupportFragmentManager().setFragmentResult("taskAddedRequest", new Bundle());
+                }
+                // Ako je resultCode bio RESULT_CANCELED (korisnik pritisnuo back), ne radimo ništa.
+            }
+    );
     public static RecurringTaskDetailsFragment newInstance(int taskId) {
         RecurringTaskDetailsFragment fragment = new RecurringTaskDetailsFragment();
         Bundle args = new Bundle();
@@ -114,13 +137,13 @@ public class RecurringTaskDetailsFragment extends Fragment {
         });
 
 
-//        binding.editTaskButton.setOnClickListener(v -> {
-//
-//            Intent intent = new Intent(getActivity(), RecurringTaskEditActivity.class);
-//            intent.putExtra("TASK_ID_TO_EDIT", taskId);
-//            startActivity(intent);
-//
-//        });
+        binding.editTaskButton.setOnClickListener(v -> {
+
+            Intent intent = new Intent(getActivity(), RecurringTaskEditActivity.class);
+            intent.putExtra("TASK_ID_TO_EDIT", taskId);
+            editTaskLauncher.launch(intent);
+
+        });
 
         binding.btnRctaskDone.setOnClickListener(v -> {
 

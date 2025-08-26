@@ -30,7 +30,9 @@ public class RecurringTaskDTO {
 
     private RecurringTaskStatus status;
 
-    public RecurringTaskDTO(Integer id, String name, String description, Integer difficulty, Integer importance, String categoryColour, LocalTime executionTime, int recurrenceInterval, RecurrenceUnit recurrenceUnit, LocalDate startDate, LocalDate endDate, RecurringTaskStatus status) {
+    private Integer FirstRecurringTaskId;
+
+    public RecurringTaskDTO(Integer id, String name, String description, Integer difficulty, Integer importance, String categoryColour, LocalTime executionTime, int recurrenceInterval, RecurrenceUnit recurrenceUnit, LocalDate startDate, LocalDate endDate, RecurringTaskStatus status, Integer firstRecurringTaskId) {
         Id = id;
         Name = name;
         Description = description;
@@ -43,6 +45,7 @@ public class RecurringTaskDTO {
         this.startDate = startDate;
         this.endDate = endDate;
         this.status = status;
+        FirstRecurringTaskId = firstRecurringTaskId;
     }
 
 
@@ -59,6 +62,7 @@ public class RecurringTaskDTO {
                           this.startDate =   taskModel.getStartDate();
                         this.endDate =  taskModel.getEndDate();
                             this.status =  taskModel.getStatus();
+                            FirstRecurringTaskId = taskModel.getFirstRecurringTaskId();
 
 
                             //Boze pomozi na sta ovo lici sori ne znam da kucam
@@ -158,5 +162,13 @@ public class RecurringTaskDTO {
 
     public void setStatus(RecurringTaskStatus status) {
         this.status = status;
+    }
+
+    public Integer getFirstRecurringTaskId() {
+        return FirstRecurringTaskId;
+    }
+
+    public void setFirstRecurringTaskId(Integer firstRecurringTaskId) {
+        FirstRecurringTaskId = firstRecurringTaskId;
     }
 }

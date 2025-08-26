@@ -16,53 +16,56 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class TaskCalendarViewModel extends ViewModel {
 
-    private MutableLiveData<List<RecurringTask>> allTasks;
-    private TaskService taskService;
+    private final TaskService taskService;
 
-    private final Map<LocalDate, List<RecurringTask>> scheduledTasks;
+    private final MutableLiveData<List<RecurringTask>> _scheduledTasksLiveData = new MutableLiveData<>();
+
+    public LiveData<List<RecurringTask>> getScheduledTasksLiveData() {
+        return _scheduledTasksLiveData;
+    }
 
     private final MutableLiveData<LocalDate> _selectedDate = new MutableLiveData<>();
-
-    public TaskCalendarViewModel(TaskService taskService){
-        this.taskService = taskService;
-        this.allTasks = new MutableLiveData<>();
-        this.scheduledTasks = taskService.getScheduledTasks();
-    }
-
-    public MutableLiveData<List<RecurringTask>> getAllTasksLiveData() {
-        return allTasks;
-    }
-
-    private void loadAllTasks() {
-        allTasks.setValue(taskService.getRecurringTasks());
-    }
 
     public LiveData<LocalDate> getSelectedDate() {
         return _selectedDate;
     }
+
+    public TaskCalendarViewModel(TaskService taskService) {
+        this.taskService = taskService;
+        loadAllTasks();
+    }
+
+    private void loadAllTasks() {
+        List<RecurringTask> allTasks = taskService.getAllTasks();
+        _scheduledTasksLiveData.setValue(allTasks);
+        Log.d("ViewModelDebug", "LiveData osvežen. Novi broj zadataka: " + (allTasks != null ? allTasks.size() : 0));
+    }
+
+    public void refreshScheduledTasks() {
+        Log.d("ViewModelDebug", "Pozvana je refreshScheduledTasks metoda.");
+        loadAllTasks();
+    }
+
     public void selectDate(LocalDate date) {
         _selectedDate.setValue(date);
     }
 
-
-    public void refreshScheduledTasks() {
-        this.scheduledTasks.clear();
-
-        Map<LocalDate, List<RecurringTask>> freshTasks = taskService.getScheduledTasks();
-        this.scheduledTasks.putAll(freshTasks);
-    }
-
-
     public List<RecurringTask> getTasksForDate(LocalDate date) {
-        List<RecurringTask> tasks = scheduledTasks.get(date);
-        if (tasks != null) {
-            return tasks;
-        } else {
+
+        List<RecurringTask> currentTasks = _scheduledTasksLiveData.getValue();
+
+        if (currentTasks == null || date == null) {
             return Collections.emptyList();
         }
+
+        return currentTasks.stream()
+                .filter(task -> date.equals(task.getStartDate()))
+                .collect(Collectors.toList());
     }
 
 }
+

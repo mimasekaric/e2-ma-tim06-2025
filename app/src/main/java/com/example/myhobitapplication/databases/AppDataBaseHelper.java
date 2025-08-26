@@ -33,6 +33,8 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_NAME = "name";
 
     public static final String COLUMN_COLOUR = "colour";
+
+    public static final String COLUMN_FIRST_REC_TASK_ID = "first_rec_task_id";
     public AppDataBaseHelper(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -59,6 +61,7 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
                 + COLUMN_EXECUTION_TIME + " TEXT," // <-- Ponovo je dodata sa razmakom
                 + COLUMN_STATUS+ " TEXT," // <-- Ponovo je dodata sa razmakom
                 + COLUMN_START_DATE + " TEXT," // LocalDate se čuva kao String
+                + COLUMN_FIRST_REC_TASK_ID + " TEXT,"
                 + COLUMN_END_DATE + " TEXT" + ")";
         db.execSQL(CREATE_RECURRING_TASKS_TABLE);
     }

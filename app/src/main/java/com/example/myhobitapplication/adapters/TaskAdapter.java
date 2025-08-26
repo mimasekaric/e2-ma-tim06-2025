@@ -10,11 +10,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.models.RecurringTask;
-import com.example.myhobitapplication.models.UserTest;
 
 import java.util.List;
 
@@ -40,10 +38,10 @@ public class TaskAdapter extends ArrayAdapter<RecurringTask> {
             taskName.setText(recurringTask.getName());
             taskTime.setText(recurringTask.getExecutionTime().toString());
 
-            View taskContainer = convertView.findViewById(R.id.task_container); // Pretpostavimo da imate taj ID
+            View taskContainer = convertView.findViewById(R.id.task_container);
 
 
-            String taskColor = recurringTask.getCategoryColour(); // Ovo je samo primer
+            String taskColor = recurringTask.getCategoryColour();
 
             try {
                 int color = Color.parseColor(taskColor);

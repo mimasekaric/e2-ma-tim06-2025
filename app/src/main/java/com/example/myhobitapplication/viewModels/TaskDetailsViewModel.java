@@ -79,7 +79,7 @@ public class TaskDetailsViewModel extends ViewModel {
 
         RecurringTaskDTO currentTaskDto = taskDetails.getValue();
 
-        if(!currentTaskDto.getStatus().equals(RecurringTaskStatus.CANCELED) && !currentTaskDto.getStatus().equals(RecurringTaskStatus.INCOMPLETE)){
+        if(!currentTaskDto.getStatus().equals(RecurringTaskStatus.CANCELED) && !currentTaskDto.getStatus().equals(RecurringTaskStatus.INCOMPLETE) && !currentTaskDto.getStatus().equals(RecurringTaskStatus.COMPLETED) ){
 
             currentTaskDto.setStatus(RecurringTaskStatus.COMPLETED);
 
@@ -94,7 +94,7 @@ public class TaskDetailsViewModel extends ViewModel {
 
         RecurringTaskDTO currentTaskDto = taskDetails.getValue();
 
-        if(!currentTaskDto.getStatus().equals(RecurringTaskStatus.CANCELED) && !currentTaskDto.getStatus().equals(RecurringTaskStatus.INCOMPLETE)) {
+        if(!currentTaskDto.getStatus().equals(RecurringTaskStatus.CANCELED) && !currentTaskDto.getStatus().equals(RecurringTaskStatus.INCOMPLETE) && !currentTaskDto.getStatus().equals(RecurringTaskStatus.COMPLETED)) {
             currentTaskDto.setStatus(RecurringTaskStatus.CANCELED);
 
             taskService.editRecurringTask(currentTaskDto);
@@ -108,7 +108,7 @@ public class TaskDetailsViewModel extends ViewModel {
 
         RecurringTaskDTO currentTaskDto = taskDetails.getValue();
 
-        if(!currentTaskDto.getStatus().equals(RecurringTaskStatus.CANCELED) && !currentTaskDto.getStatus().equals(RecurringTaskStatus.INCOMPLETE)) {
+        if(!currentTaskDto.getStatus().equals(RecurringTaskStatus.CANCELED) && !currentTaskDto.getStatus().equals(RecurringTaskStatus.INCOMPLETE) && !currentTaskDto.getStatus().equals(RecurringTaskStatus.PAUSED)) {
             currentTaskDto.setStatus(RecurringTaskStatus.PAUSED);
 
             taskService.editRecurringTask(currentTaskDto);

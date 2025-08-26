@@ -78,7 +78,21 @@ public class TaskCalendarFragment extends Fragment {
 
         calendarViewModel = new ViewModelProvider(requireActivity(), factory).get(TaskCalendarViewModel.class);
 
+        getParentFragmentManager().setFragmentResultListener("taskAddedRequest", getViewLifecycleOwner(), (requestKey, bundle) -> {
 
+            // Signal je primljen!
+            Toast.makeText(getContext(), "Kalendar se osvežava...", Toast.LENGTH_SHORT).show();
+
+            // 1. Naredi ViewModel-u da osveži svoje interne podatke iz baze.
+            //    Ovo je važno da oba fragmenta rade sa istim, svežim podacima.
+            calendarViewModel.refreshScheduledTasks();
+
+            // 2. Naredi UI-ju (samom kalendaru) da se ponovo iscrta.
+            //    Ovo će naterati biblioteku da ponovo pozove `bind` metodu za sve vidljive dane.
+            if (calendarView != null) {
+                calendarView.notifyCalendarChanged();
+            }
+        });
 
 //        getParentFragmentManager().setFragmentResultListener("taskAddedRequest", getViewLifecycleOwner(), (requestKey, bundle) -> {
 //            // Ovaj kod će se izvršiti KADA RecurringTaskFragment pošalje signal
@@ -109,7 +123,7 @@ public class TaskCalendarFragment extends Fragment {
             public void bind(@NonNull DayViewContainer container, @NonNull CalendarDay day) {
 
                 container.getCalendarDayText().setText(String.valueOf(day.getDate().getDayOfMonth()));
-                container.getCalendarDayText().setTextColor(Color.YELLOW);
+                container.getCalendarDayText().setTextColor(Color.argb(255, 253, 221, 230));
                 container.getView().setOnClickListener(v -> {
                     CalendarDay oldDate = selectedDate;
                     selectedDate = day;
