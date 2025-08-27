@@ -250,13 +250,6 @@ public class RecurringTaskDetailsFragment extends Fragment {
                 taskDetailsViewModel.onTaskDeletedEventHandled(); // Resetuj event
             }
         });
-
-
-
-
-
-
-
     }
 
     @Override
