@@ -232,7 +232,6 @@ public class TaskRepository {
         database.close();
     }
 
-    // Metoda 3: Ažuriraj samo jedno polje
     public void updateFirstRecurringTaskId(long taskId, long firstId) {
         database = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -264,5 +263,40 @@ public class TaskRepository {
 
         return count;
     }
+
+
+    public int deleteRecurringTaskAndFutureInstances(RecurringTask taskToDelete) {
+
+        if (taskToDelete == null || taskToDelete.getFirstRecurringTaskId() == null || taskToDelete.getStartDate() == null) {
+            return 0;
+        }
+
+        database = dbHelper.getWritableDatabase();
+        int deletedRows = 0;
+
+        database.beginTransaction();
+        try {
+
+            String whereClause = AppDataBaseHelper.COLUMN_FIRST_REC_TASK_ID + " = ? AND " +
+                    AppDataBaseHelper.COLUMN_START_DATE + " >= ?";
+
+
+            String[] whereArgs = {
+                    String.valueOf(taskToDelete.getFirstRecurringTaskId()),
+                    taskToDelete.getStartDate().toString()
+            };
+
+            deletedRows = database.delete(AppDataBaseHelper.TABLE_RECURRING_TASKS, whereClause, whereArgs);
+
+            database.setTransactionSuccessful();
+        } finally {
+            database.endTransaction();
+        }
+        database.close();
+
+        return deletedRows;
+    }
+
+
 
 }

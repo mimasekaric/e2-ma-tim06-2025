@@ -1,5 +1,6 @@
 package com.example.myhobitapplication.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +12,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -55,6 +58,25 @@ public class TaskSlotCalendarFragment extends Fragment {
 //        return fragment;
 //    }
 
+    // REGISTRUJ LAUNCHER za detalje zadatka
+    private final ActivityResultLauncher<Intent> taskDetailsLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                // Ovaj kod se izvršava kada se vratimo iz TaskDetailActivity
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    // Stigao je signal da su se podaci promenili!
+                    Toast.makeText(getContext(), "Lista se osvjezavaaa nakon edita...", Toast.LENGTH_SHORT).show();
+
+                    // Pokreni mehanizam osvežavanja koji već imaš
+                    taskCalendarViewModel.refreshScheduledTasks();
+                    LocalDate currentDate = taskCalendarViewModel.getSelectedDate().getValue();
+                    if (currentDate != null) {
+                        taskCalendarViewModel.selectDate(currentDate);
+                    }
+                }
+            }
+    );
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +114,24 @@ public class TaskSlotCalendarFragment extends Fragment {
         tasks = new java.util.ArrayList<>();
         adapter = new TaskAdapter(getContext(), tasks);
         taskListView.setAdapter(adapter);
+
+
+        taskListView.setOnItemClickListener((parent, view1, position, id) -> {
+            RecurringTask selectedTask = tasks.get(position);
+
+            if (selectedTask != null) {
+                int taskId = selectedTask.getId();
+                Intent intent = new Intent(getActivity(), TaskDetailActivity.class);
+                intent.putExtra("TASK_ID_EXTRA", taskId);
+
+                // POKRENI AKTIVNOST PREKO LAUNCHER-a!
+                taskDetailsLauncher.launch(intent);
+            }
+        });
+
+
+
+
 
 
         getParentFragmentManager().setFragmentResultListener("taskAddedRequest", getViewLifecycleOwner(), (requestKey, bundle) -> {
@@ -132,20 +172,20 @@ public class TaskSlotCalendarFragment extends Fragment {
         });
 
 
-        taskListView.setOnItemClickListener((parent, view1, position, id) -> {
-               RecurringTask selectedTask = (RecurringTask) parent.getItemAtPosition(position);
-
-               if (selectedTask != null) {
-
-                   int taskId = selectedTask.getId();
-                   Intent intent = new Intent(getActivity(), TaskDetailActivity.class);
-
-                   intent.putExtra("TASK_ID_EXTRA", taskId);
-
-
-                   startActivity(intent);
-               }
-            });
+//        taskListView.setOnItemClickListener((parent, view1, position, id) -> {
+//               RecurringTask selectedTask = (RecurringTask) parent.getItemAtPosition(position);
+//
+//               if (selectedTask != null) {
+//
+//                   int taskId = selectedTask.getId();
+//                   Intent intent = new Intent(getActivity(), TaskDetailActivity.class);
+//
+//                   intent.putExtra("TASK_ID_EXTRA", taskId);
+//
+//
+//                   startActivity(intent);
+//               }
+//            });
 
 
 

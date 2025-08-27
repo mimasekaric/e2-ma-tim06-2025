@@ -155,13 +155,31 @@ public class TaskService {
         long editedRow = repository.updateRecurringTask(recurringTask);
 
 
-
             return editedRow;
+    }
 
+    public void deleteRecurringTask(RecurringTaskDTO recurringTaskDTO){
 
+        RecurringTask recurringTask = new RecurringTask(
 
+                recurringTaskDTO.getId(),
+                recurringTaskDTO.getName(),
+                recurringTaskDTO.getDescription(),
+                recurringTaskDTO.getDifficulty(),
+                recurringTaskDTO.getImportance(),
+                recurringTaskDTO.getCategoryColour(),
+                recurringTaskDTO.getExecutionTime(),
+                recurringTaskDTO.getRecurrenceInterval(),
+                recurringTaskDTO.getRecurrenceUnit(),
+                recurringTaskDTO.getStartDate(),
+                recurringTaskDTO.getEndDate(),
+                recurringTaskDTO.getStatus(),
+                recurringTaskDTO.getFirstRecurringTaskId()
+        );
 
-
+        if (recurringTask != null) {
+            repository.deleteRecurringTaskAndFutureInstances(recurringTask);
+        }
     }
 
     public int updateOutdatedTasksToNotDone() {
