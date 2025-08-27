@@ -1,8 +1,9 @@
 <resources>
     <string name="app_name">MyHobitApplication</string>
+    <string name="confirm_pass">Confirm Password</string>
     <string-array name="recurrence_units">
-            <item>Day</item>
-            <item>Week</item>
-            <item>Month</item>
+        <item>Day</item>
+        <item>Week</item>
+        <item>Month</item>
     </string-array>
 </resources>

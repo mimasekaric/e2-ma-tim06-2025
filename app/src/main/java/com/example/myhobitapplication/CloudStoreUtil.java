@@ -24,9 +24,9 @@ public class CloudStoreUtil {
     public static void initDB(){
         User user1 = new User("mima@gmail.com" , "mima", "MIMA123", 1);
         Map<String, Object> user2 = new HashMap<>();
-        user2.put("email", "jelen.ica@gmail.com");
-        user2.put("username", "jelena");
-        user2.put("password", "jelena123");
+        user2.put("email", "jovan.ica@gmail.com");
+        user2.put("username", "jovana");
+        user2.put("password", "jovana123");
         user2.put("avatarId", 1);
 
 
