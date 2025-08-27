@@ -1,0 +1,4 @@
+package com.example.myhobitapplication.databases;
+
+public class RegistrationRepository {
+}
