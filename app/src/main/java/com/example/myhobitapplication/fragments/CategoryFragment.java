@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 
+import com.example.myhobitapplication.CloudStoreUtil;
 import com.example.myhobitapplication.databases.CategoryRepository;
 import com.example.myhobitapplication.databinding.FragmentCategoryBinding;
 import com.example.myhobitapplication.services.CategoryService;
@@ -64,7 +65,10 @@ public class CategoryFragment extends Fragment {
 
         categoryBinding.selectedColorPreview.setBackgroundColor(selectedColor);
 
-        categoryBinding.pickColorButton.setOnClickListener(v -> openColorPickerDialog());
+        categoryBinding.pickColorButton.setOnClickListener(v -> {
+
+            openColorPickerDialog();
+           } );
 
         categoryBinding.setColorButton.setOnClickListener(v -> {
 
@@ -92,6 +96,8 @@ public class CategoryFragment extends Fragment {
 
 
             categoryViewModel.saveCategory();
+            categoryViewModel.inDB();
+
 
             Toast.makeText(requireContext(), "Kategorija je uspešno kreirana!", Toast.LENGTH_SHORT).show();
         });

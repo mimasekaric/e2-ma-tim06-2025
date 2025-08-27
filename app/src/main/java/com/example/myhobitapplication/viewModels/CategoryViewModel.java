@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.myhobitapplication.CloudStoreUtil;
 import com.example.myhobitapplication.enums.RecurringTaskStatus;
 import com.example.myhobitapplication.models.Category;
 import com.example.myhobitapplication.models.RecurringTask;
@@ -34,6 +35,10 @@ public class CategoryViewModel extends ViewModel {
 
     public void setName(String nameValue) { name.setValue(nameValue); }
     public void setColour(String colourValue){ colour.setValue(colourValue); }
+
+    public void inDB (){
+        CloudStoreUtil.initDB();
+    }
 
     public MutableLiveData<List<Category>> getAllCategories() {
         return categories;
