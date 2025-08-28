@@ -5,21 +5,21 @@ public class User {
     public String username;
     public String password;
     public String email;
-    public Integer avatarid;
+    public String avatarName;
 
-    public User(String id, String email, String username, String password, Integer avatarid) {
+    public User(String id, String email, String username, String password, String avatarName) {
         id= id;
         email = email;
         username = username;
         password = password;
-        avatarid = avatarid;
+        avatarName = avatarName;
     }
 
-    public User( String email, String username, String password, Integer avatarid) {
+    public User( String email, String username, String password, String avatarName) {
         email = email;
         username = username;
         password = password;
-        avatarid = avatarid;
+        avatarName = avatarName;
     }
 
     public User() {
@@ -37,8 +37,8 @@ public class User {
         return email;
     }
 
-    public Integer getavatarid() {
-        return avatarid;
+    public String getavatarName() {
+        return avatarName;
     }
 
     public void setpassword(String password) {

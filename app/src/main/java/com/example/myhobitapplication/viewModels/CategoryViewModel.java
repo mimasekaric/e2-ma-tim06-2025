@@ -36,9 +36,6 @@ public class CategoryViewModel extends ViewModel {
     public void setName(String nameValue) { name.setValue(nameValue); }
     public void setColour(String colourValue){ colour.setValue(colourValue); }
 
-    public void inDB (){
-        CloudStoreUtil.initDB();
-    }
 
     public MutableLiveData<List<Category>> getAllCategories() {
         return categories;

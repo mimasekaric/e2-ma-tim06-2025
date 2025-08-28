@@ -22,7 +22,7 @@ public class CloudStoreUtil {
     static String usersId_Ivana;
 
     public static void initDB(){
-        User user1 = new User("mima@gmail.com" , "mima", "MIMA123", 1);
+        /*User user1 = new User("mima@gmail.com" , "mima", "MIMA123", 1);
         Map<String, Object> user2 = new HashMap<>();
         user2.put("email", "jovan.ica@gmail.com");
         user2.put("username", "jovana");
@@ -61,11 +61,11 @@ public class CloudStoreUtil {
                     public void onFailure(@NonNull Exception e) {
                         Log.w("REZ_DB", "Error adding document", e);
                     }
-                });
+                });*/
     }
 
     public static void insert(){
-        User user1 = new User("mita1@gmaqil.com", "mitar2001", "Kovacevic1", 2);
+       /* User user1 = new User("mita1@gmaqil.com", "mitar2001", "Kovacevic1", 2);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("userss")
@@ -81,7 +81,7 @@ public class CloudStoreUtil {
                     public void onFailure(@NonNull Exception e) {
                         Log.w("REZ_DB", "Error adding document", e);
                     }
-                });
+                });*/
     }
 /*
     public static void select(){
