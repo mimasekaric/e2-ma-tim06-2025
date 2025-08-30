@@ -48,7 +48,7 @@ public class TaskViewModel extends ViewModel {
 
     public MutableLiveData<Category> getCategory() {  return category;}
 
-    // Metode za ažuriranje podataka iz fragmenata
+
     public void setTitle(String newTitle) { title.setValue(newTitle); }
     public void setDescription(String newDescription) { description.setValue(newDescription); }
     public void setDifficultyXp(int newXp) { difficultyXp.setValue(newXp); }
@@ -82,7 +82,9 @@ public class TaskViewModel extends ViewModel {
                 startDate.getValue(),
                 endDate.getValue(),
                 RecurringTaskStatus.ACTIVE,
-                -1
+                -1,
+                LocalDate.now(),
+                LocalDate.now()
         );
         taskService.createRecurringTaskSeries(task);
     }

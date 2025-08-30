@@ -16,10 +16,11 @@ public class RecurringTask extends Task {
 
     private RecurringTaskStatus status;
 
+
     private Integer FirstRecurringTaskId;
 
-    public RecurringTask(Integer id, String name, String description, Integer difficulty, Integer importance, String categoryId, LocalTime executionTime, int recurrenceInterval, RecurrenceUnit recurrenceUnit, LocalDate startDate, LocalDate endDate, RecurringTaskStatus status, Integer firstRecurringTaskId) {
-        super(id, name, description, difficulty, importance, categoryId, executionTime);
+    public RecurringTask(Integer id, String name, String description, Integer difficulty, Integer importance, String categoryId, LocalTime executionTime, int recurrenceInterval, RecurrenceUnit recurrenceUnit, LocalDate startDate, LocalDate endDate, RecurringTaskStatus status, Integer firstRecurringTaskId, LocalDate finishedDate, LocalDate creationDate) {
+        super(id, name, description, difficulty, importance, categoryId, executionTime, finishedDate, creationDate);
         this.recurrenceInterval = recurrenceInterval;
         this.recurrenceUnit = recurrenceUnit;
         this.startDate = startDate;
@@ -35,8 +36,8 @@ public class RecurringTask extends Task {
 
 
 
-    public RecurringTask(String name, String description, Integer difficulty, Integer importance, String categoryId, LocalTime executionTime, int recurrenceInterval, RecurrenceUnit recurrenceUnit, LocalDate startDate, LocalDate endDate, RecurringTaskStatus status, Integer firstRecurringTaskId ) {
-        super(name, description, difficulty, importance, categoryId, executionTime);
+    public RecurringTask(String name, String description, Integer difficulty, Integer importance, String categoryId, LocalTime executionTime, int recurrenceInterval, RecurrenceUnit recurrenceUnit, LocalDate startDate, LocalDate endDate, RecurringTaskStatus status, Integer firstRecurringTaskId, LocalDate finishedDate, LocalDate creationDate ) {
+        super(name, description, difficulty, importance, categoryId, executionTime, finishedDate, creationDate);
         this.recurrenceInterval = recurrenceInterval;
         this.recurrenceUnit = recurrenceUnit;
         this.startDate = startDate;

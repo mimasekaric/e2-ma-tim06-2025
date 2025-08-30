@@ -50,6 +50,8 @@ public class TaskRepository {
         values.put(AppDataBaseHelper.COLUMN_STATUS, recurringTask.getStatus().toString());
         values.put(AppDataBaseHelper.COLUMN_START_DATE, recurringTask.getStartDate().toString());
         values.put(AppDataBaseHelper.COLUMN_END_DATE, recurringTask.getEndDate().toString());
+        values.put(AppDataBaseHelper.COLUMN_CREATION_DATE, recurringTask.getCreationDate().toString());
+        values.put(AppDataBaseHelper.COLUMN_FINISHED_DATE, recurringTask.getFinishedDate().toString());
         values.put(AppDataBaseHelper.COLUMN_FIRST_REC_TASK_ID, recurringTask.getFirstRecurringTaskId().toString());
 
         long newRowId = database.insert(AppDataBaseHelper.TABLE_RECURRING_TASKS, null, values);
@@ -73,6 +75,8 @@ public class TaskRepository {
         values.put(AppDataBaseHelper.COLUMN_STATUS, recurringTask.getStatus().toString());
         values.put(AppDataBaseHelper.COLUMN_START_DATE, recurringTask.getStartDate().toString());
         values.put(AppDataBaseHelper.COLUMN_END_DATE, recurringTask.getEndDate().toString());
+        values.put(AppDataBaseHelper.COLUMN_CREATION_DATE, recurringTask.getCreationDate().toString());
+        values.put(AppDataBaseHelper.COLUMN_FINISHED_DATE, recurringTask.getFinishedDate().toString());
         values.put(AppDataBaseHelper.COLUMN_FIRST_REC_TASK_ID, recurringTask.getFirstRecurringTaskId().toString());
 
         long newRowId = database.insert(AppDataBaseHelper.TABLE_RECURRING_TASKS, null, values);
@@ -114,6 +118,12 @@ public class TaskRepository {
 
                 String endDateString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_END_DATE));
                 task.setEndDate(LocalDate.parse(endDateString));
+
+                String creationDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CREATION_DATE));
+                task.setCreationDate(LocalDate.parse(creationDate));
+
+                String finishedDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_FINISHED_DATE));
+                task.setFinishedDate(LocalDate.parse(finishedDate));
 
                 taskList.add(task);
             } while (cursor.moveToNext());
@@ -161,6 +171,12 @@ public class TaskRepository {
             String endDateString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_END_DATE));
             task.setEndDate(LocalDate.parse(endDateString));
 
+            String creationDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CREATION_DATE));
+            task.setCreationDate(LocalDate.parse(creationDate));
+
+            String finishedDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_FINISHED_DATE));
+            task.setFinishedDate(LocalDate.parse(finishedDate));
+
 
             String status = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_STATUS));
             task.setStatus(RecurringTaskStatus.valueOf(status));
@@ -188,6 +204,8 @@ public class TaskRepository {
         values.put(AppDataBaseHelper.COLUMN_STATUS, task.getStatus().toString());
         values.put(AppDataBaseHelper.COLUMN_START_DATE, task.getStartDate().toString());
         values.put(AppDataBaseHelper.COLUMN_END_DATE, task.getEndDate().toString());
+        values.put(AppDataBaseHelper.COLUMN_CREATION_DATE, task.getCreationDate().toString());
+        values.put(AppDataBaseHelper.COLUMN_FINISHED_DATE, task.getFinishedDate().toString());
         values.put(AppDataBaseHelper.COLUMN_FIRST_REC_TASK_ID, task.getFirstRecurringTaskId().toString());
 
         String selection = AppDataBaseHelper.COLUMN_RECURRING_TASK_ID + " = ?";
@@ -222,6 +240,8 @@ public class TaskRepository {
                 values.put(AppDataBaseHelper.COLUMN_STATUS, recurringTask.getStatus().toString());
                 values.put(AppDataBaseHelper.COLUMN_START_DATE, recurringTask.getStartDate().toString());
                 values.put(AppDataBaseHelper.COLUMN_END_DATE, recurringTask.getEndDate().toString());
+                values.put(AppDataBaseHelper.COLUMN_CREATION_DATE, recurringTask.getCreationDate().toString());
+                values.put(AppDataBaseHelper.COLUMN_FINISHED_DATE, recurringTask.getFinishedDate().toString());
                 values.put(AppDataBaseHelper.COLUMN_FIRST_REC_TASK_ID, recurringTask.getFirstRecurringTaskId().toString());
                 database.insert(AppDataBaseHelper.TABLE_RECURRING_TASKS, null, values);
             }
@@ -296,6 +316,68 @@ public class TaskRepository {
 
         return deletedRows;
     }
+
+    public int countTasksByStatusInDateRange(RecurringTaskStatus status, LocalDate startDate, LocalDate endDate) {
+
+        int count = 0;
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String selection = AppDataBaseHelper.COLUMN_STATUS + " = ? AND " +
+                AppDataBaseHelper.COLUMN_FINISHED_DATE + " BETWEEN ? AND ?";
+
+
+        String[] selectionArgs = {
+                status.name(),
+                startDate.toString(),
+                endDate.toString()
+        };
+
+        String countQuery = "SELECT COUNT(*) FROM " + AppDataBaseHelper.TABLE_RECURRING_TASKS +
+                " WHERE " + selection;
+
+        Cursor cursor = db.rawQuery(countQuery, selectionArgs);
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(0);
+            }
+            cursor.close();
+        }
+        db.close();
+
+        return count;
+    }
+
+    public int countTasksByDateRange(LocalDate startDate, LocalDate endDate) {
+
+        int count = 0;
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String selection = AppDataBaseHelper.COLUMN_CREATION_DATE + " BETWEEN ? AND ?";
+
+
+
+        String[] selectionArgs = {
+                startDate.toString(),
+                endDate.toString()
+        };
+
+        String countQuery = "SELECT COUNT(*) FROM " + AppDataBaseHelper.TABLE_RECURRING_TASKS +
+                " WHERE " + selection;
+
+        Cursor cursor = db.rawQuery(countQuery, selectionArgs);
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(0);
+            }
+            cursor.close();
+        }
+        db.close();
+
+        return count;
+    }
+
 
 
 

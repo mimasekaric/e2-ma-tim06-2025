@@ -10,8 +10,8 @@ public class OneTimeTask extends Task{
 
     private OneTimeTaskStatus status;
 
-    public OneTimeTask(Integer id, String name, String description, Integer difficulty, Integer importance, String categoryId, LocalTime executionTime, OneTimeTaskStatus status) {
-        super(id, name, description, difficulty, importance, categoryId, executionTime);
+    public OneTimeTask(Integer id, String name, String description, Integer difficulty, Integer importance, String categoryId, LocalTime executionTime, OneTimeTaskStatus status, LocalDate finishedDate, LocalDate creationDate) {
+        super(id, name, description, difficulty, importance, categoryId, executionTime, finishedDate, creationDate);
         this.status = status;
     }
 

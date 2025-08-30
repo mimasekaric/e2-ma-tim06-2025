@@ -28,6 +28,7 @@
         </activity>
         <activity android:name=".activities.TaskDetailActivity" />
         <activity android:name=".activities.RecurringTaskEditActivity" />
+        <activity android:name=".activities.BossActivity" />
 
     </application>
 

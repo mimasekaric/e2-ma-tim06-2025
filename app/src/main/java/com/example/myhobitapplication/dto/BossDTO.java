@@ -1,6 +1,8 @@
-package com.example.myhobitapplication.models;
+package com.example.myhobitapplication.dto;
 
-public class Boss {
+import com.example.myhobitapplication.models.Boss;
+
+public class BossDTO {
 
     private Integer Id;
     private Integer HP;
@@ -15,15 +17,15 @@ public class Boss {
 
     private Integer CoinsReward;
 
-    public Boss(Integer HP) {
+    public BossDTO(Integer HP) {
 
         this.HP = HP;
     }
 
-    public Boss() {
+    public BossDTO() {
     }
 
-    public Boss(Integer id, Integer HP, Integer userId, Integer currentHP, Boolean isDefeated, Integer bossLevel, Integer coinsReward) {
+    public BossDTO(Integer id, Integer HP, Integer userId, Integer currentHP, Boolean isDefeated, Integer bossLevel, Integer coinsReward) {
         Id = id;
         this.HP = HP;
         UserId = userId;
@@ -33,13 +35,23 @@ public class Boss {
         CoinsReward = coinsReward;
     }
 
-    public Boss(Integer HP, Integer userId, Integer currentHP, Boolean isDefeated, Integer bossLevel, Integer coinsReward) {
+    public BossDTO(Integer HP, Integer userId, Integer currentHP, Boolean isDefeated, Integer bossLevel, Integer coinsReward) {
         this.HP = HP;
         UserId = userId;
         CurrentHP = currentHP;
         IsDefeated = isDefeated;
         BossLevel = bossLevel;
         CoinsReward = coinsReward;
+    }
+
+    public BossDTO(Boss boss) {
+        Id = boss.getId();
+        this.HP = boss.getHP();
+        UserId = boss.getUserId();
+        CurrentHP = boss.getCurrentHP();
+        IsDefeated = boss.getDefeated();
+        BossLevel = boss.getBossLevel();
+        CoinsReward = boss.getCoinsReward();
     }
 
     public Integer getId() {
@@ -90,10 +102,6 @@ public class Boss {
         BossLevel = bossLevel;
     }
 
-    public void calculateHP(){
-
-        setHP(getHP()*2+getHP()/2);
-    }
 
     public Integer getCoinsReward() {
         return CoinsReward;
