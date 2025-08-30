@@ -30,6 +30,7 @@ import com.example.myhobitapplication.databinding.ActivityRegistrationBinding;
 import com.example.myhobitapplication.models.AvatarList;
 import com.example.myhobitapplication.services.RegistrationService;
 import com.example.myhobitapplication.viewModels.RegistrationViewModel;
+import com.google.firebase.FirebaseApp;
 
 import java.util.List;
 
@@ -45,10 +46,11 @@ public class RegistrationActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         repository = new RegistrationRepository();
         RegistrationService registrationService = new RegistrationService(repository);
-
+        FirebaseApp.initializeApp(this);
         registrationViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @NonNull
             @Override
@@ -157,11 +159,11 @@ protected void onResume(){
             registrationViewModel.saveUser();
             registrationViewModel.getRegistrationSuccess().observe(this, isSuccess -> {
                 if (isSuccess) {
-                    Toast.makeText(this, "Successful sign up!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Successfully signed up!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(RegistrationActivity.this, TaskActivity.class);
                     startActivity(intent);
                 } else {
-                    Toast.makeText(this, "Error with sign up.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, registrationViewModel.getResponse().getValue(), Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -171,31 +173,3 @@ protected void onResume(){
 
     }
 }
-
-
-    /*    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        repository = new CategoryRepository(requireContext());
-        CategoryService categoryService = new CategoryService(repository);
-
-
-
-        categoryViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
-            @NonNull
-            @Override
-            public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-                return (T) new CategoryViewModel(categoryService);
-            }
-        }).get(CategoryViewModel.class);
-    }
-
-
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        categoryBinding = FragmentCategoryBinding.inflate(inflater, container, false);
-        return categoryBinding.getRoot();
-    }
-
-}*/
