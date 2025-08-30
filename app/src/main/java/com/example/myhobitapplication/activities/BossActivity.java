@@ -59,7 +59,7 @@ public class BossActivity extends AppCompatActivity implements SensorEventListen
 
         TaskRepository taskRepository = new TaskRepository(getApplicationContext());
         BossRepository bossRepository = new BossRepository(getApplicationContext());
-        Boss boss = new Boss(2,400,3,400,false,3,200);
+        Boss boss = new Boss(2,400,4,400,false,3,200);
         bossRepository.insertBoss(boss);
 
         battleViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
@@ -77,9 +77,13 @@ public class BossActivity extends AppCompatActivity implements SensorEventListen
         binding = ActivityBossBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        ImageView bossImage = binding.myAnimatedImage;
+        currentAnimation = (AnimationDrawable) bossImage.getBackground();
+        currentAnimation.start();
+
         setupObservers();
         //todo: moracu uzeti logovanog usera ubuduce
-        battleViewModel.loadBattleState(3);
+        battleViewModel.loadBattleState(4);
 
         binding.attackButton.setOnClickListener(v -> {
             battleViewModel.performAttack();
