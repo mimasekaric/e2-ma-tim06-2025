@@ -64,7 +64,10 @@ public class CategoryFragment extends Fragment {
 
         categoryBinding.selectedColorPreview.setBackgroundColor(selectedColor);
 
-        categoryBinding.pickColorButton.setOnClickListener(v -> openColorPickerDialog());
+        categoryBinding.pickColorButton.setOnClickListener(v -> {
+
+            openColorPickerDialog();
+           } );
 
         categoryBinding.setColorButton.setOnClickListener(v -> {
 
@@ -92,6 +95,8 @@ public class CategoryFragment extends Fragment {
 
 
             categoryViewModel.saveCategory();
+
+
 
             Toast.makeText(requireContext(), "Kategorija je uspešno kreirana!", Toast.LENGTH_SHORT).show();
         });

@@ -1,44 +1,51 @@
 package com.example.myhobitapplication.models;
 
 public class User {
-    public Integer Id;
-    public String Username;
-    public String Password;
-    public String Email;
-    public Integer AvatarId;
+    public String id;
+    public String username;
+    public String password;
+    public String email;
+    public String avatarName;
 
-    public User(Integer id, String email, String username, String password, Integer avatarId) {
-        Id= id;
-        Email = email;
-        Username = username;
-        Password = password;
-        AvatarId = avatarId;
+    public User(String id, String email, String username, String password, String avatarName) {
+        id= id;
+        email = email;
+        username = username;
+        password = password;
+        avatarName = avatarName;
+    }
+
+    public User( String email, String username, String password, String avatarName) {
+        email = email;
+        username = username;
+        password = password;
+        avatarName = avatarName;
     }
 
     public User() {
     }
 
-    public String getPassword() {
-        return Password;
+    public String getpassword() {
+        return password;
     }
 
-    public String getUsername() {
-        return Username;
+    public String getusername() {
+        return username;
     }
 
-    public String getEmail() {
-        return Email;
+    public String getemail() {
+        return email;
     }
 
-    public Integer getAvatarId() {
-        return AvatarId;
+    public String getavatarName() {
+        return avatarName;
     }
 
-    public void setPassword(String password) {
-        Password = password;
+    public void setpassword(String password) {
+        password = password;
     }
 
-    public void setEmail(String email) {
-        Email = email;
+    public void setemail(String email) {
+        email = email;
     }
 }

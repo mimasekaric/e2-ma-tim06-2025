@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Profile {
 
-    private Integer UserId;
+    private String UserId;
 
     private Integer Coins;
     private Integer XP;
@@ -19,7 +19,7 @@ public class Profile {
 
     private List<Equipment> Equipment;
 
-    public Profile(Integer userId, Integer coins, Integer XP, Integer level, Bitmap QRCode, Integer numberOfBadges, List<Badge> badges, List<Equipment> equipment) {
+    public Profile(String userId, Integer coins, Integer XP, Integer level, Bitmap QRCode, Integer numberOfBadges, List<Badge> badges, List<Equipment> equipment) {
         UserId = userId;
         Coins = coins;
         this.XP = XP;
@@ -30,11 +30,11 @@ public class Profile {
         Equipment = equipment;
     }
 
-    public Integer getUserId() {
+    public String getUserId() {
         return UserId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(String userId) {
         UserId = userId;
     }
 
