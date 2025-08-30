@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 1. POZADINA BARA (ono što se vidi kada je HP prazan) -->
+    <item android:id="@android:id/background">
+        <shape android:shape="rectangle">
+            <!-- Malo zaobljeni uglovi -->
+            <corners android:radius="10dp" />
+            <!-- Tamno siva/crna pozadina -->
+            <solid android:color="#424242" />
+            <!-- Opciono: tanka ivica -->
+            <stroke android:width="1dp" android:color="#212121" />
+        </shape>
+    </item>
+
+    <!-- 2. PROGRESS (sam HP koji se smanjuje) -->
+    <!-- Koristimo <clip> da bi se crvena boja "odsecala" s desna na levo -->
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape android:shape="rectangle">
+                <corners android:radius="10dp" />
+                <!-- Klasična crvena boja za HP -->
+                <solid android:color="#F44336" />
+            </shape>
+        </clip>
+    </item>
+
+</layer-list>
