@@ -25,7 +25,7 @@ public class RegistrationViewModel extends ViewModel {
         this.registrationService = registrationService;
     }
 
-    private  MutableLiveData<Boolean> _registrationSuccess = new MutableLiveData<Boolean>(false);
+    private  MutableLiveData<Boolean> _registrationSuccess = new MutableLiveData<Boolean>(true);
     public MutableLiveData<Boolean> getRegistrationSuccess (){return  _registrationSuccess;}
     public MutableLiveData<String> getUsername(){ return username;}
     public MutableLiveData<String> getEmail(){ return email;}
