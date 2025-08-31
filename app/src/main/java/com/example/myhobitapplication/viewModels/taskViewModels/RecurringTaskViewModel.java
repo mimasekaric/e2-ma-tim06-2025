@@ -1,4 +1,4 @@
-package com.example.myhobitapplication.viewModels;
+package com.example.myhobitapplication.viewModels.taskViewModels;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -11,10 +11,9 @@ import com.example.myhobitapplication.models.RecurringTask;
 import com.example.myhobitapplication.services.TaskService;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-public class TaskViewModel extends ViewModel {
+public class RecurringTaskViewModel extends ViewModel {
 
     // LiveData za podatke o zadatku
     private final TaskService taskService;
@@ -63,7 +62,7 @@ public class TaskViewModel extends ViewModel {
 
 
 
-    public TaskViewModel(TaskService taskService){
+    public RecurringTaskViewModel(TaskService taskService){
         this.taskService = taskService;
     }
 

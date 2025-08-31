@@ -21,6 +21,7 @@ public abstract class Task {
     private LocalDate finishedDate;
     private LocalDate creationDate;
 
+
     public Task(){}
     public Task(Integer id, String name, String description, Integer difficulty, Integer importance, String categoryColour, LocalTime executionTime, LocalDate finishedDate, LocalDate creationDate) {
         Id = id;
@@ -43,6 +44,9 @@ public abstract class Task {
         this.finishedDate = finishedDate;
         this.creationDate = creationDate;
     }
+
+
+
 
     public Integer getId() {
         return Id;

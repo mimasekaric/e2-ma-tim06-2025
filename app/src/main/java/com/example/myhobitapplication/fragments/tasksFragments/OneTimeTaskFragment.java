@@ -1,6 +1,5 @@
-package com.example.myhobitapplication.fragments;
+package com.example.myhobitapplication.fragments.tasksFragments;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,30 +16,30 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-
 import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.adapters.CategorySpinnerAdapter;
 import com.example.myhobitapplication.databases.CategoryRepository;
-import com.example.myhobitapplication.databases.DataBaseRecurringTaskHelper;
 import com.example.myhobitapplication.databases.TaskRepository;
+import com.example.myhobitapplication.databinding.FragmentOnetimeTaskBinding;
 import com.example.myhobitapplication.databinding.FragmentRecurringTaskBinding;
 import com.example.myhobitapplication.enums.RecurrenceUnit;
 import com.example.myhobitapplication.models.Category;
 import com.example.myhobitapplication.services.CategoryService;
 import com.example.myhobitapplication.services.TaskService;
 import com.example.myhobitapplication.viewModels.CategoryViewModel;
-import com.example.myhobitapplication.viewModels.TaskViewModel;
+import com.example.myhobitapplication.viewModels.taskViewModels.OneTimeTaskViewModel;
+import com.example.myhobitapplication.viewModels.taskViewModels.RecurringTaskViewModel;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.List;
 
-public class RecurringTaskFragment extends Fragment {
+public class OneTimeTaskFragment extends Fragment {
 
-    private TaskViewModel taskViewModel;
+
+    private OneTimeTaskViewModel taskViewModel;
     private CategoryViewModel categoryViewModel;
-    private FragmentRecurringTaskBinding recurringTaskBinding;
+    private FragmentOnetimeTaskBinding binding;
 
 
     @Override
@@ -58,9 +57,9 @@ public class RecurringTaskFragment extends Fragment {
             @NonNull
             @Override
             public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-                return (T) new TaskViewModel(taskService);
+                return (T) new OneTimeTaskViewModel(taskService);
             }
-        }).get(TaskViewModel.class);
+        }).get(OneTimeTaskViewModel.class);
 
         categoryViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @NonNull
@@ -74,21 +73,22 @@ public class RecurringTaskFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        recurringTaskBinding = FragmentRecurringTaskBinding.inflate(inflater, container, false);
-        return recurringTaskBinding.getRoot();
+        binding = FragmentOnetimeTaskBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
 
-        ScrollView scrollView = recurringTaskBinding.rtScrollView;
+        ScrollView scrollView = binding.rtScrollView;
         scrollView.setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
         scrollView.setFocusable(false);
 
 
-        recurringTaskBinding.rgDifficultyOptions.setOnCheckedChangeListener((group, checkedId) -> {
+        binding.rbDifficultyOptions.setOnCheckedChangeListener((group, checkedId) -> {
             View radioButton = group.findViewById(checkedId);
             if (radioButton != null && radioButton.getTag() != null) {
                 int xpValue = Integer.parseInt(radioButton.getTag().toString());
@@ -96,7 +96,7 @@ public class RecurringTaskFragment extends Fragment {
             }
         });
 
-        recurringTaskBinding.rgImportanceOptions.setOnCheckedChangeListener((group, checkedId) -> {
+        binding.rgImportanceOptions.setOnCheckedChangeListener((group, checkedId) -> {
             View radioButton = group.findViewById(checkedId);
             if (radioButton != null && radioButton.getTag() != null) {
                 int xpValue = Integer.parseInt(radioButton.getTag().toString());
@@ -106,7 +106,7 @@ public class RecurringTaskFragment extends Fragment {
 
 
 
-        recurringTaskBinding.rtaskName.addTextChangedListener(new TextWatcher() {
+        binding.otaskName.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
             }
@@ -122,7 +122,7 @@ public class RecurringTaskFragment extends Fragment {
 
         });
 
-        recurringTaskBinding.rtaskDescription.addTextChangedListener(new TextWatcher() {
+        binding.otaskDescription.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
             }
@@ -138,64 +138,25 @@ public class RecurringTaskFragment extends Fragment {
 
         });
 
-        recurringTaskBinding.rtaskTime.setOnTimeChangedListener((timePickerView, hourOfDay, minute) -> {
+        binding.otaskTime.setOnTimeChangedListener((timePickerView, hourOfDay, minute) -> {
             LocalTime selectedTime = LocalTime.of(hourOfDay, minute);
             taskViewModel.setExecutionTime(selectedTime);
         });
 
-        recurringTaskBinding.etRecurrenceInterval.setOnValueChangedListener((picker, oldVal, newVal) -> {
-            taskViewModel.setRecurrenceInterval(newVal);
-        });
 
 
-        recurringTaskBinding.spinnerRecurrenceUnit.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                RecurrenceUnit unit = null;
-                switch (position) {
-                    case 0:
-                        unit = RecurrenceUnit.DAY;
-                        break;
-                    case 1:
-                        unit = RecurrenceUnit.WEEK;
-                        break;
-                    case 2:
-                        unit = RecurrenceUnit.MONTH;
-                        break;
 
-                }
-                taskViewModel.setRecurrenceUnit(unit);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-        recurringTaskBinding.rtDateEnd.init(
-
-                recurringTaskBinding.rtDateEnd.getYear(),
-                recurringTaskBinding.rtDateEnd.getMonth(),
-                recurringTaskBinding.rtDateEnd.getDayOfMonth(),
-                (picker, year, month, day) -> {
-                    LocalDate selectedDate = LocalDate.of(year, month + 1, day);
-                    taskViewModel.setEndDate(selectedDate);
-                }
-        );
-
-
-        recurringTaskBinding.rtDateStart.init(
-                recurringTaskBinding.rtDateStart.getYear(),
-                recurringTaskBinding.rtDateStart.getMonth(),
-                recurringTaskBinding.rtDateStart.getDayOfMonth(),
+        binding.otDateStart.init(
+                binding.otDateStart.getYear(),
+                binding.otDateStart.getMonth(),
+                binding.otDateStart.getDayOfMonth(),
                 (picker, year, month, day) -> {
                     LocalDate selectedDate = LocalDate.of(year, month + 1, day);
                     taskViewModel.setStartDate(selectedDate);
                 }
         );
 
-        recurringTaskBinding.btnRtask.setOnClickListener(v -> {
+        binding.btnOtask.setOnClickListener(v -> {
 
 
             taskViewModel.saveRecurringTask();
@@ -208,7 +169,7 @@ public class RecurringTaskFragment extends Fragment {
 
 
         CategorySpinnerAdapter adapter = new CategorySpinnerAdapter(requireContext(), new ArrayList<>());
-        recurringTaskBinding.categorySpinner.setAdapter(adapter);
+        binding.categorySpinner.setAdapter(adapter);
 
 
         categoryViewModel.getAllCategories().observe(getViewLifecycleOwner(), newCategories -> {
@@ -217,7 +178,7 @@ public class RecurringTaskFragment extends Fragment {
             adapter.notifyDataSetChanged();
         });
 
-        recurringTaskBinding.categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        binding.categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Category selectedCategory = (Category) parent.getItemAtPosition(position);
@@ -230,11 +191,8 @@ public class RecurringTaskFragment extends Fragment {
         });
 
 
-
-
-
-
     }
+
 
 
 

@@ -3,9 +3,11 @@ package com.example.myhobitapplication.services;
 import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.databases.DataBaseRecurringTaskHelper;
 import com.example.myhobitapplication.databases.TaskRepository;
+import com.example.myhobitapplication.dto.OneTimeTaskDTO;
 import com.example.myhobitapplication.dto.RecurringTaskDTO;
 import com.example.myhobitapplication.enums.RecurrenceUnit;
 import com.example.myhobitapplication.enums.RecurringTaskStatus;
+import com.example.myhobitapplication.models.OneTimeTask;
 import com.example.myhobitapplication.models.RecurringTask;
 import com.example.myhobitapplication.models.Task;
 
@@ -210,6 +212,54 @@ public class TaskService {
     public int countFinishedTasksForDateRange(LocalDate previousLevelDate, LocalDate currentLevelDate){
 
         return repository.countTasksByStatusInDateRange(RecurringTaskStatus.COMPLETED,previousLevelDate,currentLevelDate);
+    }
+
+    public void createOneTimeTask(OneTimeTaskDTO taskDTO){
+
+        OneTimeTask oneTimeTask = new OneTimeTask(
+
+                taskDTO.getId(),
+                taskDTO.getName(),
+                taskDTO.getDescription(),
+                taskDTO.getDifficulty(),
+                taskDTO.getImportance(),
+                taskDTO.getCategoryColour(),
+                taskDTO.getExecutionTime(),
+                taskDTO.getStatus(),
+                taskDTO.getCreationDate(),
+                taskDTO.getFinishedDate(),
+                taskDTO.getStartDate()
+        );
+
+         repository.insertOneTimeTask(oneTimeTask);
+    }
+
+    public OneTimeTask getOneTimeTaskById(long id){
+        return repository.getOneTimeTaskById(id);
+    }
+
+    public List<OneTimeTask> getAllOneTimeTasks() {
+        return repository.getAllOneTimeTasks();
+    }
+
+    public void editOneTimeTask(OneTimeTaskDTO taskDTO){
+
+
+        OneTimeTask oneTimeTask = new OneTimeTask(
+
+                taskDTO.getId(),
+                taskDTO.getName(),
+                taskDTO.getDescription(),
+                taskDTO.getDifficulty(),
+                taskDTO.getImportance(),
+                taskDTO.getCategoryColour(),
+                taskDTO.getExecutionTime(),
+                taskDTO.getStatus(),
+                taskDTO.getCreationDate(),
+                taskDTO.getFinishedDate(),
+                taskDTO.getStartDate()
+        );
+        repository.updateOneTimeTask(oneTimeTask);
     }
 
 }

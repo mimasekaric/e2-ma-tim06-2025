@@ -12,18 +12,15 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.activities.TaskDetailActivity;
-import com.example.myhobitapplication.databases.DataBaseRecurringTaskHelper;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.FragmentTaskCalendarBinding;
 import com.example.myhobitapplication.services.TaskService;
 import com.example.myhobitapplication.viewModels.TaskCalendarViewModel;
 import com.example.myhobitapplication.viewModels.TaskCalendarViewModelFactory;
-import com.example.myhobitapplication.viewModels.TaskViewModel;
 import com.kizitonwose.calendar.core.CalendarDay;
 import com.kizitonwose.calendar.core.CalendarMonth;
 import com.kizitonwose.calendar.view.CalendarView;
@@ -33,7 +30,6 @@ import com.kizitonwose.calendar.view.ViewContainer;
 
 import java.time.DayOfWeek;
 import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 

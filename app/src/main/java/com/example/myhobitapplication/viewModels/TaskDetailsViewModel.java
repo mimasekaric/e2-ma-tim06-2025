@@ -8,10 +8,8 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.myhobitapplication.databases.CategoryRepository;
 import com.example.myhobitapplication.dto.RecurringTaskDTO;
-import com.example.myhobitapplication.dto.TaskDetailsDTO;
 import com.example.myhobitapplication.enums.RecurringTaskStatus;
 import com.example.myhobitapplication.models.Category;
-import com.example.myhobitapplication.models.RecurringTask;
 import com.example.myhobitapplication.services.CategoryService;
 import com.example.myhobitapplication.services.TaskService;
 
