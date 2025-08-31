@@ -23,6 +23,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
     <TextView
         android:id="@+id/hpTextView"
         android:layout_width="wrap_content"
@@ -38,6 +39,37 @@
 
 
 
+    <ProgressBar
+        android:id="@+id/ppProgressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:max="1000"
+        android:progressDrawable="@drawable/custom_pp_bar"
+        tools:progress="500"
+        app:layout_constraintTop_toBottomOf="@+id/hpProgressBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+    <TextView
+        android:id="@+id/ppTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        tools:text="PP: 500 / 1000"
+        app:layout_constraintTop_toTopOf="@id/ppProgressBar"
+        app:layout_constraintBottom_toBottomOf="@id/ppProgressBar"
+        app:layout_constraintStart_toStartOf="@id/ppProgressBar"
+        app:layout_constraintEnd_toEndOf="@id/ppProgressBar" />
+
+
+
     <ImageView
         android:id="@+id/myAnimatedImage"
         android:layout_width="0dp"
@@ -45,10 +77,10 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         android:background="@drawable/boss_idle_animation"
+        app:layout_constraintTop_toBottomOf="@id/ppProgressBar"
         app:layout_constraintBottom_toTopOf="@+id/attackAttemptsImage"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/hpProgressBar" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 
@@ -58,11 +90,9 @@
         android:layout_height="50dp"
         android:layout_marginBottom="8dp"
         android:src="@drawable/lifes_frame_1"
-
-
-    app:layout_constraintBottom_toTopOf="@id/attackButton"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintBottom_toTopOf="@id/attackButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 

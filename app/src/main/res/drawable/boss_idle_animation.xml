@@ -4,7 +4,7 @@
 
     <item android:drawable="@drawable/idle_dragon_boss_frame_1" android:duration="500" />
     <item android:drawable="@drawable/idle_dragon_boss_frame_2" android:duration="500" />
-    <item android:drawable="@drawable/success_dragon_boss_frame_1" android:duration="500" />
+    <item android:drawable="@drawable/idle_dragon_boss_frame_1" android:duration="500" />
     <item android:drawable="@drawable/idle_dragon_boss_frame_2" android:duration="500" />
     <item android:drawable="@drawable/idle_dragon_boss_frame_1" android:duration="500" />
 

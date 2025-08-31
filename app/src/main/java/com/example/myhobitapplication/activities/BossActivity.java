@@ -59,7 +59,7 @@ public class BossActivity extends AppCompatActivity implements SensorEventListen
 
         TaskRepository taskRepository = new TaskRepository(getApplicationContext());
         BossRepository bossRepository = new BossRepository(getApplicationContext());
-        Boss boss = new Boss(2,400,4,400,false,3,200);
+        Boss boss = new Boss(2,400,6,400,false,4,200);
         bossRepository.insertBoss(boss);
 
         battleViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
@@ -77,13 +77,22 @@ public class BossActivity extends AppCompatActivity implements SensorEventListen
         binding = ActivityBossBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+//        Integer userPP = battleViewModel.getUserPP().getValue();
+//
+//        if (userPP == null) return;
+
+//        binding.ppProgressBar.setMax(userPP);
+//        binding.ppProgressBar.setProgress(userPP, true);
+//        binding.ppTextView.setText("PP: " + userPP);
+
+
         ImageView bossImage = binding.myAnimatedImage;
         currentAnimation = (AnimationDrawable) bossImage.getBackground();
         currentAnimation.start();
 
         setupObservers();
         //todo: moracu uzeti logovanog usera ubuduce
-        battleViewModel.loadBattleState(4);
+        battleViewModel.loadBattleState(6);
 
         binding.attackButton.setOnClickListener(v -> {
             battleViewModel.performAttack();
@@ -141,8 +150,7 @@ public class BossActivity extends AppCompatActivity implements SensorEventListen
                 String info = "FAILED: CHANCES FOR SUCCESS:"+battleViewModel.getHitChance();
                 Toast.makeText(this, info, Toast.LENGTH_SHORT).show();
 
-                //TODO: Dodacu da boss plezi jezik
-                // playMissAnimation();
+                playMissAndReturnToIdle();
 
                 battleViewModel.onAttackMissedEventHandled();
             }
@@ -151,6 +159,15 @@ public class BossActivity extends AppCompatActivity implements SensorEventListen
 
 
     private void updateHpBar() {
+
+        Integer userPP = battleViewModel.getUserPP().getValue();
+
+        if (userPP == null) return;
+
+        binding.ppProgressBar.setMax(userPP);
+        binding.ppProgressBar.setProgress(userPP, true);
+        binding.ppTextView.setText("PP: " + userPP);
+
         Integer currentHp = battleViewModel.getBossCurrentHp().getValue();
         Integer maxHp = battleViewModel.getBossMaxHp().getValue();
 
@@ -172,6 +189,29 @@ public class BossActivity extends AppCompatActivity implements SensorEventListen
             default: drawableResourceId = R.drawable.lifes_frame_6; break;
         }
         binding.attackAttemptsImage.setImageResource(drawableResourceId);
+    }
+
+    private void playMissAndReturnToIdle() {
+
+        binding.attackButton.setEnabled(false);
+
+        AnimationDrawable missAnimation = (AnimationDrawable) getResources().getDrawable(R.drawable.boss_miss_animation, getTheme());
+        binding.myAnimatedImage.setBackground(missAnimation);
+        missAnimation.start();
+
+        int missDuration = 500;
+
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            AnimationDrawable idleAnimation = (AnimationDrawable) getResources().getDrawable(R.drawable.boss_idle_animation, getTheme());
+            binding.myAnimatedImage.setBackground(idleAnimation);
+            idleAnimation.start();
+
+            Integer attacksLeft = battleViewModel.getRemainingAttacks().getValue();
+            Integer currentHp = battleViewModel.getBossCurrentHp().getValue();
+            if (attacksLeft != null && attacksLeft > 0 && attacksLeft != null && currentHp>0) {
+                binding.attackButton.setEnabled(true);
+            }
+        }, 500);
     }
 
     private void playHitAndReturnToIdle() {
