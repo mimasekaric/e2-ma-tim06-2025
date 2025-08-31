@@ -9,6 +9,7 @@ import com.example.myhobitapplication.models.Category;
 import com.example.myhobitapplication.models.User;
 import com.example.myhobitapplication.services.CategoryService;
 import com.example.myhobitapplication.services.RegistrationService;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -58,6 +59,7 @@ public class RegistrationViewModel extends ViewModel {
                         .addOnFailureListener(e -> {
                             response.setValue("failed insert");
                         });
+                FirebaseAuth.getInstance().signOut();
             }
         }else{
             registrationSuccess.setValue(false);

@@ -27,12 +27,14 @@ public class LoginViewModel extends ViewModel {
     public void setPassword(String passwordValue){ password.setValue(passwordValue); }
 
     public void loginUser(){
+        response.setValue("");
+        loginSuccess.setValue(false);
         registrationService.Login(email.getValue(),password.getValue()).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 response.setValue("Succesfully logged in!");
                 loginSuccess.setValue(true);
             } else {
-                response.setValue("Login failed!");
+                response.setValue(task.getException().getMessage());
                 loginSuccess.setValue(false);
             }
         });

@@ -9,6 +9,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -38,6 +39,16 @@ public class RegistrationRepository {
         usersCollection = db.collection("users");
     }
 
+    public Task<DocumentReference> mailExistsCheck(String email){
+        final TaskCompletionSource<DocumentReference> taskCompletionSource = new TaskCompletionSource<>();
+        usersCollection.whereEqualTo("email", email).get().addOnSuccessListener(queryDocumentSnapshots ->{
+            if(queryDocumentSnapshots.isEmpty()){
+                taskCompletionSource.setException(new Exception("Wrong email"));
+            }else taskCompletionSource.setResult(queryDocumentSnapshots.getDocuments().get(0).getReference());
+        }) .addOnFailureListener(e -> taskCompletionSource.setException(new Exception("Wrong email")));
+        return taskCompletionSource.getTask();
+    }
+
     public Task<DocumentReference> insert(String uid, String email, String username, String avatarName, Date registrationDate, Boolean isRegistered) {
         Map<String, Object> user2 = new HashMap<>();
         user2.put("uid", uid);
@@ -62,11 +73,14 @@ public class RegistrationRepository {
         return null;
     }
 
+    public void authSignOut(){
+         FirebaseAuth.getInstance().signOut();
+    }
     public Task<AuthResult> authLogin(String email, String password) {
         return firebaseAuth.signInWithEmailAndPassword(email, password);
     }
 
-    public void verificatedCheck() {
+    public void verificatedCheck(FirebaseUser firebaseUser) {
         usersCollection
                 .whereEqualTo("uid", firebaseAuth.getCurrentUser().getUid())
                 .get()
@@ -74,30 +88,31 @@ public class RegistrationRepository {
                     if (!queryDocumentSnapshots.isEmpty()) {
                         DocumentSnapshot document = queryDocumentSnapshots.getDocuments().get(0);
                         User user = document.toObject(User.class);
+                        if(!user.getRegistered()) {
+                            Log.d("Firestore", "User found: " + user.getusername());
 
-                        Log.d("Firestore", "User found: " + user.getusername());
+                            Date sentTime = user.getRegistrationDate();
+                            LocalDateTime currentTime = LocalDateTime.now();
+                            Date dateNow = Date.from(currentTime.atZone(ZoneId.systemDefault()).toInstant());
 
-
-                       Date sentTime = user.getRegistrationDate();
-                        LocalDateTime currentTime = LocalDateTime.now();
-                        Date dateNow = Date.from(currentTime.atZone(ZoneId.systemDefault()).toInstant());
-
-                        long twentyFourHoursInMillis = 24 * 60 * 60 * 1000L;
-                        Date sentTimePlus24h = new Date(sentTime.getTime() + twentyFourHoursInMillis);
-
-
-                        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-                        if (firebaseUser != null && !firebaseUser.isEmailVerified()
-                                && dateNow.after(sentTimePlus24h)) {
-                            firebaseUser.delete()
-                                    .addOnSuccessListener(aVoid -> {Log.d("Auth", "User deleted");  })
-                                    .addOnFailureListener(e -> Log.e("Auth", "Failed to delete user", e));
-                            document.getReference().delete();
-                            firebaseAuth.signOut();
-                        }else{
-                            user.setRegistered(true);
+                            long twentyFourHoursInMillis = 24 * 60 * 60 * 1000L;
+                            Date sentTimePlus24h = new Date(sentTime.getTime() + twentyFourHoursInMillis);
+                            //FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                            if (firebaseUser != null && !firebaseUser.isEmailVerified()
+                                    && dateNow.after(sentTimePlus24h)) {
+                                firebaseUser.delete()
+                                        .addOnSuccessListener(aVoid -> {
+                                            Log.d("Auth", "User deleted");
+                                        })
+                                        .addOnFailureListener(e -> Log.e("Auth", "Failed to delete user", e));
+                                document.getReference().delete();
+                                firebaseAuth.signOut();
+                            } else {
+                                user.setRegistered(true);
+                                usersCollection.document(document.getId())
+                                        .update("isRegistered", true);
+                            }
                         }
-
                     } else {
                         Log.d("Firestore", "No user found with UID: " + firebaseAuth.getCurrentUser().getUid());
                     }

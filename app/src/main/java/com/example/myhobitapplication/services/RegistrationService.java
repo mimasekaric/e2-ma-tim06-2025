@@ -14,6 +14,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -28,12 +30,33 @@ public class RegistrationService {
         this.repository = repository;
     }
 
+   public Task<AuthResult> Login(String email, String password) {
+       TaskCompletionSource<AuthResult> taskCompletionSource = new TaskCompletionSource<>();
+       repository.mailExistsCheck(email).addOnCompleteListener(task -> {
+           if (task.isSuccessful()) {
+               Task<AuthResult> loginTask = repository.authLogin(email, password);
+               loginTask.addOnSuccessListener(authResult -> {
+                           FirebaseUser user = authResult.getUser();
+                           if (user != null && user.isEmailVerified()) {
+                               repository.verificatedCheck(user);
+                               taskCompletionSource.setResult(authResult);
+                           } else {
+                               repository.authSignOut();
+                               taskCompletionSource.setException(new Exception("Email not verified"));
+                           }
 
-    public Task<AuthResult> Login(String email, String password) {
-        Task<AuthResult> loginTask = repository.authLogin(email, password);
-        loginTask.addOnSuccessListener(authResult -> repository.verificatedCheck());
-        return loginTask;
-    }
+                       })
+                       .addOnFailureListener( e ->{
+                               taskCompletionSource.setException(new Exception("Bad password, login failed!"));
+
+                       });
+           } else {
+               taskCompletionSource.setException(task.getException());
+           }
+       });
+       return taskCompletionSource.getTask();
+   }
+
     public Task<DocumentReference> Register(String email, String username, String password, String avatarName, Date registrationDate) {
         final TaskCompletionSource<DocumentReference> taskCompletionSource = new TaskCompletionSource<>();
         repository.authinsert(email, password)
@@ -54,7 +77,7 @@ public class RegistrationService {
                                 .addOnFailureListener(e -> {
                                     taskCompletionSource.setException(e);
                                 });
-                        //FirebaseAuth.getInstance().signOut();
+
                     } else {
                         taskCompletionSource.setException(new Exception("Authentication succeeded but user is null."));
                     }

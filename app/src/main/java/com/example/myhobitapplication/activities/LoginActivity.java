@@ -57,6 +57,18 @@ public class LoginActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        loginViewModel.getLoginSuccess().observe(this, isSuccess -> {
+            String message = loginViewModel.getResponse().getValue();
+            if (message != null && !message.isEmpty()) {
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                if (isSuccess) {
+                    Intent intent = new Intent(LoginActivity.this, TaskActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
+
     }
 
     @Override
@@ -95,14 +107,6 @@ public class LoginActivity extends AppCompatActivity {
 
         binding.buttonn.setOnClickListener(v -> {
             loginViewModel.loginUser();
-            loginViewModel.getLoginSuccess().observe(this, isSuccess -> {
-                if (isSuccess) {
-                    Toast.makeText(this, loginViewModel.getResponse().getValue(), Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(LoginActivity.this, TaskActivity.class);
-                    startActivity(intent);
-                } else
-                    Toast.makeText(this, loginViewModel.getResponse().getValue(), Toast.LENGTH_SHORT).show();
-            });
         });
 
     }
