@@ -1,5 +1,7 @@
 package com.example.myhobitapplication.viewModels;
 
+import android.util.Patterns;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -7,13 +9,19 @@ import com.example.myhobitapplication.models.Category;
 import com.example.myhobitapplication.models.User;
 import com.example.myhobitapplication.services.CategoryService;
 import com.example.myhobitapplication.services.RegistrationService;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 public class RegistrationViewModel extends ViewModel {
 
     private RegistrationService registrationService;
 
+    private final MutableLiveData<Boolean> registrationSuccess= new MutableLiveData<>(false);
     private final MutableLiveData<String> email = new MutableLiveData<>("");
     private final MutableLiveData<String> username = new MutableLiveData<>("");
 
@@ -25,8 +33,9 @@ public class RegistrationViewModel extends ViewModel {
         this.registrationService = registrationService;
     }
 
-    private  MutableLiveData<Boolean> _registrationSuccess = new MutableLiveData<Boolean>(true);
-    public MutableLiveData<Boolean> getRegistrationSuccess (){return  _registrationSuccess;}
+    private  MutableLiveData<String> response = new MutableLiveData<String>("");
+    public MutableLiveData<String> getResponse (){return  response;}
+    public MutableLiveData<Boolean> getRegistrationSuccess (){return  registrationSuccess;}
     public MutableLiveData<String> getUsername(){ return username;}
     public MutableLiveData<String> getEmail(){ return email;}
     public MutableLiveData<String> getPassword(){ return password;}
@@ -39,20 +48,73 @@ public class RegistrationViewModel extends ViewModel {
     public void setConfirmPassword(String passwordValue){ confirmPassword.setValue(passwordValue); }
 
     public void setAvatarName(String avatarValue){avatarName.setValue(avatarValue);}
-    public void saveUser() {
+  /*  public void saveUser() {
+        registrationSuccess.setValue(validateFields());
         if(password.getValue().equals(confirmPassword.getValue())) {
-            registrationService.Register(email.getValue(), username.getValue(), password.getValue(), avatarName.getValue())
-                    .addOnSuccessListener(documentReference -> {
-                        _registrationSuccess.setValue(true);
-                    })
-                    .addOnFailureListener(e -> {
-                        _registrationSuccess.setValue(false);
-                    });
+            if(registrationSuccess.getValue()) {
+                Date dateNow = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
+                registrationService.Register(email.getValue(), username.getValue(), password.getValue(), avatarName.getValue(), dateNow)
+                        .addOnSuccessListener(documentReference -> {
+                            response.setValue("success");
+                            registrationSuccess.setValue(true);
+                            FirebaseAuth.getInstance().signOut();
+                        })
+                        .addOnFailureListener(e -> {
+                                    response.setValue("Failed signup!" + e.getMessage());
+                                    registrationSuccess.setValue(false);
+                                });
+
+            }
         }else{
-            _registrationSuccess.setValue(false);
+            registrationSuccess.setValue(false);
+            response.setValue("Your passwords must match");
         }
+    }*/
+
+    public void saveUser() {
+        if (!validateFields()) {
+            registrationSuccess.setValue(false);
+            return;
+        }
+
+        if (!password.getValue().equals(confirmPassword.getValue())) {
+            registrationSuccess.setValue(false);
+            response.setValue("Your passwords must match");
+            return;
+        }
+
+        // Only async call from here
+        Date dateNow = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
+        registrationService.Register(email.getValue(), username.getValue(), password.getValue(), avatarName.getValue(), dateNow)
+                .addOnSuccessListener(documentReference -> {
+                    response.setValue("success");
+                    registrationSuccess.setValue(true);
+                    FirebaseAuth.getInstance().signOut();
+                })
+                .addOnFailureListener(e -> {
+                    response.setValue("Failed signup! " + e.getMessage());
+                    registrationSuccess.setValue(false);
+                });
     }
 
 
-
+    private boolean validateFields(){
+        if(!username.getValue().matches("(?=.*[A-Za-z])[A-Za-z0-9._]+")) {
+            response.setValue("Username must contain at least one letter and optional numbers or {. _ }");
+            return false;
+        }
+        if(!Patterns.EMAIL_ADDRESS.matcher(email.getValue()).matches()) {
+            response.setValue("Please enter correct email address");
+            return false;
+        }
+        if(password.getValue().length()<6){
+            response.setValue("Password must be at least 6 character long");
+            return false;
+        }
+        if(!password.getValue().matches("^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).*$")) {
+            response.setValue("Password must contain at least one uppercase letter , one lowercase letter and one number ");
+            return false;
+        }
+        return true;
+    }
 }

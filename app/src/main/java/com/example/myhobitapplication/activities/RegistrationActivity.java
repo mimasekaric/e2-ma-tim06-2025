@@ -22,6 +22,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.models.Avatar;
 import com.example.myhobitapplication.adapters.AvatarSpinnerAdapter;
@@ -30,6 +31,7 @@ import com.example.myhobitapplication.databinding.ActivityRegistrationBinding;
 import com.example.myhobitapplication.models.AvatarList;
 import com.example.myhobitapplication.services.RegistrationService;
 import com.example.myhobitapplication.viewModels.RegistrationViewModel;
+import com.google.firebase.FirebaseApp;
 
 import java.util.List;
 
@@ -42,13 +44,15 @@ public class RegistrationActivity extends AppCompatActivity {
     private AvatarSpinnerAdapter avataradapter;
 
     private List<Avatar> avatarList;
+    LottieAnimationView animationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         repository = new RegistrationRepository();
         RegistrationService registrationService = new RegistrationService(repository);
-
+        FirebaseApp.initializeApp(this);
         registrationViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @NonNull
             @Override
@@ -56,6 +60,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 return (T) new RegistrationViewModel(registrationService);
             }
         }).get(RegistrationViewModel.class);
+
 
 
 
@@ -73,6 +78,24 @@ public class RegistrationActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        animationView = binding.registrationLoading;
+        animationView.setAnimation(R.raw.waiting);
+        registrationViewModel.getRegistrationSuccess().observe(this, isSuccess -> {
+            String message = registrationViewModel.getResponse().getValue();
+            if (isSuccess) {
+                    animationView.setVisibility(View.GONE);
+                    animationView.cancelAnimation();
+                    Toast.makeText(this, "Successfully signed up!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(RegistrationActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+            } else if (!message.isEmpty()) {
+                binding.buttonn.setVisibility(View.VISIBLE);
+                animationView.setVisibility(View.GONE);
+                animationView.cancelAnimation();
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            }});
     }
 
     @Override
@@ -154,48 +177,12 @@ protected void onResume(){
             }
         });
         binding.buttonn.setOnClickListener(v->{
+            animationView.setVisibility(View.VISIBLE);
+            binding.buttonn.setVisibility(View.INVISIBLE);
+            animationView.playAnimation();
             registrationViewModel.saveUser();
-            registrationViewModel.getRegistrationSuccess().observe(this, isSuccess -> {
-                if (isSuccess) {
-                    Toast.makeText(this, "Successful sign up!", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(RegistrationActivity.this, TaskActivity.class);
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(this, "Error with sign up.", Toast.LENGTH_SHORT).show();
-                }
+
             });
-
-
-
-        });
 
     }
 }
-
-
-    /*    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        repository = new CategoryRepository(requireContext());
-        CategoryService categoryService = new CategoryService(repository);
-
-
-
-        categoryViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
-            @NonNull
-            @Override
-            public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-                return (T) new CategoryViewModel(categoryService);
-            }
-        }).get(CategoryViewModel.class);
-    }
-
-
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        categoryBinding = FragmentCategoryBinding.inflate(inflater, container, false);
-        return categoryBinding.getRoot();
-    }
-
-}*/
