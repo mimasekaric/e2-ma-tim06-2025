@@ -59,32 +59,35 @@ public class RegistrationService {
 
     public Task<DocumentReference> Register(String email, String username, String password, String avatarName, Date registrationDate) {
         final TaskCompletionSource<DocumentReference> taskCompletionSource = new TaskCompletionSource<>();
-        repository.authinsert(email, password)
-                .addOnSuccessListener(authResult -> {
-                    FirebaseUser user = authResult.getUser();
-                    if (user != null) {
-                        String uid = user.getUid();
-                        repository.insert(uid, email, username, avatarName, registrationDate, false)
-                                .addOnSuccessListener(documentReference -> {
-                                    repository.sendVerificationEmail()
-                                            .addOnSuccessListener(aVoid -> {
-                                                taskCompletionSource.setResult(documentReference);
-                                            })
-                                            .addOnFailureListener(e -> {
-                                                taskCompletionSource.setException(new Exception("Failed to send verification email: " + e.getMessage()));
-                                            });
+        repository.checkEmailUnique(email)
+                .onSuccessTask(aVoid -> repository.usernameExistsCheck(username))
+                .onSuccessTask(aVoid -> repository.authinsert(email, password)).addOnSuccessListener(authResult -> {
+                        /*repository.authinsert(email, password)
+                                .addOnSuccessListener(authResult -> {*/
+
+                                    FirebaseUser user = authResult.getUser();
+                                    if (user != null) {
+                                        String uid = user.getUid();
+                                        repository.insert(uid, email, username, avatarName, registrationDate, false)
+                                                .addOnSuccessListener(documentReference -> {
+                                                    repository.sendVerificationEmail()
+                                                            .addOnSuccessListener(aVoid -> {
+                                                                taskCompletionSource.setResult(documentReference);
+                                                            })
+                                                            .addOnFailureListener(e -> {
+                                                                taskCompletionSource.setException(new Exception("Failed to send verification email: " + e.getMessage()));
+                                                            });
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    taskCompletionSource.setException(e);
+                                                });
+                                    } else {
+                                        taskCompletionSource.setException(new Exception("Authentication succeeded but user is null."));
+                                    }
                                 })
                                 .addOnFailureListener(e -> {
                                     taskCompletionSource.setException(e);
                                 });
-
-                    } else {
-                        taskCompletionSource.setException(new Exception("Authentication succeeded but user is null."));
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    taskCompletionSource.setException(e);
-                });
         return taskCompletionSource.getTask();
     }
 }

@@ -120,5 +120,32 @@ public class RegistrationRepository {
                 .addOnFailureListener(e -> Log.e("Firestore", "Error getting user", e));
     }
 
+
+
+    public Task<DocumentReference> usernameExistsCheck(String username){
+        final TaskCompletionSource<DocumentReference> taskCompletionSource = new TaskCompletionSource<>();
+        usersCollection.whereEqualTo("username", username).get().addOnSuccessListener(queryDocumentSnapshots ->{
+            if(!queryDocumentSnapshots.isEmpty()){
+                taskCompletionSource.setException(new Exception("Account with this username exists!"));
+            }else taskCompletionSource.setResult(null);
+        }) .addOnFailureListener(e -> taskCompletionSource.setResult(null));
+        return taskCompletionSource.getTask();
+    }
+
+    public Task<Void> checkEmailUnique(String email){
+        TaskCompletionSource<Void> tcs = new TaskCompletionSource<>();
+        usersCollection.whereEqualTo("email", email).get()
+                .addOnSuccessListener(qs -> {
+                    if(qs.isEmpty()){
+                        tcs.setResult(null); // email is unique
+                    } else {
+                        tcs.setException(new Exception("Account with this email already exists!"));
+                    }
+                })
+                .addOnFailureListener(e -> tcs.setException(e));
+        return tcs.getTask();
+    }
+
+
 }
 

@@ -109,5 +109,10 @@ public class LoginActivity extends AppCompatActivity {
             loginViewModel.loginUser();
         });
 
+        binding.signup.setOnClickListener(v->{
+            Intent intent = new Intent(LoginActivity.this, RegistrationActivity.class);
+            startActivity(intent);
+        });
+
     }
 }

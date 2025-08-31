@@ -22,6 +22,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.models.Avatar;
 import com.example.myhobitapplication.adapters.AvatarSpinnerAdapter;
@@ -43,6 +44,7 @@ public class RegistrationActivity extends AppCompatActivity {
     private AvatarSpinnerAdapter avataradapter;
 
     private List<Avatar> avatarList;
+    LottieAnimationView animationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +63,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
 
 
+
         EdgeToEdge.enable(this);
         binding = ActivityRegistrationBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
@@ -75,6 +78,24 @@ public class RegistrationActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        animationView = binding.registrationLoading;
+        animationView.setAnimation(R.raw.waiting);
+        registrationViewModel.getRegistrationSuccess().observe(this, isSuccess -> {
+            String message = registrationViewModel.getResponse().getValue();
+            if (isSuccess) {
+                    animationView.setVisibility(View.GONE);
+                    animationView.cancelAnimation();
+                    Toast.makeText(this, "Successfully signed up!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(RegistrationActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+            } else if (!message.isEmpty()) {
+                binding.buttonn.setVisibility(View.VISIBLE);
+                animationView.setVisibility(View.GONE);
+                animationView.cancelAnimation();
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            }});
     }
 
     @Override
@@ -156,20 +177,12 @@ protected void onResume(){
             }
         });
         binding.buttonn.setOnClickListener(v->{
+            animationView.setVisibility(View.VISIBLE);
+            binding.buttonn.setVisibility(View.INVISIBLE);
+            animationView.playAnimation();
             registrationViewModel.saveUser();
-            registrationViewModel.getRegistrationSuccess().observe(this, isSuccess -> {
-                if (isSuccess) {
-                    Toast.makeText(this, "Successfully signed up!", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(RegistrationActivity.this, TaskActivity.class);
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(this, registrationViewModel.getResponse().getValue(), Toast.LENGTH_SHORT).show();
-                }
+
             });
-
-
-
-        });
 
     }
 }
