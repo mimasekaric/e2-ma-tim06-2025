@@ -15,6 +15,8 @@ import com.example.myhobitapplication.models.RecurringTask;
 import com.example.myhobitapplication.services.CategoryService;
 import com.example.myhobitapplication.services.TaskService;
 
+import java.time.LocalDate;
+
 public class TaskDetailsViewModel extends ViewModel {
 
     private final TaskService taskService;
@@ -89,6 +91,7 @@ public class TaskDetailsViewModel extends ViewModel {
         if(!currentTaskDto.getStatus().equals(RecurringTaskStatus.CANCELED) && !currentTaskDto.getStatus().equals(RecurringTaskStatus.INCOMPLETE) && !currentTaskDto.getStatus().equals(RecurringTaskStatus.COMPLETED) ){
 
             currentTaskDto.setStatus(RecurringTaskStatus.COMPLETED);
+            currentTaskDto.setFinishedDate(LocalDate.now());
 
             taskService.editRecurringTask(currentTaskDto);
 

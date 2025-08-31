@@ -63,7 +63,9 @@ public class TaskService {
                     currentDate,
                     taskTemplate.getEndDate(),
                     RecurringTaskStatus.ACTIVE,
-                    (int) firstTaskId
+                    (int) firstTaskId,
+                    taskTemplate.getFinishedDate(),
+                    taskTemplate.getCreationDate()
             );
 
             remainingInstances.add(instance);
@@ -149,7 +151,9 @@ public class TaskService {
                 recurringTaskDTO.getStartDate(),
                 recurringTaskDTO.getEndDate(),
                 recurringTaskDTO.getStatus(),
-                recurringTaskDTO.getFirstRecurringTaskId()
+                recurringTaskDTO.getFirstRecurringTaskId(),
+                recurringTaskDTO.getFinishedDate(),
+                recurringTaskDTO.getCreationDate()
         );
 
         long editedRow = repository.updateRecurringTask(recurringTask);
@@ -174,7 +178,9 @@ public class TaskService {
                 recurringTaskDTO.getStartDate(),
                 recurringTaskDTO.getEndDate(),
                 recurringTaskDTO.getStatus(),
-                recurringTaskDTO.getFirstRecurringTaskId()
+                recurringTaskDTO.getFirstRecurringTaskId(),
+                recurringTaskDTO.getFinishedDate(),
+                recurringTaskDTO.getCreationDate()
         );
 
         if (recurringTask != null) {
@@ -194,6 +200,16 @@ public class TaskService {
             //TODO:apdejtuj XP useru
         }
 
+    }
+
+    public int countCreatedTasksForDateRange(LocalDate previousLevelDate, LocalDate currentLevelDate){
+
+        return repository.countTasksByDateRange(previousLevelDate,currentLevelDate);
+    }
+
+    public int countFinishedTasksForDateRange(LocalDate previousLevelDate, LocalDate currentLevelDate){
+
+        return repository.countTasksByStatusInDateRange(RecurringTaskStatus.COMPLETED,previousLevelDate,currentLevelDate);
     }
 
 }

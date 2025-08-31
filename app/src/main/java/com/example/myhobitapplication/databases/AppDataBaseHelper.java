@@ -35,6 +35,25 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_COLOUR = "colour";
 
     public static final String COLUMN_FIRST_REC_TASK_ID = "first_rec_task_id";
+    public static final String COLUMN_FINISHED_DATE = "finished_date";
+    public static final String COLUMN_CREATION_DATE = "creation_date";
+
+    public static final String TABLE_BOSSES = "bosses";
+
+    public static final String COLUMN_BOSS_ID = "boss_id";
+
+    public static final String COLUMN_USER_ID = "user_id";
+
+    public static final String COLUMN_CURRENT_HP = "currentHP";
+    public static final String COLUMN_HP = "hp";
+
+    public static final String COLUMN_IS_DEFEATED = "is_defeated";
+
+    public static final String COLUMN_BOSS_LEVEL = "boss_level";
+    public static final String COLUMN_COINS_REWARD = "coins_reward";
+
+
+
     public AppDataBaseHelper(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -57,13 +76,27 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
                 + COLUMN_IMPORTANCE_XP + " INTEGER,"
                 + COLUMN_CTG_ID + " INTEGER,"
                 + COLUMN_RECURRENCE_INTERVAL + " INTEGER,"
-                + COLUMN_RECURRENCE_UNIT + " TEXT," // Enum se čuva kao String
-                + COLUMN_EXECUTION_TIME + " TEXT," // <-- Ponovo je dodata sa razmakom
-                + COLUMN_STATUS+ " TEXT," // <-- Ponovo je dodata sa razmakom
-                + COLUMN_START_DATE + " TEXT," // LocalDate se čuva kao String
+                + COLUMN_RECURRENCE_UNIT + " TEXT,"
+                + COLUMN_EXECUTION_TIME + " TEXT,"
+                + COLUMN_STATUS+ " TEXT,"
+                + COLUMN_START_DATE + " TEXT,"
                 + COLUMN_FIRST_REC_TASK_ID + " TEXT,"
+                + COLUMN_CREATION_DATE + " TEXT,"
+                + COLUMN_FINISHED_DATE + " TEXT,"
                 + COLUMN_END_DATE + " TEXT" + ")";
         db.execSQL(CREATE_RECURRING_TASKS_TABLE);
+
+        String CREATE_BOSS_TABLE = "CREATE TABLE " + TABLE_BOSSES + "("
+                + COLUMN_BOSS_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + COLUMN_USER_ID + " TEXT,"
+                + COLUMN_IS_DEFEATED + " TEXT,"
+                + COLUMN_BOSS_LEVEL + " TEXT,"
+                + COLUMN_HP + " TEXT,"
+                + COLUMN_COINS_REWARD + " TEXT,"
+                + COLUMN_CURRENT_HP + " TEXT" + ")";
+        db.execSQL(CREATE_BOSS_TABLE);
+
+
     }
 
     @Override
@@ -71,6 +104,7 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
 
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CATEGORIES);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_RECURRING_TASKS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_BOSSES);
 
         onCreate(db);
 

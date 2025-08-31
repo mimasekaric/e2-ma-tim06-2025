@@ -32,7 +32,10 @@ public class RecurringTaskDTO {
 
     private Integer FirstRecurringTaskId;
 
-    public RecurringTaskDTO(Integer id, String name, String description, Integer difficulty, Integer importance, String categoryColour, LocalTime executionTime, int recurrenceInterval, RecurrenceUnit recurrenceUnit, LocalDate startDate, LocalDate endDate, RecurringTaskStatus status, Integer firstRecurringTaskId) {
+    private LocalDate FinishedDate;
+    private LocalDate CreationDate;
+
+    public RecurringTaskDTO(Integer id, String name, String description, Integer difficulty, Integer importance, String categoryColour, LocalTime executionTime, int recurrenceInterval, RecurrenceUnit recurrenceUnit, LocalDate startDate, LocalDate endDate, RecurringTaskStatus status, Integer firstRecurringTaskId, LocalDate finishedDate, LocalDate creationDate) {
         Id = id;
         Name = name;
         Description = description;
@@ -46,6 +49,8 @@ public class RecurringTaskDTO {
         this.endDate = endDate;
         this.status = status;
         FirstRecurringTaskId = firstRecurringTaskId;
+        FinishedDate = finishedDate;
+        CreationDate = creationDate;
     }
 
 
@@ -63,6 +68,8 @@ public class RecurringTaskDTO {
                         this.endDate =  taskModel.getEndDate();
                             this.status =  taskModel.getStatus();
                             FirstRecurringTaskId = taskModel.getFirstRecurringTaskId();
+                            FinishedDate = taskModel.getFinishedDate();
+                            CreationDate = taskModel.getCreationDate();
 
 
                             //Boze pomozi na sta ovo lici sori ne znam da kucam
@@ -170,5 +177,21 @@ public class RecurringTaskDTO {
 
     public void setFirstRecurringTaskId(Integer firstRecurringTaskId) {
         FirstRecurringTaskId = firstRecurringTaskId;
+    }
+
+    public LocalDate getFinishedDate() {
+        return FinishedDate;
+    }
+
+    public void setFinishedDate(LocalDate finishedDate) {
+        FinishedDate = finishedDate;
+    }
+
+    public LocalDate getCreationDate() {
+        return CreationDate;
+    }
+
+    public void setCreationDate(LocalDate creationDate) {
+        CreationDate = creationDate;
     }
 }
