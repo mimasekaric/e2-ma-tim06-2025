@@ -1,13 +1,10 @@
-package com.example.myhobitapplication.viewModels;
+package com.example.myhobitapplication.viewModels.taskViewModels;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.myhobitapplication.databases.CategoryRepository;
 import com.example.myhobitapplication.dto.RecurringTaskDTO;
-import com.example.myhobitapplication.models.Category;
-import com.example.myhobitapplication.services.CategoryService;
 import com.example.myhobitapplication.services.TaskService;
 
 public class RecurringTaskEditViewModel extends ViewModel {

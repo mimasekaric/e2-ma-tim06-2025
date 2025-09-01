@@ -22,9 +22,7 @@ import com.example.myhobitapplication.adapters.DifficultySpinnerAdapter;
 import com.example.myhobitapplication.adapters.ImportanceSpinnerAdapter;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.FragmentOnetimeTaskEditBinding;
-import com.example.myhobitapplication.databinding.FragmentRecurringTaskEditBinding;
 import com.example.myhobitapplication.services.TaskService;
-import com.example.myhobitapplication.viewModels.RecurringTaskEditViewModel;
 import com.example.myhobitapplication.viewModels.taskViewModels.OneTimeTaskEditViewModel;
 
 public class OneTimeTaskEditFragment extends Fragment {

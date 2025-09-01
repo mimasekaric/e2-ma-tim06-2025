@@ -18,7 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.myhobitapplication.activities.RecurringTaskEditActivity;
+import com.example.myhobitapplication.activities.TaskEditActivity;
 import com.example.myhobitapplication.databases.CategoryRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.FragmentOneTimeTaskDetailsBinding;
@@ -137,8 +137,9 @@ public class OneTimeTaskDetailsFragment extends Fragment {
 
         binding.editTaskButton.setOnClickListener(v -> {
 
-            Intent intent = new Intent(getActivity(), RecurringTaskEditActivity.class);
+            Intent intent = new Intent(getActivity(), TaskEditActivity.class);
             intent.putExtra("TASK_ID_TO_EDIT", taskId);
+            intent.putExtra("TASK_TYPE_EXTRA", "ONETIME");
             editTaskLauncher.launch(intent);
 
         });
