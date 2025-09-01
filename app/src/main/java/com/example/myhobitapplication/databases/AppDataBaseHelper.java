@@ -126,8 +126,6 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
 
 
         onCreate(db);
-
-
     }
 
 }

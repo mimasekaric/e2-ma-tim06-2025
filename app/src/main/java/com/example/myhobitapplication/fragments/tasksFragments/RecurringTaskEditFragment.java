@@ -1,4 +1,4 @@
-package com.example.myhobitapplication.fragments;
+package com.example.myhobitapplication.fragments.tasksFragments;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,8 +12,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -22,15 +20,10 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myhobitapplication.adapters.DifficultySpinnerAdapter;
 import com.example.myhobitapplication.adapters.ImportanceSpinnerAdapter;
-import com.example.myhobitapplication.databases.CategoryRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
-import com.example.myhobitapplication.databinding.FragmentRecurringTaskBinding;
 import com.example.myhobitapplication.databinding.FragmentRecurringTaskEditBinding;
-import com.example.myhobitapplication.databinding.FragmentTaskDetailsBinding;
-import com.example.myhobitapplication.models.Category;
 import com.example.myhobitapplication.services.TaskService;
 import com.example.myhobitapplication.viewModels.RecurringTaskEditViewModel;
-import com.example.myhobitapplication.viewModels.TaskDetailsViewModel;
 
 public class RecurringTaskEditFragment extends Fragment {
 
@@ -203,7 +196,7 @@ public class RecurringTaskEditFragment extends Fragment {
 
             taskEditViewModel.editRecurringTask();
 
-            Toast.makeText(requireContext(), "Izmene su sačuvane!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "Task edited!", Toast.LENGTH_SHORT).show();
 
             // --- NOVI DEO: VRATI REZULTAT ---
             // Kreiraj prazan Intent. Ne trebaju nam podaci, samo signal.

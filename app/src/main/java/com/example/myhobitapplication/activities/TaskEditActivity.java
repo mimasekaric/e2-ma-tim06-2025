@@ -6,8 +6,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myhobitapplication.R;
-import com.example.myhobitapplication.fragments.RecurringTaskDetailsFragment;
-import com.example.myhobitapplication.fragments.RecurringTaskEditFragment;
+import com.example.myhobitapplication.fragments.tasksFragments.RecurringTaskEditFragment;
 
 public class RecurringTaskEditActivity extends AppCompatActivity {
 

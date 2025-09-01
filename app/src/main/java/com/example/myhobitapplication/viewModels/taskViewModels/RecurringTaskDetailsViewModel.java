@@ -1,6 +1,4 @@
-package com.example.myhobitapplication.viewModels;
-
-import android.widget.Toast;
+package com.example.myhobitapplication.viewModels.taskViewModels;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -15,7 +13,7 @@ import com.example.myhobitapplication.services.TaskService;
 
 import java.time.LocalDate;
 
-public class TaskDetailsViewModel extends ViewModel {
+public class RecurringTaskDetailsViewModel extends ViewModel {
 
     private final TaskService taskService;
     private final CategoryService categoryService;
@@ -28,7 +26,7 @@ public class TaskDetailsViewModel extends ViewModel {
     public LiveData<Boolean> getTaskDeletedEvent() {
         return _taskDeletedEvent;
     }
-    public TaskDetailsViewModel(TaskService taskService, CategoryRepository categoryRepository) {
+    public RecurringTaskDetailsViewModel(TaskService taskService, CategoryRepository categoryRepository) {
         this.taskService = taskService;
         this.categoryService = new CategoryService(categoryRepository);
 

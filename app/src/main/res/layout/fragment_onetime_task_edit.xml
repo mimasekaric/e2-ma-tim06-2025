@@ -84,14 +84,7 @@
                 android:layout_gravity="fill_horizontal"
                 android:spinnerMode="dropdown"/>
 
-            <TextView
-                style="@style/DetailHeader"
-                android:text="Recurrence:" />
 
-            <TextView
-                android:id="@+id/recurrence_text_view"
-                style="@style/DetailValue"
-                tools:text="Every 2 weeks" />
 
             <TextView
                 style="@style/DetailHeader"
@@ -102,31 +95,6 @@
                 style="@style/DetailValue"
                 tools:text="09:30 AM" />
 
-            <TextView
-                style="@style/DetailHeader"
-                android:text="Start Date:" />
-
-            <TextView
-                android:id="@+id/start_date_text_view"
-                style="@style/DetailValue"
-                tools:text="2025-01-01" />
-
-            <TextView
-                style="@style/DetailHeader"
-                android:text="End Date:" />
-
-            <TextView
-                android:id="@+id/end_date_text_view"
-                style="@style/DetailValue"
-                tools:text="2025-12-31" />
-            <TextView
-                style="@style/DetailHeader"
-                android:text="Status:" />
-
-            <TextView
-                android:id="@+id/rct_status"
-                style="@style/DetailValue"
-                tools:text="status" />
 
         </GridLayout>
 

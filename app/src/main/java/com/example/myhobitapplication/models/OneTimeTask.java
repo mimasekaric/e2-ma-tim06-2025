@@ -10,30 +10,24 @@ public class OneTimeTask extends Task{
 
     private OneTimeTaskStatus status;
 
-    private LocalDate startDate;
+    //private LocalDate startDate;
 
     public OneTimeTask( ) {
 
     }
 
-    public OneTimeTask(Integer id, String name, String description, Integer difficulty, Integer importance, String categoryColour, LocalTime executionTime, LocalDate finishedDate, LocalDate creationDate) {
-        super(id, name, description, difficulty, importance, categoryColour, executionTime, finishedDate, creationDate);
-    }
 
-    public OneTimeTask(String name, String description, Integer difficulty, Integer importance, String categoryColour, LocalTime executionTime, LocalDate finishedDate, LocalDate creationDate) {
-        super(name, description, difficulty, importance, categoryColour, executionTime, finishedDate, creationDate);
-    }
 
     public OneTimeTask(String name, String description, Integer difficulty, Integer importance, String categoryColour, LocalTime executionTime, LocalDate finishedDate, LocalDate creationDate, OneTimeTaskStatus status, LocalDate startDate) {
-        super(name, description, difficulty, importance, categoryColour, executionTime, finishedDate, creationDate);
+        super(name, description, difficulty, importance, categoryColour, executionTime, finishedDate, creationDate, startDate);
         this.status = status;
-        this.startDate = startDate;
+       // this.startDate = startDate;
     }
 
     public OneTimeTask(Integer id, String name, String description, Integer difficulty, Integer importance, String categoryId, LocalTime executionTime, OneTimeTaskStatus status, LocalDate finishedDate, LocalDate creationDate, LocalDate startDate) {
-        super(id, name, description, difficulty, importance, categoryId, executionTime, finishedDate, creationDate);
+        super(id, name, description, difficulty, importance, categoryId, executionTime, finishedDate, creationDate, startDate);
         this.status = status;
-        this.startDate = startDate;
+       // this.startDate = startDate;
     }
 
     public OneTimeTaskStatus getStatus() {
@@ -44,11 +38,4 @@ public class OneTimeTask extends Task{
     }
 
 
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
 }

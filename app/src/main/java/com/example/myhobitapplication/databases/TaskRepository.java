@@ -518,4 +518,27 @@ public class TaskRepository {
         db.close();
         return task;
     }
+
+
+    public int deleteOneTimeTask(long taskId) {
+
+
+
+        database = dbHelper.getWritableDatabase();
+        int deletedRows = 0;
+
+
+            String whereClause = AppDataBaseHelper.COLUMN_ONE_TIME_TASK_ID + " = ? AND ";
+
+
+            String[] whereArgs = {
+                    String.valueOf(taskId),
+            };
+
+            deletedRows = database.delete(AppDataBaseHelper.TABLE_ONE_TIME_TASKS, whereClause, whereArgs);
+
+        database.close();
+
+        return deletedRows;
+    }
 }

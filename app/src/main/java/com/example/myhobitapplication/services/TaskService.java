@@ -123,10 +123,24 @@ public class TaskService {
     }
 
 
-    public List<RecurringTask> getAllTasks() {
+    public List<RecurringTask> getAllRecurringTasks() {
         return repository.getAllRecurringTasks();
     }
 
+    public List<Task> getAllTasks(){
+
+
+        List<Task> taskList = new ArrayList<>();
+
+
+        List<RecurringTask> recurringTasks = getAllRecurringTasks();
+        taskList.addAll(recurringTasks);
+
+        List<OneTimeTask> oneTimeTasks = getAllOneTimeTasks();
+        taskList.addAll(oneTimeTasks);
+
+        return taskList;
+    }
     public RecurringTaskDTO getTaskById(long id) {
         RecurringTask taskModel =  repository.getTaskById(id);
 
@@ -234,9 +248,6 @@ public class TaskService {
          repository.insertOneTimeTask(oneTimeTask);
     }
 
-    public OneTimeTask getOneTimeTaskById(long id){
-        return repository.getOneTimeTaskById(id);
-    }
 
     public List<OneTimeTask> getAllOneTimeTasks() {
         return repository.getAllOneTimeTasks();
@@ -260,6 +271,21 @@ public class TaskService {
                 taskDTO.getStartDate()
         );
         repository.updateOneTimeTask(oneTimeTask);
+    }
+
+    public OneTimeTaskDTO getOneTimeTaskById(long taskId){
+
+        OneTimeTask oneTimeTask = new OneTimeTask();
+        oneTimeTask = repository.getOneTimeTaskById(taskId);
+
+        OneTimeTaskDTO oneTimeTaskDTO = new OneTimeTaskDTO(oneTimeTask);
+
+        return oneTimeTaskDTO;
+    }
+
+    public long deleteOneTimeTask(long taskId){
+
+        return repository.deleteOneTimeTask(taskId);
     }
 
 }

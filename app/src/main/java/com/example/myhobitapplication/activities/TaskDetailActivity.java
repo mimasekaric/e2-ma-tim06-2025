@@ -3,9 +3,11 @@ package com.example.myhobitapplication.activities;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import com.example.myhobitapplication.R;
-import com.example.myhobitapplication.fragments.RecurringTaskDetailsFragment;
+import com.example.myhobitapplication.fragments.tasksFragments.OneTimeTaskDetailsFragment;
+import com.example.myhobitapplication.fragments.tasksFragments.RecurringTaskDetailsFragment;
 
 public class TaskDetailActivity extends AppCompatActivity
         {
@@ -16,29 +18,25 @@ public class TaskDetailActivity extends AppCompatActivity
         setContentView(R.layout.activity_task_detail);
 
         int taskId = getIntent().getIntExtra("TASK_ID_EXTRA", -1);
+        String taskType = getIntent().getStringExtra("TASK_TYPE_EXTRA");
 
-        if (savedInstanceState == null && taskId != -1L) {
+        if (savedInstanceState == null && taskId != -1 && taskType != null) {
 
-            // 3. Kreiraj instancu TaskDetailsFragment-a koristeći ID.
-            //    Ovo pretpostavlja da TaskDetailsFragment ima newInstance metodu.
-            RecurringTaskDetailsFragment recurringTaskDetailsFragment = RecurringTaskDetailsFragment.newInstance(taskId);
+            Fragment fragmentToLoad;
 
-            // 4. Prikaži fragment unutar kontejnera ove aktivnosti.
+            if ("RECURRING".equals(taskType)) {
+
+                fragmentToLoad = RecurringTaskDetailsFragment.newInstance(taskId);
+
+            } else {
+
+                fragmentToLoad = OneTimeTaskDetailsFragment.newInstance(taskId);
+            }
+
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.task_detail_container, recurringTaskDetailsFragment) // task_detail_container je ID FrameLayout-a u tvom XML-u
+                    .replace(R.id.task_detail_container, fragmentToLoad)
                     .commit();
         }
     }
 
-//    @Override
-//    public void onTaskSelected(int taskId) {
-//
-//        TaskDetailsFragment taskFragment = TaskDetailsFragment.newInstance(taskId);
-//
-//
-//        getSupportFragmentManager().beginTransaction()
-//                .replace(R.id.task_detail_container, taskFragment)
-//                .addToBackStack(null) // Dodavanje u "back stack" za povratak pritiskom na dugme
-//                .commit();
-//    }
 }

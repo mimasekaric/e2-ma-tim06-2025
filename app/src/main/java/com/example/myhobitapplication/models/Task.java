@@ -21,9 +21,11 @@ public abstract class Task {
     private LocalDate finishedDate;
     private LocalDate creationDate;
 
+    private LocalDate startDate;
+
 
     public Task(){}
-    public Task(Integer id, String name, String description, Integer difficulty, Integer importance, String categoryColour, LocalTime executionTime, LocalDate finishedDate, LocalDate creationDate) {
+    public Task(Integer id, String name, String description, Integer difficulty, Integer importance, String categoryColour, LocalTime executionTime, LocalDate finishedDate, LocalDate creationDate, LocalDate startDate) {
         Id = id;
         Name = name;
         Description = description;
@@ -33,8 +35,9 @@ public abstract class Task {
         this.executionTime = executionTime;
         this.finishedDate = finishedDate;
         this.creationDate = creationDate;
+        this.startDate = startDate;
     }
-    public Task(String name, String description, Integer difficulty, Integer importance, String categoryColour, LocalTime executionTime, LocalDate finishedDate, LocalDate creationDate) {
+    public Task(String name, String description, Integer difficulty, Integer importance, String categoryColour, LocalTime executionTime, LocalDate finishedDate, LocalDate creationDate, LocalDate startDate) {
         Name = name;
         Description = description;
         Difficulty = difficulty;
@@ -43,6 +46,7 @@ public abstract class Task {
         this.executionTime = executionTime;
         this.finishedDate = finishedDate;
         this.creationDate = creationDate;
+        this.startDate = startDate;
     }
 
 
@@ -119,5 +123,13 @@ public abstract class Task {
 
     public void setCreationDate(LocalDate creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
     }
 }
