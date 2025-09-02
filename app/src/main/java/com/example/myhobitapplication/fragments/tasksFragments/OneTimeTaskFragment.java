@@ -16,19 +16,15 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.adapters.CategorySpinnerAdapter;
 import com.example.myhobitapplication.databases.CategoryRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.FragmentOnetimeTaskBinding;
-import com.example.myhobitapplication.databinding.FragmentRecurringTaskBinding;
-import com.example.myhobitapplication.enums.RecurrenceUnit;
 import com.example.myhobitapplication.models.Category;
 import com.example.myhobitapplication.services.CategoryService;
 import com.example.myhobitapplication.services.TaskService;
-import com.example.myhobitapplication.viewModels.CategoryViewModel;
+import com.example.myhobitapplication.viewModels.categoryViewModels.CategoryViewModel;
 import com.example.myhobitapplication.viewModels.taskViewModels.OneTimeTaskViewModel;
-import com.example.myhobitapplication.viewModels.taskViewModels.RecurringTaskViewModel;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

@@ -1,13 +1,9 @@
-package com.example.myhobitapplication.viewModels;
+package com.example.myhobitapplication.viewModels.categoryViewModels;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.myhobitapplication.CloudStoreUtil;
-import com.example.myhobitapplication.enums.RecurringTaskStatus;
 import com.example.myhobitapplication.models.Category;
-import com.example.myhobitapplication.models.RecurringTask;
 import com.example.myhobitapplication.services.CategoryService;
 
 import java.util.List;

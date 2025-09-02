@@ -19,7 +19,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.myhobitapplication.databases.CategoryRepository;
 import com.example.myhobitapplication.databinding.FragmentCategoryBinding;
 import com.example.myhobitapplication.services.CategoryService;
-import com.example.myhobitapplication.viewModels.CategoryViewModel;
+import com.example.myhobitapplication.viewModels.categoryViewModels.CategoryViewModel;
 
 
 import yuku.ambilwarna.AmbilWarnaDialog;
@@ -98,7 +98,7 @@ public class CategoryFragment extends Fragment {
 
 
 
-            Toast.makeText(requireContext(), "Kategorija je uspešno kreirana!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "Kategorija je uspješno kreirana!", Toast.LENGTH_SHORT).show();
         });
 
 

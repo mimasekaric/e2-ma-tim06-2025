@@ -25,7 +25,7 @@ import com.example.myhobitapplication.enums.RecurrenceUnit;
 import com.example.myhobitapplication.models.Category;
 import com.example.myhobitapplication.services.CategoryService;
 import com.example.myhobitapplication.services.TaskService;
-import com.example.myhobitapplication.viewModels.CategoryViewModel;
+import com.example.myhobitapplication.viewModels.categoryViewModels.CategoryViewModel;
 import com.example.myhobitapplication.viewModels.taskViewModels.RecurringTaskViewModel;
 
 import java.time.LocalDate;

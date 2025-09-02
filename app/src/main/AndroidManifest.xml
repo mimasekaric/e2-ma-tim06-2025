@@ -31,6 +31,8 @@
             android:exported="false"></activity>
         <activity android:name=".activities.TaskDetailActivity" />
         <activity android:name=".activities.TaskEditActivity" />
+        <activity android:name=".activities.CategoryEditActivity" />
+        <activity android:name=".activities.CategoryViewActivity" />
 
 
     </application>

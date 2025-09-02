@@ -32,7 +32,7 @@ public class RecurringTaskViewModel extends ViewModel {
     private final MutableLiveData<RecurrenceUnit> recurrenceUnit = new MutableLiveData<>(RecurrenceUnit.DAY);
 
     private final MutableLiveData<Category> category = new MutableLiveData<>();
-    // Expose LiveData za fragmente
+
     public LiveData<String> getTitle() { return title; }
     public LiveData<String> getDescription() { return description; }
     public LiveData<Integer> getDifficultyXp() { return difficultyXp; }
