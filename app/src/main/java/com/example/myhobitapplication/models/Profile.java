@@ -2,96 +2,125 @@ package com.example.myhobitapplication.models;
 
 import android.graphics.Bitmap;
 
+import com.example.myhobitapplication.enums.Title;
+
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class Profile {
 
-    private String UserId;
+    private String userUid;
+    private Title title;
+    private Integer coins;
+    private Integer pp;
+    private Integer xp;
+    private Integer level;
 
-    private Integer Coins;
-    private Integer XP;
-    private Integer Level;
+   // private Bitmap QRCode;
+    private Integer numberOgBadges;
+    private List<String> badges;
 
-    private Bitmap QRCode;
-    private Integer NumberOfBadges;
-    private List<Badge> Badges;
+    private List<String> equipment;//equipment ids
 
-    private List<Equipment> Equipment;
-
-    public Profile(String userId, Integer coins, Integer XP, Integer level, Bitmap QRCode, Integer numberOfBadges, List<Badge> badges, List<Equipment> equipment) {
-        UserId = userId;
-        Coins = coins;
-        this.XP = XP;
-        Level = level;
-        this.QRCode = QRCode;
-        NumberOfBadges = numberOfBadges;
-        Badges = badges;
-        Equipment = equipment;
+    public Profile(String userUid, Integer coins, Integer xp, Integer level, Integer numberOfbadges, List<String> badges, List<String> equipment, Title title, Integer pp) {
+        this.userUid = userUid;
+        this.coins = coins;
+        this.xp = xp;
+        this.level = level;
+        this.numberOgBadges = numberOfbadges;
+        this.badges = badges;
+        this.equipment = equipment;
+        this.title=title;
+        this.pp=pp;
     }
 
-    public String getUserId() {
-        return UserId;
+    public Profile(String userUid) {
+        this.userUid = userUid;
+        this.coins = 0;
+        this.xp = 0;
+        this.title= Title.CURIOUS_WANDERER;
+        this.level = 0;
+        this.numberOgBadges = 0;
+        this.badges = new ArrayList<>();
+        this.pp=0;
+        this.equipment = new ArrayList<>();
     }
 
-    public void setUserId(String userId) {
-        UserId = userId;
+    public Profile(){
+        badges = new ArrayList<>();
+        equipment = new ArrayList<>();
+    }
+    public String getuserUid() {
+        return userUid;
+    }
+
+    public void setuserUid(String userUid) {
+        this.userUid = userUid;
     }
 
 
-    public Integer getCoins() {
-        return Coins;
+    public Integer getcoins() {
+        return coins;
     }
 
-    public void setCoins(Integer coins) {
-        Coins = coins;
+    public void setcoins(Integer coins) {
+        this.coins = coins;
     }
 
-    public Integer getXP() {
-        return XP;
+    public Integer getxp() {
+        return xp;
     }
 
-    public void setXP(Integer XP) {
-        this.XP = XP;
+    public void setxp(Integer xp) {
+        this.xp = xp;
     }
 
-    public Integer getLevel() {
-        return Level;
+    public Integer getlevel() {
+        return level;
     }
 
-    public void setLevel(Integer level) {
-        Level = level;
+    public void setlevel(Integer level) {
+        this.level = level;
     }
 
-    public Integer getNumberOfBadges() {
-        return NumberOfBadges;
+    public Integer getnumberOgbadges() {
+        return numberOgBadges;
     }
 
-    public void setNumberOfBadges(Integer numberOfBadges) {
-        NumberOfBadges = numberOfBadges;
+    public void setnumberOgbadges(Integer numberOfbadges) {
+        this.numberOgBadges = numberOfbadges;
     }
 
-    public List<Badge> getBadges() {
-        return Badges;
+    public List<String> getbadges() {
+        return badges;
     }
 
-    public void setBadges(List<Badge> badges) {
-        this.Badges = badges;
+    public void setbadges(List<String> badges) {
+        this.badges = badges;
     }
 
-    public Bitmap getQRCode() {
-        return QRCode;
+    public Title getTitle() {
+        return title;
     }
 
-    public void setQRCode(Bitmap QRCode) {
-        this.QRCode = QRCode;
+    public void setTitle(Title title) {
+        this.title = title;
     }
 
-    public List<Equipment> getEquipment() {
-        return Equipment;
+    public Integer getPp() {
+        return pp;
     }
 
-    public void setEquipment(List<Equipment> equipment) {
-        Equipment = equipment;
+    public void setPp(Integer pp) {
+        this.pp = pp;
+    }
+
+    public List<String> getequipment() {
+        return equipment;
+    }
+
+    public void setequipment(List<String> equipment) {
+        this.equipment = equipment;
     }
 }

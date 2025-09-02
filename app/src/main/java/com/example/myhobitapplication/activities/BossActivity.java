@@ -9,9 +9,6 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -28,12 +25,8 @@ import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.databases.BossRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.ActivityBossBinding;
-import com.example.myhobitapplication.databinding.ActivityRegistrationBinding;
 import com.example.myhobitapplication.models.Boss;
-import com.example.myhobitapplication.services.BossService;
-import com.example.myhobitapplication.services.RegistrationService;
 import com.example.myhobitapplication.viewModels.BattleViewModel;
-import com.example.myhobitapplication.viewModels.RegistrationViewModel;
 
 public class BossActivity extends AppCompatActivity implements SensorEventListener {
 

@@ -2,12 +2,7 @@ package com.example.myhobitapplication.databases;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import com.example.myhobitapplication.models.User;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.auth.AuthResult;
@@ -17,9 +12,6 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.type.DateTime;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -27,16 +19,27 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RegistrationRepository {
+public class UserRepository {
 
     private final FirebaseFirestore db;
     private final FirebaseAuth firebaseAuth;
     private final CollectionReference usersCollection;
 
-    public RegistrationRepository() {
+    private final ProfileRepository profileRepo;
+
+    public UserRepository() {
         firebaseAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
+        profileRepo = new ProfileRepository();
         usersCollection = db.collection("users");
+    }
+    public Task<DocumentReference> getUserInfo(String uid){
+        final TaskCompletionSource<DocumentReference> taskCompletionSource = new TaskCompletionSource<>();
+        usersCollection.whereEqualTo("uid", uid).get().addOnSuccessListener(queryDocumentSnapshots ->{
+            if(!queryDocumentSnapshots.isEmpty())
+            taskCompletionSource.setResult(queryDocumentSnapshots.getDocuments().get(0).getReference());
+        }) .addOnFailureListener(e -> taskCompletionSource.setException(new Exception("Coudnt retrieve user data")));
+        return taskCompletionSource.getTask();
     }
 
     public Task<DocumentReference> mailExistsCheck(String email){
@@ -106,6 +109,7 @@ public class RegistrationRepository {
                                         })
                                         .addOnFailureListener(e -> Log.e("Auth", "Failed to delete user", e));
                                 document.getReference().delete();
+                                profileRepo.delete(firebaseUser.getUid());
                                 firebaseAuth.signOut();
                             } else {
                                 user.setRegistered(true);

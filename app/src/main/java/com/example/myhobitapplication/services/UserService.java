@@ -1,35 +1,29 @@
 package com.example.myhobitapplication.services;
 
-import android.util.Log;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-
-import com.example.myhobitapplication.databases.CategoryRepository;
-import com.example.myhobitapplication.databases.RegistrationRepository;
-import com.example.myhobitapplication.models.User;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.example.myhobitapplication.databases.ProfileRepository;
+import com.example.myhobitapplication.databases.UserRepository;
+import com.example.myhobitapplication.models.Profile;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
-import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.type.DateTime;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
-public class RegistrationService {
-    private final RegistrationRepository repository;
-    public RegistrationService(RegistrationRepository repository){
-        this.repository = repository;
-    }
+public class UserService {
+    private final UserRepository repository;
+    private final ProfileRepository profileRepository;
 
+    private  String userIdd;
+    public UserService(){
+        this.repository = new UserRepository();
+        this.profileRepository = new ProfileRepository();
+        this.userIdd="";
+    }
+public String getId(){
+        return userIdd;
+}
    public Task<AuthResult> Login(String email, String password) {
        TaskCompletionSource<AuthResult> taskCompletionSource = new TaskCompletionSource<>();
        repository.mailExistsCheck(email).addOnCompleteListener(task -> {
@@ -38,6 +32,7 @@ public class RegistrationService {
                loginTask.addOnSuccessListener(authResult -> {
                            FirebaseUser user = authResult.getUser();
                            if (user != null && user.isEmailVerified()) {
+                               this.userIdd= user.getUid();
                                repository.verificatedCheck(user);
                                taskCompletionSource.setResult(authResult);
                            } else {
@@ -62,12 +57,10 @@ public class RegistrationService {
         repository.checkEmailUnique(email)
                 .onSuccessTask(aVoid -> repository.usernameExistsCheck(username))
                 .onSuccessTask(aVoid -> repository.authinsert(email, password)).addOnSuccessListener(authResult -> {
-                        /*repository.authinsert(email, password)
-                                .addOnSuccessListener(authResult -> {*/
-
                                     FirebaseUser user = authResult.getUser();
                                     if (user != null) {
                                         String uid = user.getUid();
+                                        profileRepository.insert(new Profile(uid));
                                         repository.insert(uid, email, username, avatarName, registrationDate, false)
                                                 .addOnSuccessListener(documentReference -> {
                                                     repository.sendVerificationEmail()
