@@ -2,8 +2,6 @@ package com.example.myhobitapplication.activities;
 
 import static android.view.View.VISIBLE;
 
-import static androidx.core.content.ContentProviderCompat.requireContext;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -24,12 +22,13 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.myhobitapplication.R;
+import com.example.myhobitapplication.databases.ProfileRepository;
 import com.example.myhobitapplication.models.Avatar;
 import com.example.myhobitapplication.adapters.AvatarSpinnerAdapter;
-import com.example.myhobitapplication.databases.RegistrationRepository;
+import com.example.myhobitapplication.databases.UserRepository;
 import com.example.myhobitapplication.databinding.ActivityRegistrationBinding;
 import com.example.myhobitapplication.models.AvatarList;
-import com.example.myhobitapplication.services.RegistrationService;
+import com.example.myhobitapplication.services.UserService;
 import com.example.myhobitapplication.viewModels.RegistrationViewModel;
 import com.google.firebase.FirebaseApp;
 
@@ -40,7 +39,7 @@ public class RegistrationActivity extends AppCompatActivity {
     private Spinner avatarspinner;
     private ActivityRegistrationBinding binding ;
     private RegistrationViewModel registrationViewModel;
-    private RegistrationRepository repository;
+
     private AvatarSpinnerAdapter avataradapter;
 
     private List<Avatar> avatarList;
@@ -50,14 +49,12 @@ public class RegistrationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        repository = new RegistrationRepository();
-        RegistrationService registrationService = new RegistrationService(repository);
         FirebaseApp.initializeApp(this);
         registrationViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @NonNull
             @Override
             public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-                return (T) new RegistrationViewModel(registrationService);
+                return (T) new RegistrationViewModel();
             }
         }).get(RegistrationViewModel.class);
 
@@ -92,6 +89,7 @@ public class RegistrationActivity extends AppCompatActivity {
                     finish();
             } else if (!message.isEmpty()) {
                 binding.buttonn.setVisibility(View.VISIBLE);
+                binding.logginn.setVisibility(VISIBLE);
                 animationView.setVisibility(View.GONE);
                 animationView.cancelAnimation();
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
@@ -179,6 +177,7 @@ protected void onResume(){
         binding.buttonn.setOnClickListener(v->{
             animationView.setVisibility(View.VISIBLE);
             binding.buttonn.setVisibility(View.INVISIBLE);
+            binding.logginn.setVisibility(View.INVISIBLE);
             animationView.playAnimation();
             registrationViewModel.saveUser();
 
