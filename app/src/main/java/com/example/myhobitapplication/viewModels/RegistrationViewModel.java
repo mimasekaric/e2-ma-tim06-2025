@@ -5,21 +5,17 @@ import android.util.Patterns;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.myhobitapplication.models.Category;
-import com.example.myhobitapplication.models.User;
-import com.example.myhobitapplication.services.CategoryService;
-import com.example.myhobitapplication.services.RegistrationService;
+import com.example.myhobitapplication.services.UserService;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.List;
 
 public class RegistrationViewModel extends ViewModel {
 
-    private RegistrationService registrationService;
+    private UserService registrationService;
+
 
     private final MutableLiveData<Boolean> registrationSuccess= new MutableLiveData<>(false);
     private final MutableLiveData<String> email = new MutableLiveData<>("");
@@ -29,8 +25,8 @@ public class RegistrationViewModel extends ViewModel {
     private final MutableLiveData<String> confirmPassword = new MutableLiveData<>("");
     private final MutableLiveData<String> avatarName = new MutableLiveData<String>("");
 
-    public RegistrationViewModel(RegistrationService registrationService){
-        this.registrationService = registrationService;
+    public RegistrationViewModel(){
+        this.registrationService = new UserService();
     }
 
     private  MutableLiveData<String> response = new MutableLiveData<String>("");
@@ -48,28 +44,6 @@ public class RegistrationViewModel extends ViewModel {
     public void setConfirmPassword(String passwordValue){ confirmPassword.setValue(passwordValue); }
 
     public void setAvatarName(String avatarValue){avatarName.setValue(avatarValue);}
-  /*  public void saveUser() {
-        registrationSuccess.setValue(validateFields());
-        if(password.getValue().equals(confirmPassword.getValue())) {
-            if(registrationSuccess.getValue()) {
-                Date dateNow = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
-                registrationService.Register(email.getValue(), username.getValue(), password.getValue(), avatarName.getValue(), dateNow)
-                        .addOnSuccessListener(documentReference -> {
-                            response.setValue("success");
-                            registrationSuccess.setValue(true);
-                            FirebaseAuth.getInstance().signOut();
-                        })
-                        .addOnFailureListener(e -> {
-                                    response.setValue("Failed signup!" + e.getMessage());
-                                    registrationSuccess.setValue(false);
-                                });
-
-            }
-        }else{
-            registrationSuccess.setValue(false);
-            response.setValue("Your passwords must match");
-        }
-    }*/
 
     public void saveUser() {
         if (!validateFields()) {
@@ -83,7 +57,6 @@ public class RegistrationViewModel extends ViewModel {
             return;
         }
 
-        // Only async call from here
         Date dateNow = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
         registrationService.Register(email.getValue(), username.getValue(), password.getValue(), avatarName.getValue(), dateNow)
                 .addOnSuccessListener(documentReference -> {

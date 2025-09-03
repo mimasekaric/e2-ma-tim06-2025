@@ -1,7 +1,5 @@
 package com.example.myhobitapplication.activities;
 
-import static android.view.View.VISIBLE;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -18,35 +16,34 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.myhobitapplication.R;
-import com.example.myhobitapplication.databases.RegistrationRepository;
+import com.example.myhobitapplication.databases.ProfileRepository;
+import com.example.myhobitapplication.databases.UserRepository;
 import com.example.myhobitapplication.databinding.ActivityLoginBinding;
-import com.example.myhobitapplication.databinding.ActivityRegistrationBinding;
-import com.example.myhobitapplication.services.RegistrationService;
+import com.example.myhobitapplication.services.UserService;
 import com.example.myhobitapplication.viewModels.LoginViewModel;
-import com.example.myhobitapplication.viewModels.RegistrationViewModel;
-import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
     private ActivityLoginBinding binding;
-    private RegistrationRepository repository;
+    LottieAnimationView animationView;
 
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
-        //FirebaseApp.initializeApp(this);
-
         super.onCreate(savedInstanceState);
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
-        repository = new RegistrationRepository();
-        RegistrationService registrationService = new RegistrationService(repository);
+        animationView = binding.registrationLoading;
+        animationView.setAnimation(R.raw.waiting);
+
         loginViewModel= new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @NonNull
             @Override
             public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-                return (T) new LoginViewModel(registrationService);
+                return (T) new LoginViewModel();
             }
         }).get(LoginViewModel.class);
         EdgeToEdge.enable(this);
@@ -63,9 +60,17 @@ public class LoginActivity extends AppCompatActivity {
             if (message != null && !message.isEmpty()) {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
                 if (isSuccess) {
-                    Intent intent = new Intent(LoginActivity.this, TaskActivity.class);
+             //       Intent intent = new Intent(LoginActivity.this, ProfileActivity.class);
+                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                    //Toast.makeText(this,FirebaseAuth.getInstance().getCurrentUser().getUid(),SHORT)
+                    intent.putExtra("USER_ID", FirebaseAuth.getInstance().getCurrentUser().getUid());
                     startActivity(intent);
+                   /* Intent intent = new Intent(LoginActivity.this, TaskActivity.class);
+                    startActivity(intent);*/
                 }
+                binding.buttonn.setVisibility(View.VISIBLE);
+                animationView.setVisibility(View.GONE);
+                animationView.cancelAnimation();
             }
         });
 
@@ -106,7 +111,11 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         binding.buttonn.setOnClickListener(v -> {
+            binding.buttonn.setVisibility(View.INVISIBLE);
+            animationView.setVisibility(View.VISIBLE);
+            animationView.playAnimation();
             loginViewModel.loginUser();
+
         });
 
         binding.signup.setOnClickListener(v->{
