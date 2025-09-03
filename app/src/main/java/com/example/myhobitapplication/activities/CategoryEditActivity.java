@@ -1,5 +1,6 @@
 package com.example.myhobitapplication.activities;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
@@ -15,7 +16,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.myhobitapplication.databases.CategoryRepository;
 import com.example.myhobitapplication.databinding.ActivityCategoryEditBinding;
 import com.example.myhobitapplication.services.CategoryService;
-import com.example.myhobitapplication.viewModels.categoryViewModels.CategoryeEditViewModel;
+import com.example.myhobitapplication.viewModels.categoryViewModels.CategoryEditViewModel;
 
 import yuku.ambilwarna.AmbilWarnaDialog;
 
@@ -26,7 +27,7 @@ public class CategoryEditActivity extends AppCompatActivity {
 
     private ActivityCategoryEditBinding binding;
 
-    private CategoryeEditViewModel categoryEditViewModel;
+    private CategoryEditViewModel categoryEditViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,9 +45,9 @@ public class CategoryEditActivity extends AppCompatActivity {
             @NonNull
             @Override
             public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-                return (T) new CategoryeEditViewModel(categoryService);
+                return (T) new CategoryEditViewModel(categoryService);
             }
-        }).get(CategoryeEditViewModel.class);
+        }).get(CategoryEditViewModel.class);
 
         if (categoryId != -1) {
             categoryEditViewModel.loadCategoryDetails(categoryId);
@@ -68,20 +69,18 @@ public class CategoryEditActivity extends AppCompatActivity {
             }
         });
 
+        categoryEditViewModel.getColour().observe(this, hexColor -> {
+            if (hexColor != null) {
+                updateColorPreview(hexColor);
+            }
+        });
 
-        binding.selectedColorPreview.setBackgroundColor(selectedColor);
 
         binding.pickColorButton.setOnClickListener(v -> {
             openColorPickerDialog();
         });
 
 
-
-
-        binding.setColorButton.setOnClickListener(v -> {
-            String hexColor = String.format("#%06X", (0xFFFFFF & selectedColor));
-            categoryEditViewModel.setColour(hexColor);
-        });
 
 
 
@@ -98,24 +97,25 @@ public class CategoryEditActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {}
         });
 
-//        binding.btnAddCategory.setOnClickListener(v -> {
-//            String hexColor = String.format("#%06X", (0xFFFFFF & selectedColor));
-//            categoryEditViewModel.setColour(hexColor);
-//
-//            categoryEditViewModel.saveCategory(); // Ili 'updateCategory()' ako je to mod izmene
-//
-//            Toast.makeText(this, "Kategorija je uspešno sačuvana!", Toast.LENGTH_SHORT).show();
-//
-//            // Pošalji rezultat nazad i zatvori aktivnost
-//            setResult(Activity.RESULT_OK); // Signalizira da je došlo do promene
-//            finish();
-//        });
+        binding.btnAddCategory.setOnClickListener(v -> {
+
+            categoryEditViewModel.updateCategory();
+
+            Toast.makeText(this, "Kategorija je uspješno azurirana!", Toast.LENGTH_SHORT).show();
+
+            setResult(Activity.RESULT_OK);
+            finish();
+        });
     }
 
     private void openColorPickerDialog() {
+        String currentColorHex = categoryEditViewModel.getColour().getValue();
         int initialColor = Color.BLACK;
-        if (binding.selectedColorPreview.getBackground() instanceof android.graphics.drawable.ColorDrawable) {
-            initialColor = ((android.graphics.drawable.ColorDrawable) binding.selectedColorPreview.getBackground()).getColor();
+        if (currentColorHex != null) {
+            try {
+                initialColor = Color.parseColor(currentColorHex);
+            } catch (IllegalArgumentException e) {
+            }
         }
 
 
@@ -131,5 +131,14 @@ public class CategoryEditActivity extends AppCompatActivity {
             }
         });
         dialog.show();
+    }
+
+    private void updateColorPreview(String hexColor) {
+        try {
+            int color = Color.parseColor(hexColor);
+            binding.selectedColorPreview.setBackgroundColor(color);
+        } catch (Exception e) {
+            binding.selectedColorPreview.setBackgroundColor(Color.BLACK);
+        }
     }
 }

@@ -50,6 +50,7 @@ public class RecurringTaskFragment extends Fragment {
 
 
 
+
         taskViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @NonNull
             @Override
@@ -82,6 +83,21 @@ public class RecurringTaskFragment extends Fragment {
         ScrollView scrollView = recurringTaskBinding.rtScrollView;
         scrollView.setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
         scrollView.setFocusable(false);
+
+        long danasUMilisekundama = System.currentTimeMillis();
+        recurringTaskBinding.rtDateStart.setMinDate(danasUMilisekundama);
+        recurringTaskBinding.rtDateEnd.setMinDate(danasUMilisekundama);
+
+
+        taskViewModel.isFormValid().observe(getViewLifecycleOwner(), isValid -> {
+            if (isValid != null) {
+                recurringTaskBinding.btnRtask.setEnabled(isValid);
+            }
+        });
+
+        taskViewModel.getTitleError().observe(getViewLifecycleOwner(), error -> {
+            recurringTaskBinding.rtaskName.setError(error);
+        });
 
 
         recurringTaskBinding.rgDifficultyOptions.setOnCheckedChangeListener((group, checkedId) -> {

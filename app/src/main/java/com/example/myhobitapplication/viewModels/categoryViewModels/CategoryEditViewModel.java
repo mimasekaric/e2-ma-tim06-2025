@@ -5,12 +5,9 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.myhobitapplication.dto.CategoryDTO;
-import com.example.myhobitapplication.models.Category;
 import com.example.myhobitapplication.services.CategoryService;
 
-import java.util.List;
-
-public class CategoryeEditViewModel extends ViewModel {
+public class CategoryEditViewModel extends ViewModel {
 
 
     private final CategoryService categoryService;
@@ -19,7 +16,7 @@ public class CategoryeEditViewModel extends ViewModel {
     private final MutableLiveData<String> _name = new MutableLiveData<>();
     private final MutableLiveData<String> _colour = new MutableLiveData<>();
 
-    public CategoryeEditViewModel(CategoryService categoryService) {
+    public CategoryEditViewModel(CategoryService categoryService) {
         this.categoryService = categoryService;
     }
 
@@ -35,19 +32,17 @@ public class CategoryeEditViewModel extends ViewModel {
 
     public void setName(String name) { _name.setValue(name); }
     public void setColour(String colour) { _colour.setValue(colour); }
+    public MutableLiveData<String> getColour() { return _colour; }
 
-    // Metoda za ažuriranje
-//    public void updateCategory() {
-//        CategoryDTO originalDto = _categoryDetails.getValue();
-//        if (originalDto == null) return;
-//
-//        // Ažuriraj DTO sa novim podacima iz forme
-//        originalDto.setName(_name.getValue());
-//        originalDto.setColour(_colour.getValue());
-//
-//        // Prosledi ažurirani DTO u servis
-//        categoryService.updateCategory(originalDto); // Moraš imati ovu metodu u servisu
-//    }
+    public void updateCategory() {
+        CategoryDTO originalDto = _categoryDetails.getValue();
+        if (originalDto == null) return;
+
+        originalDto.setName(_name.getValue());
+        originalDto.setColour(_colour.getValue());
+
+        categoryService.updateCategory(originalDto);
+    }
 
 
 

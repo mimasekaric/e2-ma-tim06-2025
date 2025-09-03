@@ -17,13 +17,8 @@ import com.example.myhobitapplication.adapters.CategoryListAdapter;
 import com.example.myhobitapplication.databases.CategoryRepository;
 import com.example.myhobitapplication.databinding.ActivityCategoryViewBinding;
 import com.example.myhobitapplication.dto.CategoryDTO;
-import com.example.myhobitapplication.models.Category;
-import com.example.myhobitapplication.models.OneTimeTask;
-import com.example.myhobitapplication.models.RecurringTask;
-import com.example.myhobitapplication.models.Task;
 import com.example.myhobitapplication.services.CategoryService;
 import com.example.myhobitapplication.viewModels.categoryViewModels.CategoryListViewModel;
-import com.example.myhobitapplication.viewModels.categoryViewModels.CategoryeEditViewModel;
 
 import java.util.ArrayList;
 
@@ -87,12 +82,11 @@ public class CategoryViewActivity extends AppCompatActivity {
             categoryEditLauncher.launch(intent);
         });
 
-        // Listener za dugme "Dodaj novu kategoriju" - koristeći binding
-//        binding.btnAddCategory.setOnClickListener(v -> {
-//            // Pokreni aktivnost za kreiranje nove kategorije
-//            // Intent intent = new Intent(this, CategoryCreateActivity.class);
-//            // startActivity(intent);
-//        });
+
+        binding.btnAddNewCategory.setOnClickListener(v -> {
+            Intent intent = new Intent(this, CategoryCreateActivity.class);
+            startActivity(intent);
+        });
 
 
     }

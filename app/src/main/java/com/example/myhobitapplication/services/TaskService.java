@@ -7,6 +7,7 @@ import com.example.myhobitapplication.dto.OneTimeTaskDTO;
 import com.example.myhobitapplication.dto.RecurringTaskDTO;
 import com.example.myhobitapplication.enums.RecurrenceUnit;
 import com.example.myhobitapplication.enums.RecurringTaskStatus;
+import com.example.myhobitapplication.exceptions.ValidationException;
 import com.example.myhobitapplication.models.OneTimeTask;
 import com.example.myhobitapplication.models.RecurringTask;
 import com.example.myhobitapplication.models.Task;
@@ -32,7 +33,9 @@ public class TaskService {
     }
     public List<RecurringTask> getRecurringTasks(){ return repository.getAllRecurringTasks();}
 
-    public void createRecurringTaskSeries(RecurringTask taskTemplate) {
+    public void createRecurringTaskSeries(RecurringTask taskTemplate) throws ValidationException{
+
+        validateRequeeingTaskTemplate(taskTemplate);
 
         taskTemplate.setStatus(RecurringTaskStatus.ACTIVE);
 
@@ -286,6 +289,42 @@ public class TaskService {
     public long deleteOneTimeTask(long taskId){
 
         return repository.deleteOneTimeTask(taskId);
+    }
+
+    private void validateRequeeingTaskTemplate(RecurringTask taskTemplate) throws ValidationException {
+
+        if (taskTemplate.getName() == null || taskTemplate.getName().trim().isEmpty()) {
+            throw new ValidationException("Task name is required.");
+        }
+
+//        if (taskTemplate.getDifficulty() <= 0) {
+//            throw new ValidationException("Morate odabrati težinu zadatka.");
+//        }
+//        if (taskTemplate.getImportance() <= 0) {
+//            throw new ValidationException("Morate odabrati važnost zadatka.");
+//        }
+
+//        // Pravilo 3: Kategorija mora biti izabrana i mora postojati u bazi
+//        if (taskTemplate.getCategoryId() == null) {
+//            throw new ValidationException("Kategorija mora biti izabrana.");
+//        }
+//        // Provera da li kategorija sa tim ID-jem zaista postoji
+//        Category category = categoryRepository.getCategoryById(taskTemplate.getCategoryId());
+//        if (category == null) {
+//            throw new ValidationException("Izabrana kategorija nije validna.");
+//        }
+
+
+        if (taskTemplate.getStartDate() == null || taskTemplate.getEndDate() == null) {
+            throw new ValidationException("Start date and End date are required.");
+        }
+        if (taskTemplate.getEndDate().isBefore(taskTemplate.getStartDate())) {
+            throw new ValidationException("End date can not be before Start date");
+        }
+
+        if (taskTemplate.getRecurrenceInterval() < 1) {
+            throw new ValidationException("Recurring interval must be positive number.");
+        }
     }
 
 }

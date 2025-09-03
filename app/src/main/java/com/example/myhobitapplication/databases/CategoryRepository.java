@@ -7,6 +7,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.example.myhobitapplication.models.Category;
+import com.example.myhobitapplication.models.OneTimeTask;
 import com.example.myhobitapplication.models.RecurringTask;
 
 import java.util.ArrayList;
@@ -90,5 +91,44 @@ public class CategoryRepository {
         }
         db.close();
         return category;
+    }
+
+    public long updateCategory(Category category) {
+
+        database = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(AppDataBaseHelper.COLUMN_NAME, category.getName());
+        values.put(AppDataBaseHelper.COLUMN_COLOUR, category.getColour());
+
+        String selection = AppDataBaseHelper.COLUMN_CATEGORY_ID + " = ?";
+        String[] selectionArgs = { String.valueOf(category.getId()) };
+
+        int count = database.update(
+                AppDataBaseHelper.TABLE_CATEGORIES,
+                values,
+                selection,
+                selectionArgs);
+
+        database.close();
+        return count;
+    }
+
+    public boolean doesCategoryNameExist(String name) {
+        database = dbHelper.getWritableDatabase();
+
+        String query = "SELECT COUNT(*) FROM " + AppDataBaseHelper.TABLE_CATEGORIES + " WHERE " + AppDataBaseHelper.COLUMN_NAME + " = ? COLLATE NOCASE";
+        Cursor cursor = database.rawQuery(query, new String[]{name.trim()});
+
+        int count = 0;
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(0);
+            }
+            cursor.close();
+        }
+        database.close();
+
+        return count > 0;
     }
 }

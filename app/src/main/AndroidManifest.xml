@@ -33,6 +33,7 @@
         <activity android:name=".activities.TaskEditActivity" />
         <activity android:name=".activities.CategoryEditActivity" />
         <activity android:name=".activities.CategoryViewActivity" />
+        <activity android:name=".activities.CategoryCreateActivity" />
 
 
     </application>

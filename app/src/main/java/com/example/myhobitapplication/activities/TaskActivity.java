@@ -42,12 +42,9 @@ public class TaskActivity extends AppCompatActivity {
                     else if(position == 2){
                         tab.setText("Calendar");
                     }
-                    else if(position == 3)
+                    else
                     {
                         tab.setText("Category");
-                    }
-                    else{
-                        tab.setText("Category View");
                     }
                 }).attach();
     }
