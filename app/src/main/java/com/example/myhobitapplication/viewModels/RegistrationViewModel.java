@@ -44,28 +44,6 @@ public class RegistrationViewModel extends ViewModel {
     public void setConfirmPassword(String passwordValue){ confirmPassword.setValue(passwordValue); }
 
     public void setAvatarName(String avatarValue){avatarName.setValue(avatarValue);}
-  /*  public void saveUser() {
-        registrationSuccess.setValue(validateFields());
-        if(password.getValue().equals(confirmPassword.getValue())) {
-            if(registrationSuccess.getValue()) {
-                Date dateNow = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
-                registrationService.Register(email.getValue(), username.getValue(), password.getValue(), avatarName.getValue(), dateNow)
-                        .addOnSuccessListener(documentReference -> {
-                            response.setValue("success");
-                            registrationSuccess.setValue(true);
-                            FirebaseAuth.getInstance().signOut();
-                        })
-                        .addOnFailureListener(e -> {
-                                    response.setValue("Failed signup!" + e.getMessage());
-                                    registrationSuccess.setValue(false);
-                                });
-
-            }
-        }else{
-            registrationSuccess.setValue(false);
-            response.setValue("Your passwords must match");
-        }
-    }*/
 
     public void saveUser() {
         if (!validateFields()) {

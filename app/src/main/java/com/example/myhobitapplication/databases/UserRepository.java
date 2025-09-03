@@ -82,7 +82,14 @@ public class UserRepository {
     public Task<AuthResult> authLogin(String email, String password) {
         return firebaseAuth.signInWithEmailAndPassword(email, password);
     }
-
+    public Task<Void> changePass(String pass) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String newPassword = pass;
+        return user.updatePassword(newPassword);
+    }
+    public void logout(){
+        firebaseAuth.signOut();
+    }
     public void verificatedCheck(FirebaseUser firebaseUser) {
         usersCollection
                 .whereEqualTo("uid", firebaseAuth.getCurrentUser().getUid())

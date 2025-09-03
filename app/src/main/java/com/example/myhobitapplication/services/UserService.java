@@ -21,9 +21,16 @@ public class UserService {
         this.profileRepository = new ProfileRepository();
         this.userIdd="";
     }
-public String getId(){
+    public String getId(){
         return userIdd;
-}
+    }
+    public Task<Void> updatePass(String pass){
+        return repository.changePass(pass);
+    }
+
+    public void logout(){
+        repository.logout();
+    }
    public Task<AuthResult> Login(String email, String password) {
        TaskCompletionSource<AuthResult> taskCompletionSource = new TaskCompletionSource<>();
        repository.mailExistsCheck(email).addOnCompleteListener(task -> {

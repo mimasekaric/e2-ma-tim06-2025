@@ -2,9 +2,12 @@ package com.example.myhobitapplication.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.widget.Toolbar;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.navigation.NavController;
 import androidx.viewpager2.widget.ViewPager2;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
@@ -13,12 +16,15 @@ import androidx.work.WorkManager;
 import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.adapters.TaskPagerAdapter;
 import com.example.myhobitapplication.workers.TaskWorker;
+import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.concurrent.TimeUnit;
 
 public class TaskActivity extends AppCompatActivity {
+
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,6 +53,9 @@ public class TaskActivity extends AppCompatActivity {
                         tab.setText("Category");
                     }
                 }).attach();
+
+
+
     }
 
 
