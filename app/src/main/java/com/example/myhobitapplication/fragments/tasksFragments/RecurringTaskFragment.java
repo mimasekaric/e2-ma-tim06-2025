@@ -89,6 +89,37 @@ public class RecurringTaskFragment extends Fragment {
         recurringTaskBinding.rtDateEnd.setMinDate(danasUMilisekundama);
 
 
+
+        taskViewModel.getDifficultyXp().observe(getViewLifecycleOwner(), difficultyValue -> {
+            if (difficultyValue != null) {
+
+                for (int i = 0; i < recurringTaskBinding.rgDifficultyOptions.getChildCount(); i++) {
+                    View radioButton = recurringTaskBinding.rgDifficultyOptions.getChildAt(i);
+
+                    if (radioButton.getTag() != null && radioButton.getTag().toString().equals(String.valueOf(difficultyValue))) {
+
+                        ((android.widget.RadioButton) radioButton).setChecked(true);
+                        break;
+                    }
+                }
+            }
+        });
+
+
+        taskViewModel.getImportanceXp().observe(getViewLifecycleOwner(), importanceValue -> {
+            if (importanceValue != null) {
+                for (int i = 0; i < recurringTaskBinding.rgImportanceOptions.getChildCount(); i++) {
+                    View radioButton = recurringTaskBinding.rgImportanceOptions.getChildAt(i);
+                    if (radioButton.getTag() != null && radioButton.getTag().toString().equals(String.valueOf(importanceValue))) {
+                        ((android.widget.RadioButton) radioButton).setChecked(true);
+                        break;
+                    }
+                }
+            }
+        });
+
+
+
         taskViewModel.isFormValid().observe(getViewLifecycleOwner(), isValid -> {
             if (isValid != null) {
                 recurringTaskBinding.btnRtask.setEnabled(isValid);

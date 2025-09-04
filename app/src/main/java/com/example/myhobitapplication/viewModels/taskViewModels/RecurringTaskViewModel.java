@@ -19,18 +19,18 @@ public class RecurringTaskViewModel extends ViewModel {
     private final TaskService taskService;
     private final MutableLiveData<String> title = new MutableLiveData<>();
     private final MutableLiveData<String> description = new MutableLiveData<>();
-    private final MutableLiveData<Integer> difficultyXp = new MutableLiveData<>(0);
+    private final MutableLiveData<Integer> difficultyXp = new MutableLiveData<>(1);
 
-    private final MutableLiveData<Integer> importanceXp = new MutableLiveData<>(0);
+    private final MutableLiveData<Integer> importanceXp = new MutableLiveData<>(1);
     private final MutableLiveData<LocalTime> executionTime = new MutableLiveData<>(LocalTime.now());
 
-    private final MutableLiveData<LocalDate> startDate = new MutableLiveData<LocalDate>();
-    private final MutableLiveData<LocalDate> endDate = new MutableLiveData<LocalDate>();
+    private final MutableLiveData<LocalDate> startDate = new MutableLiveData<LocalDate>(LocalDate.now());
+    private final MutableLiveData<LocalDate> endDate = new MutableLiveData<LocalDate>(LocalDate.now());
 
     private final MutableLiveData<Integer> recurrenceInterval = new MutableLiveData<>(0);
     private final MutableLiveData<RecurrenceUnit> recurrenceUnit = new MutableLiveData<>(RecurrenceUnit.DAY);
 
-    private final MutableLiveData<Category> category = new MutableLiveData<>();
+    private final MutableLiveData<Category> category = new MutableLiveData<>(null);
 
     public LiveData<String> getTitle() { return title; }
     public LiveData<String> getDescription() { return description; }
@@ -67,6 +67,8 @@ public class RecurringTaskViewModel extends ViewModel {
     public LiveData<String> getSubmissionError() { return _submissionError; }
     private final MutableLiveData<Boolean> _saveSuccessEvent = new MutableLiveData<>();
     public LiveData<Boolean> getSaveSuccessEvent() { return _saveSuccessEvent; }
+    private final MutableLiveData<String> _categoryError = new MutableLiveData<>(null);
+    public LiveData<String> getCategoryError() { return _categoryError; }
 
 
     public RecurringTaskViewModel(TaskService taskService){
@@ -124,20 +126,19 @@ public class RecurringTaskViewModel extends ViewModel {
             _titleError.setValue(null);
         }
 
-//        // Pravilo 2: Kategorija mora biti selektovana
-//        boolean isCategoryValid = currentCategory != null;
-//        if (!isCategoryValid) {
-//            _categoryError.setValue("Morate izabrati kategoriju."); // Možeš prikazati ovo u Toast-u
-//        } else {
-//            _categoryError.setValue(null);
-//        }
+        boolean isCategoryValid = currentCategory != null;
+        if (!isCategoryValid) {
+            _categoryError.setValue("Category is required.");
+        } else {
+            _categoryError.setValue(null);
+        }
 
         boolean isDifficultyValid = currentDifficulty != null;
 
         boolean isImportanceValid = currentImportance != null;
 
         boolean areDatesValid = startDate.getValue() != null && endDate.getValue() != null && !endDate.getValue().isBefore(startDate.getValue());
-        _isFormValid.setValue(isTitleValid && areDatesValid);
+        _isFormValid.setValue(isTitleValid && areDatesValid && isCategoryValid);
     }
 
 }
