@@ -11,24 +11,41 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyHobitApplication">
+<!--        <activity-->
+<!--            android:name=".activities.HomeFirstActivity"-->
+<!--            android:exported="false" />-->
+        <activity
+            android:name=".activities.HomeActivity"
+            android:exported="false" />
+<!--        <activity-->
+<!--            android:name=".activities.ProfileActivity"-->
+<!--            android:exported="false" />-->
+        <!--
+   <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="myhobbitapplication"
+                    android:host="profil" />
+            </intent-filter>
+        </activity>
+        -->
         <activity
             android:name=".activities.LoginActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-        android:exported="true">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-    </activity>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".activities.RegistrationActivity"
-            android:exported="false"
-            />
-
+            android:exported="false" />
         <activity
             android:name=".activities.TaskActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
         <activity android:name=".activities.TaskDetailActivity" />
         <activity android:name=".activities.TaskEditActivity" />
         <activity android:name=".activities.CategoryEditActivity" />

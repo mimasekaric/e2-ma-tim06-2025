@@ -9,4 +9,6 @@
     <string name="attack_button">ATTACK</string>
     <string name="create_new_category">Create new category</string>
     <string name="my_categories">My Categories</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 </resources>

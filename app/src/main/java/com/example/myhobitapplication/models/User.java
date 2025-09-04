@@ -13,21 +13,21 @@ public class User {
     public Date registrationDate;
 
     public User(String id, String email, String username, String password, String avatarName,Date registrationDate) {
-        id= id;
-        email = email;
-        username = username;
-        password = password;
-        avatarName = avatarName;
-        registrationDate = registrationDate;
+        this.id= id;
+        this.email = email;
+        this.username = username;
+        this.password = password;
+        this.avatarName = avatarName;
+        this.registrationDate = registrationDate;
         isRegistered = false;
     }
 
     public User( String email, String username, String password, String avatarName, Date registrationDate) {
-        email = email;
-        username = username;
-        password = password;
-        avatarName = avatarName;
-        registrationDate = registrationDate;
+        this.email = email;
+        this.username = username;
+        this.password = password;
+        this.avatarName = avatarName;
+        this.registrationDate = registrationDate;
         isRegistered = false;
     }
 
@@ -39,7 +39,7 @@ public class User {
     }
 
     public void setRegistered(Boolean registered) {
-        isRegistered = registered;
+        this.isRegistered = registered;
     }
 
     public Date getRegistrationDate() {
@@ -67,10 +67,10 @@ public class User {
     }
 
     public void setpassword(String password) {
-        password = password;
+        this.password = password;
     }
 
     public void setemail(String email) {
-        email = email;
+        this.email = email;
     }
 }
