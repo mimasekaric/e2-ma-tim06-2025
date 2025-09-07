@@ -34,8 +34,9 @@ public class RecurringTaskDTO {
 
     private LocalDate FinishedDate;
     private LocalDate CreationDate;
+    private String userUid;
 
-    public RecurringTaskDTO(Integer id, String name, String description, Integer difficulty, Integer importance, String categoryColour, LocalTime executionTime, int recurrenceInterval, RecurrenceUnit recurrenceUnit, LocalDate startDate, LocalDate endDate, RecurringTaskStatus status, Integer firstRecurringTaskId, LocalDate finishedDate, LocalDate creationDate) {
+    public RecurringTaskDTO(Integer id, String name, String description, Integer difficulty, Integer importance, String categoryColour, LocalTime executionTime, int recurrenceInterval, RecurrenceUnit recurrenceUnit, LocalDate startDate, LocalDate endDate, RecurringTaskStatus status, Integer firstRecurringTaskId, LocalDate finishedDate, LocalDate creationDate, String userUid) {
         Id = id;
         Name = name;
         Description = description;
@@ -51,28 +52,30 @@ public class RecurringTaskDTO {
         FirstRecurringTaskId = firstRecurringTaskId;
         FinishedDate = finishedDate;
         CreationDate = creationDate;
+        this.userUid = userUid;
     }
 
 
     public RecurringTaskDTO(RecurringTask taskModel) {
-                        Id = taskModel.getId();
-                        Name =  taskModel.getName();
-                        Description = taskModel.getDescription();
-                         Difficulty =  taskModel.getDifficulty();
-                        Importance =  taskModel.getImportance();
-                        CategoryColour =  taskModel.getCategoryColour();
-                        this.executionTime =  taskModel.getExecutionTime();
-                        this.recurrenceInterval =  taskModel.getRecurrenceInterval();
-                         this.recurrenceUnit =  taskModel.getRecurrenceUnit();
-                          this.startDate =   taskModel.getStartDate();
-                        this.endDate =  taskModel.getEndDate();
-                            this.status =  taskModel.getStatus();
-                            FirstRecurringTaskId = taskModel.getFirstRecurringTaskId();
-                            FinishedDate = taskModel.getFinishedDate();
-                            CreationDate = taskModel.getCreationDate();
+            Id = taskModel.getId();
+            Name =  taskModel.getName();
+            Description = taskModel.getDescription();
+            Difficulty =  taskModel.getDifficulty();
+            Importance =  taskModel.getImportance();
+            CategoryColour =  taskModel.getCategoryColour();
+            this.executionTime =  taskModel.getExecutionTime();
+            this.recurrenceInterval =  taskModel.getRecurrenceInterval();
+            this.recurrenceUnit =  taskModel.getRecurrenceUnit();
+            this.startDate =   taskModel.getStartDate();
+            this.endDate =  taskModel.getEndDate();
+            this.status =  taskModel.getStatus();
+            FirstRecurringTaskId = taskModel.getFirstRecurringTaskId();
+            FinishedDate = taskModel.getFinishedDate();
+            CreationDate = taskModel.getCreationDate();
+            this.userUid = taskModel.getUserUid();
 
 
-                            //Boze pomozi na sta ovo lici sori ne znam da kucam
+
     }
 
     public Integer getId() {
@@ -193,5 +196,13 @@ public class RecurringTaskDTO {
 
     public void setCreationDate(LocalDate creationDate) {
         CreationDate = creationDate;
+    }
+
+    public String getUserUid() {
+        return userUid;
+    }
+
+    public void setUserUid(String userUid) {
+        this.userUid = userUid;
     }
 }

@@ -5,13 +5,12 @@ import android.util.Log;
 import com.example.myhobitapplication.models.Profile;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,8 +57,31 @@ public class ProfileRepository {
            DocumentSnapshot document = queryDocumentSnapshots.getDocuments().get(0);
            document.getReference().delete();
        }).addOnFailureListener(e->{new Exception("Failed to delete profile");});
+    }
 
-       }
+    public Task<Void> incrementUserProfileField(String uid, String fieldName, long newValue) {
+
+        TaskCompletionSource<Void> tcs = new TaskCompletionSource<>();
+
+        profileCollection.whereEqualTo("userUid", uid).limit(1).get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (queryDocumentSnapshots.isEmpty()) {
+                        tcs.setException(new Exception("Profile not found for UID: ".concat(uid)));
+                    } else {
+                        DocumentSnapshot document = queryDocumentSnapshots.getDocuments().get(0);
+                        document.getReference().update(fieldName, FieldValue.increment(newValue))
+                                .addOnSuccessListener(aVoid -> tcs.setResult(null))
+                                .addOnFailureListener(tcs::setException);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("FirestoreError", "Error with searching for profile with  UID: " + uid, e);
+                    tcs.setException(e);
+                });
+
+        return tcs.getTask();
+
+    }
 
 
 }

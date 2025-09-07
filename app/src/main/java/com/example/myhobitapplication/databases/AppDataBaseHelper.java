@@ -55,6 +55,7 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
     public static final String TABLE_ONE_TIME_TASKS = "one_time_tasks";
 
     public static final String COLUMN_ONE_TIME_TASK_ID = "id";
+    public static final String COLUMN_IS_AWARDED = "is_awarded";
 
 
 
@@ -87,7 +88,9 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
                 + COLUMN_FIRST_REC_TASK_ID + " TEXT,"
                 + COLUMN_CREATION_DATE + " TEXT,"
                 + COLUMN_FINISHED_DATE + " TEXT,"
-                + COLUMN_END_DATE + " TEXT" + ")";
+                + COLUMN_USER_ID + " TEXT,"
+                + COLUMN_END_DATE + " TEXT,"
+                + COLUMN_IS_AWARDED + " TEXT" + ")";
         db.execSQL(CREATE_RECURRING_TASKS_TABLE);
 
         String CREATE_ONE_TIME_TASK_TABLE = "CREATE TABLE " + TABLE_ONE_TIME_TASKS + "("
@@ -101,7 +104,9 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
                 + COLUMN_STATUS+ " TEXT,"
                 + COLUMN_CREATION_DATE + " TEXT,"
                 + COLUMN_START_DATE + " TEXT,"
-                + COLUMN_FINISHED_DATE + " TEXT" + ")";
+                + COLUMN_USER_ID + " TEXT,"
+                + COLUMN_FINISHED_DATE + " TEXT,"
+                + COLUMN_IS_AWARDED + " TEXT" + ")";
         db.execSQL(CREATE_ONE_TIME_TASK_TABLE);
 
         String CREATE_BOSS_TABLE = "CREATE TABLE " + TABLE_BOSSES + "("

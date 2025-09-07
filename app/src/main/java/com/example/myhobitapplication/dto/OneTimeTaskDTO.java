@@ -32,11 +32,15 @@ public class OneTimeTaskDTO {
     private LocalDate FinishedDate;
     private LocalDate CreationDate;
 
+    private String userUid;
+
+    private boolean isAwarded = false;
+
 
 
     public OneTimeTaskDTO() {
     }
-    public OneTimeTaskDTO(Integer id, String name, String description, Integer difficulty, Integer importance, String categoryColour, LocalTime executionTime, LocalDate startDate, OneTimeTaskStatus status, LocalDate finishedDate, LocalDate creationDate) {
+    public OneTimeTaskDTO(Integer id, String name, String description, Integer difficulty, Integer importance, String categoryColour, LocalTime executionTime, LocalDate startDate, OneTimeTaskStatus status, LocalDate finishedDate, LocalDate creationDate, String userUid) {
         Id = id;
         Name = name;
         Description = description;
@@ -48,9 +52,10 @@ public class OneTimeTaskDTO {
         this.status = status;
         FinishedDate = finishedDate;
         CreationDate = creationDate;
+        this.userUid = userUid;
     }
 
-    public OneTimeTaskDTO(String name, String description, Integer difficulty, String categoryColour, Integer importance, LocalTime executionTime, LocalDate startDate, OneTimeTaskStatus status, LocalDate finishedDate, LocalDate creationDate) {
+    public OneTimeTaskDTO(String name, String description, Integer difficulty, String categoryColour, Integer importance, LocalTime executionTime, LocalDate startDate, OneTimeTaskStatus status, LocalDate finishedDate, LocalDate creationDate, String userUid) {
         Name = name;
         Description = description;
         Difficulty = difficulty;
@@ -61,6 +66,7 @@ public class OneTimeTaskDTO {
         this.status = status;
         FinishedDate = finishedDate;
         CreationDate = creationDate;
+        this.userUid = userUid;
     }
 
     public OneTimeTaskDTO(OneTimeTask taskModel) {
@@ -75,6 +81,7 @@ public class OneTimeTaskDTO {
         this.status = taskModel.getStatus();
         FinishedDate = taskModel.getFinishedDate();
         CreationDate = taskModel.getCreationDate();
+        this.userUid = taskModel.getUserUid();
     }
 
 
@@ -164,5 +171,21 @@ public class OneTimeTaskDTO {
 
     public void setCreationDate(LocalDate creationDate) {
         CreationDate = creationDate;
+    }
+
+    public String getUserUid() {
+        return userUid;
+    }
+
+    public void setUserUid(String userUid) {
+        this.userUid = userUid;
+    }
+
+    public boolean isAwarded() {
+        return isAwarded;
+    }
+
+    public void setAwarded(boolean awarded) {
+        isAwarded = awarded;
     }
 }

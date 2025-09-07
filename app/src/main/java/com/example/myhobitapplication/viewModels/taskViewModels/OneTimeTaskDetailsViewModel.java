@@ -63,7 +63,7 @@ public class OneTimeTaskDetailsViewModel extends ViewModel {
             currentTaskDto.setStatus(OneTimeTaskStatus.COMPLETED);
             currentTaskDto.setFinishedDate(LocalDate.now());
 
-            taskService.editOneTimeTask(currentTaskDto);
+            taskService.markOneTimeTaskAsDone(taskDetails.getValue().getId(), taskDetails.getValue().getUserUid());
 
             loadTaskDetails(currentTaskDto.getId());
 

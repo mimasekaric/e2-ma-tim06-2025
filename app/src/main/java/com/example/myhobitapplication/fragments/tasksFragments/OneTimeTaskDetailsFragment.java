@@ -23,6 +23,7 @@ import com.example.myhobitapplication.databases.CategoryRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.FragmentOneTimeTaskDetailsBinding;
 import com.example.myhobitapplication.services.CategoryService;
+import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.TaskService;
 import com.example.myhobitapplication.viewModels.taskViewModels.OneTimeTaskDetailsViewModel;
 
@@ -67,7 +68,8 @@ public class OneTimeTaskDetailsFragment extends Fragment {
 
         taskRepository = new TaskRepository(getContext());
         categoryRepository = new CategoryRepository(getContext());
-        taskService = new TaskService(taskRepository);
+        ProfileService profileService = new ProfileService();
+        taskService = new TaskService(taskRepository, profileService);
 
         taskDetailsViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @NonNull

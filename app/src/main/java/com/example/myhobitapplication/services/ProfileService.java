@@ -22,4 +22,8 @@ public class ProfileService {
     public Task<DocumentReference> getUserData(String uid){
         return userRepository.getUserInfo(uid);
     }
+
+    public Task<Void> updateUserXp(String userUid, String fieldName, Integer xp){
+        return profileRepository.incrementUserProfileField(userUid, fieldName, xp);
+    }
 }

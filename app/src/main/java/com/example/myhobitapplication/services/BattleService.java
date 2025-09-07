@@ -28,10 +28,10 @@ public class BattleService {
 
     }
 
-    public Double calculateChanceForAttack(LocalDate previousLevelDate, LocalDate currentLevelDate){
+    public Double calculateChanceForAttack(LocalDate previousLevelDate, LocalDate currentLevelDate, String userUid){
 
-        Integer completedTasks = taskService.countFinishedTasksForDateRange(previousLevelDate,currentLevelDate);
-        Integer createdTasks = taskService.countCreatedTasksForDateRange(previousLevelDate,currentLevelDate);
+        Integer completedTasks = taskService.countFinishedTasksForDateRange(previousLevelDate,currentLevelDate, userUid);
+        Integer createdTasks = taskService.countCreatedTasksForDateRange(previousLevelDate,currentLevelDate, userUid);
 
         if (createdTasks == null || createdTasks == 0) {
             return 0.0;

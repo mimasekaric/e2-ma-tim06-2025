@@ -1,18 +1,23 @@
 package com.example.myhobitapplication.services;
 
-import com.example.myhobitapplication.R;
-import com.example.myhobitapplication.databases.DataBaseRecurringTaskHelper;
+import android.util.Log;
+
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.dto.OneTimeTaskDTO;
 import com.example.myhobitapplication.dto.RecurringTaskDTO;
+import com.example.myhobitapplication.enums.OneTimeTaskStatus;
 import com.example.myhobitapplication.enums.RecurrenceUnit;
 import com.example.myhobitapplication.enums.RecurringTaskStatus;
+import com.example.myhobitapplication.enums.TaskQuote;
 import com.example.myhobitapplication.exceptions.ValidationException;
+import com.example.myhobitapplication.models.Category;
 import com.example.myhobitapplication.models.OneTimeTask;
 import com.example.myhobitapplication.models.RecurringTask;
 import com.example.myhobitapplication.models.Task;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,21 +26,20 @@ import java.util.Map;
 public class TaskService {
 
     private final TaskRepository repository;
+    private final ProfileService profileService;
     private RecurringTask task;
     private final Map<LocalDate, List<RecurringTask>> scheduledTasks;
-    public TaskService(TaskRepository repository){
+    public TaskService(TaskRepository repository, ProfileService profileService){
         this.repository = repository;
+        this.profileService = profileService;
         scheduledTasks = new HashMap<>();
 
     }
-    public long saveRecurringTask(RecurringTask task){
-       return repository.insertRecurringTask(task);
-    }
-    public List<RecurringTask> getRecurringTasks(){ return repository.getAllRecurringTasks();}
+
 
     public void createRecurringTaskSeries(RecurringTask taskTemplate) throws ValidationException{
 
-        validateRequeeingTaskTemplate(taskTemplate);
+        validateRecurringTask(taskTemplate);
 
         taskTemplate.setStatus(RecurringTaskStatus.ACTIVE);
 
@@ -70,7 +74,8 @@ public class TaskService {
                     RecurringTaskStatus.ACTIVE,
                     (int) firstTaskId,
                     taskTemplate.getFinishedDate(),
-                    taskTemplate.getCreationDate()
+                    taskTemplate.getCreationDate(),
+                    taskTemplate.getUserUid()
             );
 
             remainingInstances.add(instance);
@@ -91,10 +96,10 @@ public class TaskService {
 
 
 
-    public Map<LocalDate, List<RecurringTask>> getScheduledTasks() {
+    public Map<LocalDate, List<RecurringTask>> getScheduledTasks(String useruid) {
 
         Map<LocalDate, List<RecurringTask>> newScheduledTasks = new HashMap<>();
-        List<RecurringTask> allTasks = repository.getAllRecurringTasks();
+        List<RecurringTask> allTasks = repository.getAllRecurringTasks(useruid);
 
         for (RecurringTask task : allTasks) {
             LocalDate currentDate = task.getStartDate();
@@ -126,20 +131,20 @@ public class TaskService {
     }
 
 
-    public List<RecurringTask> getAllRecurringTasks() {
-        return repository.getAllRecurringTasks();
+    public List<RecurringTask> getAllRecurringTasks(String userUid) {
+        return repository.getAllRecurringTasks(userUid);
     }
 
-    public List<Task> getAllTasks(){
+    public List<Task> getAllTasks(String userUid){
 
 
         List<Task> taskList = new ArrayList<>();
 
 
-        List<RecurringTask> recurringTasks = getAllRecurringTasks();
+        List<RecurringTask> recurringTasks = getAllRecurringTasks(userUid);
         taskList.addAll(recurringTasks);
 
-        List<OneTimeTask> oneTimeTasks = getAllOneTimeTasks();
+        List<OneTimeTask> oneTimeTasks = getAllOneTimeTasks(userUid);
         taskList.addAll(oneTimeTasks);
 
         return taskList;
@@ -172,7 +177,8 @@ public class TaskService {
                 recurringTaskDTO.getStatus(),
                 recurringTaskDTO.getFirstRecurringTaskId(),
                 recurringTaskDTO.getFinishedDate(),
-                recurringTaskDTO.getCreationDate()
+                recurringTaskDTO.getCreationDate(),
+                recurringTaskDTO.getUserUid()
         );
 
         long editedRow = repository.updateRecurringTask(recurringTask);
@@ -199,7 +205,8 @@ public class TaskService {
                 recurringTaskDTO.getStatus(),
                 recurringTaskDTO.getFirstRecurringTaskId(),
                 recurringTaskDTO.getFinishedDate(),
-                recurringTaskDTO.getCreationDate()
+                recurringTaskDTO.getCreationDate(),
+                recurringTaskDTO.getUserUid()
         );
 
         if (recurringTask != null) {
@@ -221,18 +228,19 @@ public class TaskService {
 
     }
 
-    public int countCreatedTasksForDateRange(LocalDate previousLevelDate, LocalDate currentLevelDate){
+    public int countCreatedTasksForDateRange(LocalDate previousLevelDate, LocalDate currentLevelDate, String userUid){
 
-        return repository.countTasksByDateRange(previousLevelDate,currentLevelDate);
+        return repository.countTasksByDateRange(previousLevelDate,currentLevelDate, userUid);
     }
 
-    public int countFinishedTasksForDateRange(LocalDate previousLevelDate, LocalDate currentLevelDate){
+    public int countFinishedTasksForDateRange(LocalDate previousLevelDate, LocalDate currentLevelDate, String userUid){
 
-        return repository.countTasksByStatusInDateRange(RecurringTaskStatus.COMPLETED,previousLevelDate,currentLevelDate);
+        return repository.countTasksByStatusInDateRange(RecurringTaskStatus.COMPLETED,previousLevelDate,currentLevelDate, userUid);
     }
 
-    public void createOneTimeTask(OneTimeTaskDTO taskDTO){
+    public void createOneTimeTask(OneTimeTaskDTO taskDTO) throws ValidationException {
 
+        validateOneTimeTask(taskDTO);
         OneTimeTask oneTimeTask = new OneTimeTask(
 
                 taskDTO.getId(),
@@ -245,15 +253,16 @@ public class TaskService {
                 taskDTO.getStatus(),
                 taskDTO.getCreationDate(),
                 taskDTO.getFinishedDate(),
-                taskDTO.getStartDate()
+                taskDTO.getStartDate(),
+                taskDTO.getUserUid()
         );
 
          repository.insertOneTimeTask(oneTimeTask);
     }
 
 
-    public List<OneTimeTask> getAllOneTimeTasks() {
-        return repository.getAllOneTimeTasks();
+    public List<OneTimeTask> getAllOneTimeTasks(String userUid) {
+        return repository.getAllOneTimeTasks(userUid);
     }
 
     public void editOneTimeTask(OneTimeTaskDTO taskDTO){
@@ -271,7 +280,8 @@ public class TaskService {
                 taskDTO.getStatus(),
                 taskDTO.getCreationDate(),
                 taskDTO.getFinishedDate(),
-                taskDTO.getStartDate()
+                taskDTO.getStartDate(),
+                taskDTO.getUserUid()
         );
         repository.updateOneTimeTask(oneTimeTask);
     }
@@ -291,29 +301,15 @@ public class TaskService {
         return repository.deleteOneTimeTask(taskId);
     }
 
-    private void validateRequeeingTaskTemplate(RecurringTask taskTemplate) throws ValidationException {
+    private void validateRecurringTask(RecurringTask taskTemplate) throws ValidationException {
 
         if (taskTemplate.getName() == null || taskTemplate.getName().trim().isEmpty()) {
             throw new ValidationException("Task name is required.");
         }
 
-//        if (taskTemplate.getDifficulty() <= 0) {
-//            throw new ValidationException("Morate odabrati težinu zadatka.");
-//        }
-//        if (taskTemplate.getImportance() <= 0) {
-//            throw new ValidationException("Morate odabrati važnost zadatka.");
-//        }
-
-//        // Pravilo 3: Kategorija mora biti izabrana i mora postojati u bazi
-//        if (taskTemplate.getCategoryId() == null) {
-//            throw new ValidationException("Kategorija mora biti izabrana.");
-//        }
-//        // Provera da li kategorija sa tim ID-jem zaista postoji
-//        Category category = categoryRepository.getCategoryById(taskTemplate.getCategoryId());
-//        if (category == null) {
-//            throw new ValidationException("Izabrana kategorija nije validna.");
-//        }
-
+        if (taskTemplate.getCategoryColour() == null) {
+            throw new ValidationException("You must choose category.");
+        }
 
         if (taskTemplate.getStartDate() == null || taskTemplate.getEndDate() == null) {
             throw new ValidationException("Start date and End date are required.");
@@ -325,6 +321,216 @@ public class TaskService {
         if (taskTemplate.getRecurrenceInterval() < 1) {
             throw new ValidationException("Recurring interval must be positive number.");
         }
+
+        if(taskTemplate.getExecutionTime() == null){
+            throw new ValidationException("You must choose execution time!");
+        }
+
+        LocalDate danas = LocalDate.now();
+        LocalTime sada = LocalTime.now();
+
+        if (taskTemplate.getStartDate().isEqual(danas)) {
+
+            if (taskTemplate.getExecutionTime().isBefore(sada)) {
+
+                throw new ValidationException("You can not create task today for a time that has already passed!.");
+            }
+        }
     }
+
+    private void validateOneTimeTask(OneTimeTaskDTO taskTemplate) throws ValidationException {
+
+        if (taskTemplate.getName() == null || taskTemplate.getName().trim().isEmpty()) {
+            throw new ValidationException("Task name is required.");
+        }
+
+        if (taskTemplate.getCategoryColour() == null) {
+            throw new ValidationException("You must choose category.");
+        }
+
+        if(taskTemplate.getExecutionTime() == null){
+            throw new ValidationException("You must choose execution time!");
+        }
+
+        LocalDate danas = LocalDate.now();
+        LocalTime sada = LocalTime.now();
+
+        if (taskTemplate.getStartDate().isEqual(danas)) {
+
+            if (taskTemplate.getExecutionTime().isBefore(sada)) {
+
+                throw new ValidationException("You can not create task today for a time that has already passed!.");
+            }
+        }
+    }
+
+    public void markRecurringTaskAsDone(int taskId, String userId) {
+
+        RecurringTask task = repository.getTaskById(taskId);
+        if (task == null || task.getStatus() != RecurringTaskStatus.ACTIVE) {
+            return;
+        }
+
+        TaskQuote quote = task.getQuotaCategory();
+        if (quote == TaskQuote.NO_QUOTA) {
+
+            //int xpGained = task.getDifficulty() + task.getImportance();
+            int xpGained=task.getTotalXp();
+            task.setAwarded(true);
+            task.setStatus(RecurringTaskStatus.COMPLETED);
+            repository.updateRecurringTask(task);
+            profileService.updateUserXp(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
+                        Log.d("Firestore", "XP uspešno ažuriran!");
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("Firestore", "Greška pri ažuriranju XP-a", e);
+                    });
+            return;
+        }
+
+        LocalDate today = task.getStartDate();
+        LocalDate startDate = getStartDateForQuota(quote, today);
+        LocalDate endDate = getEndDateForQuota(quote, today);
+        int limit = getLimitForCategory(quote);
+
+        int completedCountRecurringTasks = repository.countCompletedRecurringTasksWithXpInCategory(quote, startDate, endDate, userId);
+        int completedCountOneTimeTasks = repository.countCompletedOneTimeTasksWithXpInCategory(quote, startDate, endDate, userId);
+        int completedCount = completedCountOneTimeTasks + completedCountRecurringTasks;
+
+        boolean shouldAwardXp = completedCount < limit;
+        int xpGained = 0;
+
+        if (shouldAwardXp) {
+            task.setAwarded(true);
+            xpGained = task.getDifficulty() + task.getImportance();
+            profileService.updateUserXp(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
+                        Log.d("Firestore", "XP uspešno ažuriran!");
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("Firestore", "Greška pri ažuriranju XP-a", e);
+                    });
+        }
+
+        task.setStatus(RecurringTaskStatus.COMPLETED);
+        repository.updateRecurringTask(task);
+    }
+
+    public void markOneTimeTaskAsDone(int taskId, String userId) {
+
+        OneTimeTask oneTimeTask = repository.getOneTimeTaskById(taskId);
+        if (oneTimeTask == null || oneTimeTask.getStatus() != OneTimeTaskStatus.ACTIVE) {
+            return;
+        }
+
+        TaskQuote quote = oneTimeTask.getQuotaCategory();
+        if (quote == TaskQuote.NO_QUOTA) {
+
+            //int xpGained = oneTimeTask.getDifficulty() + task.getImportance();
+            int xpGained=oneTimeTask.getTotalXp();
+            oneTimeTask.setAwarded(true);
+            task.setStatus(RecurringTaskStatus.COMPLETED);
+            repository.updateOneTimeTask(oneTimeTask);
+            profileService.updateUserXp(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
+                        Log.d("Firestore", "XP uspešno ažuriran!");
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("Firestore", "Greška pri ažuriranju XP-a", e);
+                    });
+            return;
+        }
+
+        LocalDate today = oneTimeTask.getStartDate();
+        LocalDate startDate = getStartDateForQuota(quote, today);
+        LocalDate endDate = getEndDateForQuota(quote, today);
+        int limit = getLimitForCategory(quote);
+
+        int completedCountRecurringTasks = repository.countCompletedRecurringTasksWithXpInCategory(quote, startDate, endDate, userId);
+        int completedCountOneTimeTasks = repository.countCompletedOneTimeTasksWithXpInCategory(quote, startDate, endDate, userId);
+        int completedCount = completedCountOneTimeTasks + completedCountRecurringTasks;
+
+        boolean shouldAwardXp = completedCount < limit;
+        int xpGained = 0;
+
+        if (shouldAwardXp) {
+            oneTimeTask.setAwarded(true);
+            xpGained = oneTimeTask.getDifficulty() + oneTimeTask.getImportance();
+            profileService.updateUserXp(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
+                        Log.d("Firestore", "XP uspešno ažuriran!");
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("Firestore", "Greška pri ažuriranju XP-a", e);
+                    });
+        }
+
+        oneTimeTask.setStatus(OneTimeTaskStatus.COMPLETED);
+        repository.updateOneTimeTask(oneTimeTask);
+    }
+
+    private int getLimitForCategory(TaskQuote quote) {
+
+        switch (quote) {
+            case EASY_NORMAL:
+            case EASY_IMPORTANT:
+
+                return 5;
+
+            case HARD_EXTREME:
+                return 2;
+
+            case EXTREMELY_HARD:
+                return 1;
+
+            case SPECIAL:
+                return 1;
+
+            case NO_QUOTA:
+            default:
+                return Integer.MAX_VALUE;
+        }
+    }
+
+    private LocalDate getStartDateForQuota(TaskQuote quote, LocalDate taskDate) {
+        if (quote == null) {
+            return taskDate;
+        }
+
+        switch (quote) {
+            case EXTREMELY_HARD:
+                return taskDate.with(java.time.temporal.TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY));
+
+            case SPECIAL:
+                return taskDate.withDayOfMonth(1);
+
+            case EASY_NORMAL:
+            case EASY_IMPORTANT:
+            case HARD_EXTREME:
+            case NO_QUOTA:
+            default:
+                return taskDate;
+        }
+    }
+
+    private LocalDate getEndDateForQuota(TaskQuote quote, LocalDate taskDate) {
+        if (quote == null) {
+            return taskDate;
+        }
+
+        switch (quote) {
+            case EXTREMELY_HARD:
+                return taskDate.with(java.time.temporal.TemporalAdjusters.nextOrSame(java.time.DayOfWeek.SUNDAY));
+
+            case SPECIAL:
+                return taskDate.withDayOfMonth(taskDate.lengthOfMonth());
+
+            case EASY_NORMAL:
+            case EASY_IMPORTANT:
+            case HARD_EXTREME:
+            case NO_QUOTA:
+            default:
+                return taskDate;
+        }
+    }
+
+
 
 }

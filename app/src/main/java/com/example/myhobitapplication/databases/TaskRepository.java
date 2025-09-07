@@ -9,10 +9,12 @@ import android.database.sqlite.SQLiteDatabase;
 import com.example.myhobitapplication.enums.OneTimeTaskStatus;
 import com.example.myhobitapplication.enums.RecurrenceUnit;
 import com.example.myhobitapplication.enums.RecurringTaskStatus;
+import com.example.myhobitapplication.enums.TaskQuote;
 import com.example.myhobitapplication.models.OneTimeTask;
 import com.example.myhobitapplication.models.RecurringTask;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +57,8 @@ public class TaskRepository {
         values.put(AppDataBaseHelper.COLUMN_CREATION_DATE, recurringTask.getCreationDate().toString());
         values.put(AppDataBaseHelper.COLUMN_FINISHED_DATE, recurringTask.getFinishedDate().toString());
         values.put(AppDataBaseHelper.COLUMN_FIRST_REC_TASK_ID, recurringTask.getFirstRecurringTaskId().toString());
+        values.put(AppDataBaseHelper.COLUMN_USER_ID, recurringTask.getUserUid());
+        values.put(AppDataBaseHelper.COLUMN_IS_AWARDED, recurringTask.isAwarded());
 
         long newRowId = database.insert(AppDataBaseHelper.TABLE_RECURRING_TASKS, null, values);
         database.close();
@@ -80,59 +84,146 @@ public class TaskRepository {
         values.put(AppDataBaseHelper.COLUMN_CREATION_DATE, recurringTask.getCreationDate().toString());
         values.put(AppDataBaseHelper.COLUMN_FINISHED_DATE, recurringTask.getFinishedDate().toString());
         values.put(AppDataBaseHelper.COLUMN_FIRST_REC_TASK_ID, recurringTask.getFirstRecurringTaskId().toString());
+        values.put(AppDataBaseHelper.COLUMN_USER_ID, recurringTask.getUserUid());
+        values.put(AppDataBaseHelper.COLUMN_IS_AWARDED, recurringTask.isAwarded());
 
         long newRowId = database.insert(AppDataBaseHelper.TABLE_RECURRING_TASKS, null, values);
         dbHelper.close();
         return newRowId;
     }
 
-    public List<RecurringTask> getAllRecurringTasks() {
-        List<RecurringTask> taskList = new ArrayList<>();
+//    public List<RecurringTask> getAllRecurringTasks(String userUid) {
+//        List<RecurringTask> taskList = new ArrayList<>();
+//
+//        String selectQuery = "SELECT * FROM " + AppDataBaseHelper.TABLE_RECURRING_TASKS;
+//
+//        SQLiteDatabase db = dbHelper.getWritableDatabase();
+//        Cursor cursor = db.rawQuery(selectQuery, null);
+//
+//        if (cursor.moveToFirst()) {
+//            do {
+//                RecurringTask task = new RecurringTask();
+//                task.setId(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_RECURRING_TASK_ID)));
+//                task.setName(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_TITLE)));
+//                task.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DESCRIPTION)));
+//                task.setDifficulty(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DIFFICULTY_XP)));
+//                task.setImportance(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IMPORTANCE_XP)));
+//                task.setCategoryColour(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CTG_ID)));
+//                task.setRecurrenceInterval(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_RECURRENCE_INTERVAL)));
+//                task.setFirstRecurringTaskId(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_FIRST_REC_TASK_ID)));
+//
+//                String status = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_STATUS));
+//                task.setStatus(RecurringTaskStatus.valueOf(status));
+//
+//                String recurrenceUnitString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_RECURRENCE_UNIT));
+//                task.setRecurrenceUnit(RecurrenceUnit.valueOf(recurrenceUnitString));
+//
+//                String executionTimeString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_EXECUTION_TIME));
+//                task.setExecutionTime(LocalTime.parse(executionTimeString));
+//
+//                String startDateString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_START_DATE));
+//                task.setStartDate(LocalDate.parse(startDateString));
+//
+//                String endDateString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_END_DATE));
+//                task.setEndDate(LocalDate.parse(endDateString));
+//
+//                String creationDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CREATION_DATE));
+//                task.setCreationDate(LocalDate.parse(creationDate));
+//
+//                String finishedDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_FINISHED_DATE));
+//                task.setFinishedDate(LocalDate.parse(finishedDate));
+//
+//                task.setUserUid(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_USER_ID)));
+//
+//                taskList.add(task);
+//            } while (cursor.moveToNext());
+//        }
+//
+//        cursor.close();
+//        db.close();
+//
+//        return taskList;
+//    }
 
-        String selectQuery = "SELECT * FROM " + AppDataBaseHelper.TABLE_RECURRING_TASKS;
-
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
-
-        if (cursor.moveToFirst()) {
-            do {
-                RecurringTask task = new RecurringTask();
-                task.setId(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_RECURRING_TASK_ID)));
-                task.setName(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_TITLE)));
-                task.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DESCRIPTION)));
-                task.setDifficulty(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DIFFICULTY_XP)));
-                task.setImportance(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IMPORTANCE_XP)));
-                task.setCategoryColour(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CTG_ID)));
-                task.setRecurrenceInterval(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_RECURRENCE_INTERVAL)));
-                task.setFirstRecurringTaskId(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_FIRST_REC_TASK_ID)));
-
-                String status = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_STATUS));
-                task.setStatus(RecurringTaskStatus.valueOf(status));
-
-                String recurrenceUnitString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_RECURRENCE_UNIT));
-                task.setRecurrenceUnit(RecurrenceUnit.valueOf(recurrenceUnitString));
-
-                String executionTimeString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_EXECUTION_TIME));
-                task.setExecutionTime(LocalTime.parse(executionTimeString));
-
-                String startDateString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_START_DATE));
-                task.setStartDate(LocalDate.parse(startDateString));
-
-                String endDateString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_END_DATE));
-                task.setEndDate(LocalDate.parse(endDateString));
-
-                String creationDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CREATION_DATE));
-                task.setCreationDate(LocalDate.parse(creationDate));
-
-                String finishedDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_FINISHED_DATE));
-                task.setFinishedDate(LocalDate.parse(finishedDate));
-
-                taskList.add(task);
-            } while (cursor.moveToNext());
+    public List<RecurringTask> getAllRecurringTasks(String userUid) {
+        if (userUid == null || userUid.trim().isEmpty()) {
+            return new ArrayList<>();
         }
 
-        cursor.close();
-        db.close();
+        List<RecurringTask> taskList = new ArrayList<>();
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+
+        try {
+            db = dbHelper.getReadableDatabase();
+
+
+            String selection = AppDataBaseHelper.COLUMN_USER_ID + " = ?";
+
+
+            String[] selectionArgs = { userUid };
+
+            cursor = db.query(
+                    AppDataBaseHelper.TABLE_RECURRING_TASKS,
+                    null,
+                    selection,
+                    selectionArgs,
+                    null,
+                    null,
+                    null
+            );
+
+
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    RecurringTask task = new RecurringTask();
+                    task.setId(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_RECURRING_TASK_ID)));
+                    task.setName(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_TITLE)));
+                    task.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DESCRIPTION)));
+                    task.setDifficulty(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DIFFICULTY_XP)));
+                    task.setImportance(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IMPORTANCE_XP)));
+                    task.setCategoryColour(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CTG_ID)));
+                    task.setRecurrenceInterval(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_RECURRENCE_INTERVAL)));
+                    task.setFirstRecurringTaskId(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_FIRST_REC_TASK_ID)));
+
+                    String status = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_STATUS));
+                    task.setStatus(RecurringTaskStatus.valueOf(status));
+
+                    String recurrenceUnitString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_RECURRENCE_UNIT));
+                    task.setRecurrenceUnit(RecurrenceUnit.valueOf(recurrenceUnitString));
+
+                    String executionTimeString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_EXECUTION_TIME));
+                    task.setExecutionTime(LocalTime.parse(executionTimeString));
+
+                    String startDateString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_START_DATE));
+                    task.setStartDate(LocalDate.parse(startDateString));
+
+                    String endDateString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_END_DATE));
+                    task.setEndDate(LocalDate.parse(endDateString));
+
+                    String creationDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CREATION_DATE));
+                    task.setCreationDate(LocalDate.parse(creationDate));
+
+                    String finishedDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_FINISHED_DATE));
+                    task.setFinishedDate(LocalDate.parse(finishedDate));
+
+                    task.setUserUid(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_USER_ID)));
+
+                    String isAwarded = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IS_AWARDED));
+                    task.setAwarded(Boolean.parseBoolean(isAwarded));
+
+                    taskList.add(task);
+
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db != null && db.isOpen()) {
+                db.close();
+            }
+        }
 
         return taskList;
     }
@@ -183,6 +274,11 @@ public class TaskRepository {
             String status = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_STATUS));
             task.setStatus(RecurringTaskStatus.valueOf(status));
 
+            task.setUserUid(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_USER_ID)));
+
+            String isAwarded = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IS_AWARDED));
+            task.setAwarded(Boolean.parseBoolean(isAwarded));
+
             cursor.close();
         }
         db.close();
@@ -209,6 +305,8 @@ public class TaskRepository {
         values.put(AppDataBaseHelper.COLUMN_CREATION_DATE, task.getCreationDate().toString());
         values.put(AppDataBaseHelper.COLUMN_FINISHED_DATE, task.getFinishedDate().toString());
         values.put(AppDataBaseHelper.COLUMN_FIRST_REC_TASK_ID, task.getFirstRecurringTaskId().toString());
+        values.put(AppDataBaseHelper.COLUMN_USER_ID, task.getUserUid());
+        values.put(AppDataBaseHelper.COLUMN_IS_AWARDED, task.isAwarded());
 
         String selection = AppDataBaseHelper.COLUMN_RECURRING_TASK_ID + " = ?";
         String[] selectionArgs = { String.valueOf(task.getId()) };
@@ -245,6 +343,8 @@ public class TaskRepository {
                 values.put(AppDataBaseHelper.COLUMN_CREATION_DATE, recurringTask.getCreationDate().toString());
                 values.put(AppDataBaseHelper.COLUMN_FINISHED_DATE, recurringTask.getFinishedDate().toString());
                 values.put(AppDataBaseHelper.COLUMN_FIRST_REC_TASK_ID, recurringTask.getFirstRecurringTaskId().toString());
+                values.put(AppDataBaseHelper.COLUMN_USER_ID, recurringTask.getUserUid());
+                values.put(AppDataBaseHelper.COLUMN_IS_AWARDED, recurringTask.isAwarded());
                 database.insert(AppDataBaseHelper.TABLE_RECURRING_TASKS, null, values);
             }
             database.setTransactionSuccessful();
@@ -262,18 +362,49 @@ public class TaskRepository {
         database.close();
     }
 
+//    public int updateOutdatedTasksToNotDone() {
+//        database = dbHelper.getWritableDatabase();
+//
+//        LocalDate threeDaysAgo = LocalDate.now().minusDays(3);
+//        String threeDaysAgoString = threeDaysAgo.toString();
+//
+//        ContentValues values = new ContentValues();
+//        values.put(AppDataBaseHelper.COLUMN_STATUS, RecurringTaskStatus.INCOMPLETE.name());
+//
+//        String selection = AppDataBaseHelper.COLUMN_STATUS + " = ? AND " + AppDataBaseHelper.COLUMN_START_DATE + " < ?";
+//
+//        String[] selectionArgs = { RecurringTaskStatus.ACTIVE.name(), threeDaysAgoString };
+//
+//        int count = database.update(
+//                AppDataBaseHelper.TABLE_RECURRING_TASKS,
+//                values,
+//                selection,
+//                selectionArgs);
+//
+//        database.close();
+//
+//        return count;
+//    }
+
+
     public int updateOutdatedTasksToNotDone() {
         database = dbHelper.getWritableDatabase();
 
-        LocalDate threeDaysAgo = LocalDate.now().minusDays(3);
-        String threeDaysAgoString = threeDaysAgo.toString();
+        LocalDateTime preTriDana = LocalDateTime.now().minusDays(3);
+        String granicaDatumString = preTriDana.toLocalDate().toString();
+        String granicaVremeString = preTriDana.toLocalTime().toString();
 
         ContentValues values = new ContentValues();
         values.put(AppDataBaseHelper.COLUMN_STATUS, RecurringTaskStatus.INCOMPLETE.name());
 
-        String selection = AppDataBaseHelper.COLUMN_STATUS + " = ? AND " + AppDataBaseHelper.COLUMN_START_DATE + " < ?";
+        String selection = AppDataBaseHelper.COLUMN_STATUS + " = ? AND " +
+                "datetime(" + AppDataBaseHelper.COLUMN_START_DATE + ", " + AppDataBaseHelper.COLUMN_EXECUTION_TIME + ")" +
+                " < datetime(?)";
 
-        String[] selectionArgs = { RecurringTaskStatus.ACTIVE.name(), threeDaysAgoString };
+        String[] selectionArgs = {
+                RecurringTaskStatus.ACTIVE.name(),
+                preTriDana.toString()
+        };
 
         int count = database.update(
                 AppDataBaseHelper.TABLE_RECURRING_TASKS,
@@ -282,7 +413,6 @@ public class TaskRepository {
                 selectionArgs);
 
         database.close();
-
         return count;
     }
 
@@ -319,16 +449,18 @@ public class TaskRepository {
         return deletedRows;
     }
 
-    public int countTasksByStatusInDateRange(RecurringTaskStatus status, LocalDate startDate, LocalDate endDate) {
+    public int countTasksByStatusInDateRange(RecurringTaskStatus status, LocalDate startDate, LocalDate endDate, String userUid) {
 
         int count = 0;
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        String selection = AppDataBaseHelper.COLUMN_STATUS + " = ? AND " +
-                AppDataBaseHelper.COLUMN_FINISHED_DATE + " BETWEEN ? AND ?";
+        String selection = AppDataBaseHelper.COLUMN_USER_ID + " = ? AND " +
+                AppDataBaseHelper.COLUMN_STATUS + " = ? AND " +
+                AppDataBaseHelper.COLUMN_START_DATE + " BETWEEN ? AND ?";
 
 
         String[] selectionArgs = {
+                userUid,
                 status.name(),
                 startDate.toString(),
                 endDate.toString()
@@ -350,16 +482,18 @@ public class TaskRepository {
         return count;
     }
 
-    public int countTasksByDateRange(LocalDate startDate, LocalDate endDate) {
+    public int countTasksByDateRange(LocalDate startDate, LocalDate endDate, String userUid) {
 
         int count = 0;
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        String selection = AppDataBaseHelper.COLUMN_CREATION_DATE + " BETWEEN ? AND ?";
+        String selection = AppDataBaseHelper.COLUMN_USER_ID + " = ? AND " +
+                AppDataBaseHelper.COLUMN_CREATION_DATE + " BETWEEN ? AND ?";
 
 
 
         String[] selectionArgs = {
+                userUid,
                 startDate.toString(),
                 endDate.toString()
         };
@@ -394,6 +528,9 @@ public class TaskRepository {
         values.put(AppDataBaseHelper.COLUMN_CREATION_DATE, oneTimeTask.getCreationDate().toString());
         values.put(AppDataBaseHelper.COLUMN_FINISHED_DATE, oneTimeTask.getFinishedDate().toString());
         values.put(AppDataBaseHelper.COLUMN_START_DATE, oneTimeTask.getStartDate().toString());
+        values.put(AppDataBaseHelper.COLUMN_USER_ID, oneTimeTask.getUserUid());
+        values.put(AppDataBaseHelper.COLUMN_IS_AWARDED, oneTimeTask.isAwarded());
+
 
         long newRowId = database.insert(AppDataBaseHelper.TABLE_ONE_TIME_TASKS, null, values);
         database.close();
@@ -415,6 +552,8 @@ public class TaskRepository {
         values.put(AppDataBaseHelper.COLUMN_CREATION_DATE, task.getCreationDate().toString());
         values.put(AppDataBaseHelper.COLUMN_FINISHED_DATE, task.getFinishedDate().toString());
         values.put(AppDataBaseHelper.COLUMN_START_DATE, task.getStartDate().toString());
+        values.put(AppDataBaseHelper.COLUMN_USER_ID, task.getUserUid());
+        values.put(AppDataBaseHelper.COLUMN_IS_AWARDED, task.isAwarded());
 
         String selection = AppDataBaseHelper.COLUMN_ONE_TIME_TASK_ID + " = ?";
         String[] selectionArgs = { String.valueOf(task.getId()) };
@@ -430,49 +569,121 @@ public class TaskRepository {
     }
 
 
-    public List<OneTimeTask> getAllOneTimeTasks() {
+    public List<OneTimeTask> getAllOneTimeTasks(String userUid) {
         List<OneTimeTask> taskList = new ArrayList<>();
+        Cursor cursor = null;
 
-        String selectQuery = "SELECT * FROM " + AppDataBaseHelper.TABLE_ONE_TIME_TASKS;
-
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
-
-        if (cursor.moveToFirst()) {
-            do {
-                OneTimeTask task = new OneTimeTask();
-                task.setId(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_ONE_TIME_TASK_ID)));
-                task.setName(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_TITLE)));
-                task.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DESCRIPTION)));
-                task.setDifficulty(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DIFFICULTY_XP)));
-                task.setImportance(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IMPORTANCE_XP)));
-                task.setCategoryColour(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CTG_ID)));
-
-                String status = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_STATUS));
-                task.setStatus(OneTimeTaskStatus.valueOf(status));
-
-
-                String executionTimeString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_EXECUTION_TIME));
-                task.setExecutionTime(LocalTime.parse(executionTimeString));
-
-
-                String creationDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CREATION_DATE));
-                task.setCreationDate(LocalDate.parse(creationDate));
-
-                String startDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_START_DATE));
-                task.setStartDate(LocalDate.parse(startDate));
-
-                String finishedDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_FINISHED_DATE));
-                task.setFinishedDate(LocalDate.parse(finishedDate));
-
-                taskList.add(task);
-            } while (cursor.moveToNext());
+        if (userUid == null || userUid.trim().isEmpty()) {
+            return new ArrayList<>();
         }
 
-        cursor.close();
-        db.close();
+
+
+        try {
+            database = dbHelper.getReadableDatabase();
+
+            String selection = AppDataBaseHelper.COLUMN_USER_ID + " = ?";
+
+            String[] selectionArgs = { userUid };
+
+            cursor = database.query(
+                    AppDataBaseHelper.TABLE_ONE_TIME_TASKS,
+                    null,
+                    selection,
+                    selectionArgs,
+                    null,
+                    null,
+                    null
+            );
+
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    OneTimeTask task = new OneTimeTask();
+                    task.setId(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_ONE_TIME_TASK_ID)));
+                    task.setName(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_TITLE)));
+                    task.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DESCRIPTION)));
+                    task.setDifficulty(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DIFFICULTY_XP)));
+                    task.setCategoryColour(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CTG_ID)));
+
+                    String status = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_STATUS));
+                    task.setStatus(OneTimeTaskStatus.valueOf(status));
+
+
+                    String executionTimeString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_EXECUTION_TIME));
+                    task.setExecutionTime(LocalTime.parse(executionTimeString));
+
+
+                    String creationDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CREATION_DATE));
+                    task.setCreationDate(LocalDate.parse(creationDate));
+
+                    String startDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_START_DATE));
+                    task.setStartDate(LocalDate.parse(startDate));
+
+                    String finishedDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_FINISHED_DATE));
+                    task.setFinishedDate(LocalDate.parse(finishedDate));
+
+                    task.setUserUid(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_USER_ID)));
+
+                    String isAwarded = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IS_AWARDED));
+                    task.setAwarded(Boolean.parseBoolean(isAwarded));
+
+                    taskList.add(task);
+                } while (cursor.moveToNext());
+            }
+        } finally {
+
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (database != null) {
+                database.close();
+            }
+        }
 
         return taskList;
+
+        //String selectQuery = "SELECT * FROM " + AppDataBaseHelper.TABLE_ONE_TIME_TASKS;
+
+//        SQLiteDatabase db = dbHelper.getWritableDatabase();
+//        Cursor cursor = db.rawQuery(selectQuery, null);
+//
+//        if (cursor.moveToFirst()) {
+//            do {
+//                OneTimeTask task = new OneTimeTask();
+//                task.setId(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_ONE_TIME_TASK_ID)));
+//                task.setName(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_TITLE)));
+//                task.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DESCRIPTION)));
+//                task.setDifficulty(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DIFFICULTY_XP)));
+//                task.setImportance(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IMPORTANCE_XP)));
+//                task.setCategoryColour(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CTG_ID)));
+//
+//                String status = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_STATUS));
+//                task.setStatus(OneTimeTaskStatus.valueOf(status));
+//
+//
+//                String executionTimeString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_EXECUTION_TIME));
+//                task.setExecutionTime(LocalTime.parse(executionTimeString));
+//
+//
+//                String creationDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CREATION_DATE));
+//                task.setCreationDate(LocalDate.parse(creationDate));
+//
+//                String startDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_START_DATE));
+//                task.setStartDate(LocalDate.parse(startDate));
+//
+//                String finishedDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_FINISHED_DATE));
+//                task.setFinishedDate(LocalDate.parse(finishedDate));
+//
+//                task.setUserUid(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_USER_ID)));
+//
+//                taskList.add(task);
+//            } while (cursor.moveToNext());
+//        }
+//
+//        cursor.close();
+//        db.close();
+//
+//        return taskList;
     }
 
     public OneTimeTask getOneTimeTaskById(long id) {
@@ -513,6 +724,11 @@ public class TaskRepository {
             String finishedDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_FINISHED_DATE));
             task.setFinishedDate(LocalDate.parse(finishedDate));
 
+            task.setUserUid(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_USER_ID)));
+
+            String isAwarded = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IS_AWARDED));
+            task.setAwarded(Boolean.parseBoolean(isAwarded));
+
             cursor.close();
         }
         db.close();
@@ -541,4 +757,190 @@ public class TaskRepository {
 
         return deletedRows;
     }
+
+    public int countCompletedRecurringTasksWithXpInCategory(TaskQuote quote, LocalDate startDate, LocalDate endDate, String userUid) {
+
+        if (quote == null || startDate == null || endDate == null || userUid == null) {
+            return 0;
+        }
+
+        int count = 0;
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+
+        try {
+            db = dbHelper.getReadableDatabase();
+
+
+            String selection = AppDataBaseHelper.COLUMN_USER_ID + " = ? AND " +
+                    AppDataBaseHelper.COLUMN_STATUS + " = ? AND " +
+                    AppDataBaseHelper.COLUMN_IS_AWARDED + " = 1 AND " +
+                    AppDataBaseHelper.COLUMN_START_DATE + " BETWEEN ? AND ?";
+
+            String[] selectionArgs = {
+                    userUid,
+                    RecurringTaskStatus.COMPLETED.name(),
+                    startDate.toString(),
+                    endDate.toString()
+            };
+
+            cursor = db.query(
+                    AppDataBaseHelper.TABLE_RECURRING_TASKS,
+                    null,
+                    selection,
+                    selectionArgs,
+                    null, null, null
+            );
+
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+
+                    RecurringTask task = new RecurringTask();
+
+                    task.setId(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_RECURRING_TASK_ID)));
+                    task.setName(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_TITLE)));
+                    task.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DESCRIPTION)));
+                    task.setDifficulty(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DIFFICULTY_XP)));
+                    task.setImportance(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IMPORTANCE_XP)));
+                    task.setCategoryColour(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CTG_ID)));
+                    task.setFirstRecurringTaskId(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_FIRST_REC_TASK_ID)));
+                    task.setRecurrenceInterval(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_RECURRENCE_INTERVAL)));
+
+                    String recurrenceUnitString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_RECURRENCE_UNIT));
+                    task.setRecurrenceUnit(RecurrenceUnit.valueOf(recurrenceUnitString));
+
+                    String executionTimeString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_EXECUTION_TIME));
+                    task.setExecutionTime(LocalTime.parse(executionTimeString));
+
+                    String startDateString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_START_DATE));
+                    task.setStartDate(LocalDate.parse(startDateString));
+
+                    String endDateString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_END_DATE));
+                    task.setEndDate(LocalDate.parse(endDateString));
+
+                    String creationDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CREATION_DATE));
+                    task.setCreationDate(LocalDate.parse(creationDate));
+
+                    String finishedDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_FINISHED_DATE));
+                    task.setFinishedDate(LocalDate.parse(finishedDate));
+
+
+                    String status = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_STATUS));
+                    task.setStatus(RecurringTaskStatus.valueOf(status));
+
+                    task.setUserUid(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_USER_ID)));
+
+                    String isAwarded = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IS_AWARDED));
+                    task.setAwarded(Boolean.parseBoolean(isAwarded));
+
+
+                    if (task.getQuotaCategory() == quote) {
+                        count++;
+                    }
+                } while (cursor.moveToNext());
+            }
+
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db != null && db.isOpen()) {
+                db.close();
+            }
+        }
+
+        return count;
+    }
+
+    public int countCompletedOneTimeTasksWithXpInCategory(TaskQuote quote, LocalDate startDate, LocalDate endDate, String userUid) {
+
+        if (quote == null || startDate == null || endDate == null || userUid == null) {
+            return 0;
+        }
+
+        int count = 0;
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+
+        try {
+            db = dbHelper.getReadableDatabase();
+
+
+            String selection = AppDataBaseHelper.COLUMN_USER_ID + " = ? AND " +
+                    AppDataBaseHelper.COLUMN_STATUS + " = ? AND " +
+                    AppDataBaseHelper.COLUMN_IS_AWARDED + " = 1 AND " +
+                    AppDataBaseHelper.COLUMN_START_DATE + " BETWEEN ? AND ?";
+
+            String[] selectionArgs = {
+                    userUid,
+                    RecurringTaskStatus.COMPLETED.name(),
+                    startDate.toString(),
+                    endDate.toString()
+            };
+
+            cursor = db.query(
+                    AppDataBaseHelper.TABLE_ONE_TIME_TASKS,
+                    null,
+                    selection,
+                    selectionArgs,
+                    null, null, null
+            );
+
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+
+                    OneTimeTask task = new OneTimeTask();
+
+                    task.setId(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_RECURRING_TASK_ID)));
+                    task.setName(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_TITLE)));
+                    task.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DESCRIPTION)));
+                    task.setDifficulty(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DIFFICULTY_XP)));
+                    task.setImportance(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IMPORTANCE_XP)));
+                    task.setCategoryColour(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CTG_ID)));
+
+                    String recurrenceUnitString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_RECURRENCE_UNIT));
+
+
+                    String executionTimeString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_EXECUTION_TIME));
+                    task.setExecutionTime(LocalTime.parse(executionTimeString));
+
+                    String startDateString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_START_DATE));
+                    task.setStartDate(LocalDate.parse(startDateString));
+
+                    String endDateString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_END_DATE));
+
+                    String creationDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CREATION_DATE));
+                    task.setCreationDate(LocalDate.parse(creationDate));
+
+                    String finishedDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_FINISHED_DATE));
+                    task.setFinishedDate(LocalDate.parse(finishedDate));
+
+
+                    String status = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_STATUS));
+                    task.setStatus(OneTimeTaskStatus.valueOf(status));
+
+                    task.setUserUid(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_USER_ID)));
+
+                    String isAwarded = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IS_AWARDED));
+                    task.setAwarded(Boolean.parseBoolean(isAwarded));
+
+
+                    if (task.getQuotaCategory() == quote) {
+                        count++;
+                    }
+                } while (cursor.moveToNext());
+            }
+
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db != null && db.isOpen()) {
+                db.close();
+            }
+        }
+
+        return count;
+    }
+
 }

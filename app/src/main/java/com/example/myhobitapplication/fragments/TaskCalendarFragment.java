@@ -16,8 +16,10 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.activities.TaskDetailActivity;
+import com.example.myhobitapplication.databases.ProfileRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.FragmentTaskCalendarBinding;
+import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.TaskService;
 import com.example.myhobitapplication.viewModels.TaskCalendarViewModel;
 import com.example.myhobitapplication.viewModels.TaskCalendarViewModelFactory;
@@ -66,8 +68,8 @@ public class TaskCalendarFragment extends Fragment {
         calendarView = calendarBinding.calendarView;
 
         TaskRepository repository = new TaskRepository(getContext());
-
-        TaskService taskService = new TaskService(repository);
+        ProfileService profileService =  new ProfileService();
+        TaskService taskService = new TaskService(repository, profileService);
 
         TaskCalendarViewModelFactory factory = new TaskCalendarViewModelFactory(taskService);
 

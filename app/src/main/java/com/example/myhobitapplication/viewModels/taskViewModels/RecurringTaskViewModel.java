@@ -10,6 +10,7 @@ import com.example.myhobitapplication.exceptions.ValidationException;
 import com.example.myhobitapplication.models.Category;
 import com.example.myhobitapplication.models.RecurringTask;
 import com.example.myhobitapplication.services.TaskService;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -53,13 +54,15 @@ public class RecurringTaskViewModel extends ViewModel {
     public void setImportanceXp(int impXp) { importanceXp.setValue(impXp);}
     public void setRecurrenceInterval(int interval) { recurrenceInterval.setValue(interval); }
     public void setRecurrenceUnit(RecurrenceUnit unit) { recurrenceUnit.setValue(unit); }
-    public void setExecutionTime(LocalTime time) { executionTime.setValue(time); }
-    public void setStartDate(LocalDate date) { startDate.setValue(date); }
+    public void setExecutionTime(LocalTime time) { executionTime.setValue(time); validateForm(); }
+    public void setStartDate(LocalDate date) { startDate.setValue(date); validateForm();}
     public void setEndDate(LocalDate date) { endDate.setValue(date); validateForm(); }
     public void setCategory(Category categoryData) { category.setValue(categoryData); validateForm(); }
 
     private final MutableLiveData<String> _titleError = new MutableLiveData<>(null);
     public LiveData<String> getTitleError() { return _titleError; }
+    private final MutableLiveData<String> _executionTimeError = new MutableLiveData<>(null);
+    public LiveData<String> getExecutionTimeError() { return _executionTimeError; }
 
     private final MutableLiveData<Boolean> _isFormValid = new MutableLiveData<>(false);
     public LiveData<Boolean> isFormValid() { return _isFormValid; }
@@ -70,9 +73,16 @@ public class RecurringTaskViewModel extends ViewModel {
     private final MutableLiveData<String> _categoryError = new MutableLiveData<>(null);
     public LiveData<String> getCategoryError() { return _categoryError; }
 
+    private String userUid;
+
+    public void onSaveSuccessEventHandled() {
+        _saveSuccessEvent.setValue(null);
+    }
+
 
     public RecurringTaskViewModel(TaskService taskService){
         this.taskService = taskService;
+        userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         validateForm();
     }
 
@@ -91,14 +101,15 @@ public class RecurringTaskViewModel extends ViewModel {
                 importanceXp.getValue(),
                 category.getValue().getColour(),
                 executionTime.getValue(),
-                6,
+                recurrenceInterval.getValue(),
                 recurrenceUnit.getValue(),
                 startDate.getValue(),
                 endDate.getValue(),
                 RecurringTaskStatus.ACTIVE,
                 -1,
                 LocalDate.now(),
-                LocalDate.now()
+                LocalDate.now(),
+                userUid
         );
 
         try {
@@ -106,6 +117,7 @@ public class RecurringTaskViewModel extends ViewModel {
 
             _submissionError.setValue(null);
             _saveSuccessEvent.setValue(true);
+            //taskService.updateOutdatedTasksToNotDone();
 
         } catch (ValidationException e) {
 
@@ -118,6 +130,9 @@ public class RecurringTaskViewModel extends ViewModel {
         Category currentCategory = category.getValue();
         Integer currentDifficulty = difficultyXp.getValue();
         Integer currentImportance = importanceXp.getValue();
+        LocalDate currentStartDate = startDate.getValue();
+        LocalDate currentEndDate = endDate.getValue();
+        LocalTime currentExecutionTime = executionTime.getValue();
 
         boolean isTitleValid = currentTitle != null && !currentTitle.trim().isEmpty();
         if (!isTitleValid) {
@@ -132,13 +147,27 @@ public class RecurringTaskViewModel extends ViewModel {
         } else {
             _categoryError.setValue(null);
         }
+        boolean isTimeValid = true;
+
+        boolean areDatesValid = currentStartDate != null && currentEndDate != null && !currentEndDate.isBefore(currentStartDate);
+
+        if (currentStartDate != null && currentExecutionTime != null) {
+
+            if (currentStartDate.isEqual(LocalDate.now()) && currentExecutionTime.isBefore(LocalTime.now())) {
+                isTimeValid = false;
+            }
+        }
+
+        _executionTimeError.setValue(isTimeValid ? null : "Time has already passed!");
+
+
 
         boolean isDifficultyValid = currentDifficulty != null;
 
         boolean isImportanceValid = currentImportance != null;
 
-        boolean areDatesValid = startDate.getValue() != null && endDate.getValue() != null && !endDate.getValue().isBefore(startDate.getValue());
-        _isFormValid.setValue(isTitleValid && areDatesValid && isCategoryValid);
+
+        _isFormValid.setValue(isTitleValid && areDatesValid && isCategoryValid && isTimeValid);
     }
 
 }

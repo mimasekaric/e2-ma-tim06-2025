@@ -22,6 +22,7 @@ import com.example.myhobitapplication.adapters.DifficultySpinnerAdapter;
 import com.example.myhobitapplication.adapters.ImportanceSpinnerAdapter;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.FragmentRecurringTaskEditBinding;
+import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.TaskService;
 import com.example.myhobitapplication.viewModels.taskViewModels.RecurringTaskEditViewModel;
 
@@ -59,8 +60,8 @@ public class RecurringTaskEditFragment extends Fragment {
         }
 
         taskRepository = new TaskRepository(getContext());
-
-        taskService = new TaskService(taskRepository);
+        ProfileService profileService = new ProfileService();
+        taskService = new TaskService(taskRepository, profileService);
 
         taskEditViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @NonNull

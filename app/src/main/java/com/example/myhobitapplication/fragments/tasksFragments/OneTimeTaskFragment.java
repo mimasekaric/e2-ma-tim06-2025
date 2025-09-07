@@ -1,5 +1,6 @@
 package com.example.myhobitapplication.fragments.tasksFragments;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -22,6 +23,7 @@ import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.FragmentOnetimeTaskBinding;
 import com.example.myhobitapplication.models.Category;
 import com.example.myhobitapplication.services.CategoryService;
+import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.TaskService;
 import com.example.myhobitapplication.viewModels.categoryViewModels.CategoryViewModel;
 import com.example.myhobitapplication.viewModels.taskViewModels.OneTimeTaskViewModel;
@@ -44,7 +46,8 @@ public class OneTimeTaskFragment extends Fragment {
 
         TaskRepository repository = new TaskRepository(requireContext());
         CategoryRepository categoryRepository = new CategoryRepository(requireContext());
-        TaskService taskService = new TaskService(repository);
+        ProfileService profileService = new ProfileService();
+        TaskService taskService = new TaskService(repository, profileService);
         CategoryService categoryService = new CategoryService(categoryRepository);
 
 
@@ -79,10 +82,39 @@ public class OneTimeTaskFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
 
+        binding.btnOtask.setEnabled(false);
+
         ScrollView scrollView = binding.rtScrollView;
         scrollView.setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
         scrollView.setFocusable(false);
 
+        long todayInMillis = System.currentTimeMillis();
+        binding.otDateStart.setMinDate(todayInMillis);
+
+        taskViewModel.isFormValid().observe(getViewLifecycleOwner(), isValid -> {
+            if (isValid != null) {
+                binding.btnOtask.setEnabled(isValid);
+            }
+        });
+
+        int initialDifficultyId = binding.rbDifficultyOptions.getCheckedRadioButtonId();
+        if (initialDifficultyId != -1) {
+            View radioButton = binding.rbDifficultyOptions.findViewById(initialDifficultyId);
+            if (radioButton != null && radioButton.getTag() != null) {
+                taskViewModel.setDifficultyXp(Integer.parseInt(radioButton.getTag().toString()));
+            }
+        }
+        int initialImportanceId = binding.rgImportanceOptions.getCheckedRadioButtonId();
+        if (initialImportanceId != -1) {
+            View radioButton = binding.rgImportanceOptions.findViewById(initialImportanceId);
+            if (radioButton != null && radioButton.getTag() != null) {
+                taskViewModel.setImportanceXp(Integer.parseInt(radioButton.getTag().toString()));
+            }
+        }
+
+        taskViewModel.getTitleError().observe(getViewLifecycleOwner(), error -> {
+            binding.otaskName.setError(error);
+        });
 
         binding.rbDifficultyOptions.setOnCheckedChangeListener((group, checkedId) -> {
             View radioButton = group.findViewById(checkedId);
@@ -91,6 +123,8 @@ public class OneTimeTaskFragment extends Fragment {
                 taskViewModel.setDifficultyXp(xpValue);
             }
         });
+
+
 
         binding.rgImportanceOptions.setOnCheckedChangeListener((group, checkedId) -> {
             View radioButton = group.findViewById(checkedId);
@@ -140,6 +174,15 @@ public class OneTimeTaskFragment extends Fragment {
         });
 
 
+        taskViewModel.getExecutionTimeError().observe(getViewLifecycleOwner(), error -> {
+            if (error != null && !error.isEmpty()) {
+                binding.timeErrorTextView.setText(error);
+                binding.timeErrorTextView.setVisibility(View.VISIBLE);
+            } else {
+                binding.timeErrorTextView.setVisibility(View.GONE);
+            }
+        });
+
 
 
         binding.otDateStart.init(
@@ -157,9 +200,9 @@ public class OneTimeTaskFragment extends Fragment {
 
             taskViewModel.saveRecurringTask();
 
-            Toast.makeText(requireContext(), "Zadatak je uspešno kreiran!", Toast.LENGTH_SHORT).show();
-
-            getParentFragmentManager().setFragmentResult("taskAddedRequest", new Bundle());
+//            Toast.makeText(requireContext(), "Task successfully created!", Toast.LENGTH_SHORT).show();
+//
+//            getParentFragmentManager().setFragmentResult("taskAddedRequest", new Bundle());
 
         });
 
@@ -183,6 +226,56 @@ public class OneTimeTaskFragment extends Fragment {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        taskViewModel.getDifficultyXp().observe(getViewLifecycleOwner(), difficultyValue -> {
+            if (difficultyValue != null) {
+                for (int i = 0; i < binding.rbDifficultyOptions.getChildCount(); i++) {
+                    View radioButton = binding.rbDifficultyOptions.getChildAt(i);
+                    if (radioButton.getTag() != null && radioButton.getTag().toString().equals(String.valueOf(difficultyValue))) {
+                        ((android.widget.RadioButton) radioButton).setChecked(true);
+                        break;
+                    }
+                }
+            }
+        });
+
+        taskViewModel.getImportanceXp().observe(getViewLifecycleOwner(), importanceValue -> {
+            if (importanceValue != null) {
+                for (int i = 0; i < binding.rgImportanceOptions.getChildCount(); i++) {
+                    View radioButton = binding.rgImportanceOptions.getChildAt(i);
+                    if (radioButton.getTag() != null && radioButton.getTag().toString().equals(String.valueOf(importanceValue))) {
+                        ((android.widget.RadioButton) radioButton).setChecked(true);
+                        break;
+                    }
+                }
+            }
+        });
+
+
+        taskViewModel.getSubmissionError().observe(getViewLifecycleOwner(), error -> {
+
+            if (error != null && !error.isEmpty()) {
+                new AlertDialog.Builder(requireContext())
+                        .setTitle("Error with saving task!")
+                        .setMessage(error)
+                        .setPositiveButton("OK", null)
+                        .show();
+            }
+        });
+
+        taskViewModel.getSaveSuccessEvent().observe(getViewLifecycleOwner(), isSuccess -> {
+
+            if (isSuccess != null && isSuccess) {
+
+                Toast.makeText(requireContext(), "Task successfully created!", Toast.LENGTH_SHORT).show();
+
+                getParentFragmentManager().setFragmentResult("taskAddedRequest", new Bundle());
+
+                // Opciono: Očisti formu ili se vrati na prethodni ekran
+                // getParentFragmentManager().popBackStack();
+                taskViewModel.onSaveSuccessEventHandled();
             }
         });
 

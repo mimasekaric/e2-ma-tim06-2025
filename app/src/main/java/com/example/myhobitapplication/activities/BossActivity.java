@@ -23,9 +23,11 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.databases.BossRepository;
+import com.example.myhobitapplication.databases.ProfileRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.ActivityBossBinding;
 import com.example.myhobitapplication.models.Boss;
+import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.viewModels.BattleViewModel;
 
 public class BossActivity extends AppCompatActivity implements SensorEventListener {
@@ -52,6 +54,7 @@ public class BossActivity extends AppCompatActivity implements SensorEventListen
 
         TaskRepository taskRepository = new TaskRepository(getApplicationContext());
         BossRepository bossRepository = new BossRepository(getApplicationContext());
+        ProfileService profileService = new ProfileService();
         Boss boss = new Boss(2,400,6,400,false,4,200);
         bossRepository.insertBoss(boss);
 
@@ -59,7 +62,7 @@ public class BossActivity extends AppCompatActivity implements SensorEventListen
             @NonNull
             @Override
             public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-                return (T) new BattleViewModel(taskRepository, bossRepository);
+                return (T) new BattleViewModel(taskRepository, bossRepository, profileService);
             }
         }).get(BattleViewModel.class);
 

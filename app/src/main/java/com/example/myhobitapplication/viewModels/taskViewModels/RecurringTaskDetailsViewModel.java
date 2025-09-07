@@ -89,7 +89,7 @@ public class RecurringTaskDetailsViewModel extends ViewModel {
             currentTaskDto.setStatus(RecurringTaskStatus.COMPLETED);
             currentTaskDto.setFinishedDate(LocalDate.now());
 
-            taskService.editRecurringTask(currentTaskDto);
+            taskService.markRecurringTaskAsDone(taskDetails.getValue().getId(), taskDetails.getValue().getUserUid());
 
             loadTaskDetails(currentTaskDto.getId());
 

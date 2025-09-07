@@ -1,5 +1,6 @@
 package com.example.myhobitapplication.fragments.tasksFragments;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -24,6 +25,7 @@ import com.example.myhobitapplication.databinding.FragmentRecurringTaskBinding;
 import com.example.myhobitapplication.enums.RecurrenceUnit;
 import com.example.myhobitapplication.models.Category;
 import com.example.myhobitapplication.services.CategoryService;
+import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.TaskService;
 import com.example.myhobitapplication.viewModels.categoryViewModels.CategoryViewModel;
 import com.example.myhobitapplication.viewModels.taskViewModels.RecurringTaskViewModel;
@@ -45,7 +47,8 @@ public class RecurringTaskFragment extends Fragment {
 
         TaskRepository repository = new TaskRepository(requireContext());
         CategoryRepository categoryRepository = new CategoryRepository(requireContext());
-        TaskService taskService = new TaskService(repository);
+        ProfileService profileService = new ProfileService();
+        TaskService taskService = new TaskService(repository, profileService);
         CategoryService categoryService = new CategoryService(categoryRepository);
 
 
@@ -84,9 +87,22 @@ public class RecurringTaskFragment extends Fragment {
         scrollView.setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
         scrollView.setFocusable(false);
 
-        long danasUMilisekundama = System.currentTimeMillis();
-        recurringTaskBinding.rtDateStart.setMinDate(danasUMilisekundama);
-        recurringTaskBinding.rtDateEnd.setMinDate(danasUMilisekundama);
+        long today = System.currentTimeMillis();
+        recurringTaskBinding.rtDateStart.setMinDate(today);
+        recurringTaskBinding.rtDateEnd.setMinDate(today);
+
+        android.widget.NumberPicker numberPicker = recurringTaskBinding.etRecurrenceInterval;
+
+        numberPicker.setMinValue(1);
+        numberPicker.setMaxValue(99);
+
+        numberPicker.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, android.view.MotionEvent event) {
+                v.getParent().requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });
 
 
 
@@ -240,13 +256,7 @@ public class RecurringTaskFragment extends Fragment {
 
         recurringTaskBinding.btnRtask.setOnClickListener(v -> {
 
-
             taskViewModel.saveRecurringTask();
-
-            Toast.makeText(requireContext(), "Zadatak je uspešno kreiran!", Toast.LENGTH_SHORT).show();
-
-            getParentFragmentManager().setFragmentResult("taskAddedRequest", new Bundle());
-
         });
 
 
@@ -271,6 +281,42 @@ public class RecurringTaskFragment extends Fragment {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+
+        taskViewModel.getExecutionTimeError().observe(getViewLifecycleOwner(), error -> {
+            if (error != null && !error.isEmpty()) {
+                recurringTaskBinding.timeErrorTextView.setText(error);
+                recurringTaskBinding.timeErrorTextView.setVisibility(View.VISIBLE);
+            } else {
+                recurringTaskBinding.timeErrorTextView.setVisibility(View.GONE);
+            }
+        });
+
+        taskViewModel.getSubmissionError().observe(getViewLifecycleOwner(), error -> {
+
+            if (error != null && !error.isEmpty()) {
+                new AlertDialog.Builder(requireContext())
+                        .setTitle("Error with saving task!")
+                        .setMessage(error)
+                        .setPositiveButton("OK", null)
+                        .show();
+            }
+        });
+
+        taskViewModel.getSaveSuccessEvent().observe(getViewLifecycleOwner(), isSuccess -> {
+
+            if (isSuccess != null && isSuccess) {
+
+                Toast.makeText(requireContext(), "Zadatak je uspešno kreiran!", Toast.LENGTH_SHORT).show();
+
+                getParentFragmentManager().setFragmentResult("taskAddedRequest", new Bundle());
+
+                // Opciono: Očisti formu ili se vrati na prethodni ekran
+                // getParentFragmentManager().popBackStack();
+                taskViewModel.onSaveSuccessEventHandled();
+            }
+        });
+
+
 
 
 

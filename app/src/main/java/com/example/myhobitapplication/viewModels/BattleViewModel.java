@@ -10,7 +10,9 @@ import com.example.myhobitapplication.dto.BossDTO;
 import com.example.myhobitapplication.models.Boss;
 import com.example.myhobitapplication.services.BattleService;
 import com.example.myhobitapplication.services.BossService;
+import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.TaskService;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -24,6 +26,8 @@ public class BattleViewModel extends ViewModel {
     private final BattleService battleService;
 
     private double hitChance = 1.0;
+
+    private String userUid;
 
     private final MutableLiveData<Integer> _bossCurrentHp = new MutableLiveData<>();
     private final MutableLiveData<Integer> _bossMaxHp = new MutableLiveData<>();
@@ -47,10 +51,11 @@ public class BattleViewModel extends ViewModel {
 
     private BossDTO currentBoss;
 
-    public BattleViewModel(TaskRepository taskRepository, BossRepository bossRepository){
+    public BattleViewModel(TaskRepository taskRepository, BossRepository bossRepository, ProfileService profileService){
         this.bossService = new BossService(bossRepository);
-        this.taskService = new TaskService(taskRepository);
+        this.taskService = new TaskService(taskRepository, profileService);
         this.battleService = new BattleService(taskService, bossService);
+        userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
 
     public void loadBattleState(int userId){
@@ -68,7 +73,7 @@ public class BattleViewModel extends ViewModel {
         //todo: moracu u bosu pamtiti koliko je ostalo pokusaja ubuduce
         _remainingAttacks.setValue(5);
         //todo: moracu koristiti od usera datume levela prethodnog i sadanjeg i moracu povezati taskove sa userom
-        this.hitChance = battleService.calculateChanceForAttack(LocalDate.of(2025, 8, 1), LocalDate.of(2025, 9, 1));
+        this.hitChance = battleService.calculateChanceForAttack(LocalDate.of(2025, 8, 1), LocalDate.of(2025, 9, 1),userUid);
     }
 
     public void performAttack() {

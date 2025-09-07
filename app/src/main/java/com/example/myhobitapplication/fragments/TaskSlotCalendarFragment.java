@@ -30,6 +30,7 @@ import com.example.myhobitapplication.models.OneTimeTask;
 import com.example.myhobitapplication.models.RecurringTask;
 import com.example.myhobitapplication.models.Task;
 import com.example.myhobitapplication.services.CategoryService;
+import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.TaskService;
 import com.example.myhobitapplication.viewModels.TaskCalendarViewModel;
 import com.example.myhobitapplication.viewModels.TaskCalendarViewModelFactory;
@@ -83,8 +84,9 @@ public class TaskSlotCalendarFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         repository = new TaskRepository(getContext());
+        ProfileService profileService = new ProfileService();
 
-        TaskService taskService = new TaskService(repository);
+        TaskService taskService = new TaskService(repository, profileService);
         categoryRepository = new CategoryRepository(getContext());
         categoryService = new CategoryService(categoryRepository);
 

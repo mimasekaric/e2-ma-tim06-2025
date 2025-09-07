@@ -19,8 +19,8 @@ public class RecurringTask extends Task {
 
     private Integer FirstRecurringTaskId;
 
-    public RecurringTask(Integer id, String name, String description, Integer difficulty, Integer importance, String categoryId, LocalTime executionTime, int recurrenceInterval, RecurrenceUnit recurrenceUnit, LocalDate startDate, LocalDate endDate, RecurringTaskStatus status, Integer firstRecurringTaskId, LocalDate finishedDate, LocalDate creationDate) {
-        super(id, name, description, difficulty, importance, categoryId, executionTime, finishedDate, creationDate, startDate);
+    public RecurringTask(Integer id, String name, String description, Integer difficulty, Integer importance, String categoryId, LocalTime executionTime, int recurrenceInterval, RecurrenceUnit recurrenceUnit, LocalDate startDate, LocalDate endDate, RecurringTaskStatus status, Integer firstRecurringTaskId, LocalDate finishedDate, LocalDate creationDate, String userUid) {
+        super(id, name, description, difficulty, importance, categoryId, executionTime, finishedDate, creationDate, startDate, userUid);
         this.recurrenceInterval = recurrenceInterval;
         this.recurrenceUnit = recurrenceUnit;
 
@@ -36,8 +36,8 @@ public class RecurringTask extends Task {
 
 
 
-    public RecurringTask(String name, String description, Integer difficulty, Integer importance, String categoryId, LocalTime executionTime, int recurrenceInterval, RecurrenceUnit recurrenceUnit, LocalDate startDate, LocalDate endDate, RecurringTaskStatus status, Integer firstRecurringTaskId, LocalDate finishedDate, LocalDate creationDate ) {
-        super(name, description, difficulty, importance, categoryId, executionTime, finishedDate, creationDate, startDate);
+    public RecurringTask(String name, String description, Integer difficulty, Integer importance, String categoryId, LocalTime executionTime, int recurrenceInterval, RecurrenceUnit recurrenceUnit, LocalDate startDate, LocalDate endDate, RecurringTaskStatus status, Integer firstRecurringTaskId, LocalDate finishedDate, LocalDate creationDate, String userUid ) {
+        super(name, description, difficulty, importance, categoryId, executionTime, finishedDate, creationDate, startDate, userUid);
         this.recurrenceInterval = recurrenceInterval;
         this.recurrenceUnit = recurrenceUnit;
 
