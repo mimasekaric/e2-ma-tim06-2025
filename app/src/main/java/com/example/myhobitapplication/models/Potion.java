@@ -4,17 +4,49 @@ import com.example.myhobitapplication.enums.PotionTypes;
 
 public class Potion extends Equipment{
 
+
+
     private PotionTypes type;
 
-    private Float price;
+    private boolean isPermanent;
+    private double coef;
 
-    //TODO: FALI SLIKA AL NE ZNAM KAKO DA JE INTERPRETIRAMO
 
-    public Potion(Integer id, Boolean activated, PotionTypes type, Float price) {
-        super(id, activated);
+
+    public Potion(String id, Boolean activated, PotionTypes type, double coef) {
+        super(id,activated);
         this.type = type;
-        this.price = price;
+        this.coef = coef;
+
     }
+
+
+    public void setpotionDescription(String potionDescription) {
+        potionDescription = potionDescription;
+    }
+
+    public boolean isPermanent() {
+        return isPermanent;
+    }
+
+    public void setPermanent(boolean permanent) {
+        isPermanent = permanent;
+    }
+
+    public Potion(String id, Boolean activated) {
+        super(id, activated);
+    }
+    public Potion(){
+    }
+
+    public double getCoef() {
+        return coef;
+    }
+
+    public void setCoef(double coef) {
+        this.coef = coef;
+    }
+
 
     public PotionTypes getType() {
         return type;
@@ -24,11 +56,4 @@ public class Potion extends Equipment{
         this.type = type;
     }
 
-    public Float getPrice() {
-        return price;
-    }
-
-    public void setPrice(Float price) {
-        this.price = price;
-    }
 }

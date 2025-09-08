@@ -1,6 +1,7 @@
-package com.example.myhobitapplication.models;
+package com.example.myhobitapplication.staticData;
 
 import com.example.myhobitapplication.R;
+import com.example.myhobitapplication.models.Avatar;
 
 import java.util.ArrayList;
 import java.util.List;

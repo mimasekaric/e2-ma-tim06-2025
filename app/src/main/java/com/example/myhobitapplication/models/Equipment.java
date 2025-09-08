@@ -1,18 +1,38 @@
 package com.example.myhobitapplication.models;
 
-public abstract class Equipment {
+import com.example.myhobitapplication.enums.EquipmentTypes;
 
-    private Integer id;
+public  class Equipment {
+
+    private String id;
 
     private Boolean activated;
-
-
-    public Equipment(Integer id, Boolean activated) {
+    private EquipmentTypes equipmentType;
+    private double powerPercentage;
+    private int image;
+    public Equipment(){}
+    public Equipment(String id, Boolean activated) {
         this.id = id;
         this.activated = activated;
+        this.equipmentType = equipmentType;
     }
 
-    public Integer getId() {
+    public Equipment(String id, Boolean activated, EquipmentTypes equipmentType, double powerPercentage) {
+        this.id = id;
+        this.activated = activated;
+        this.equipmentType = equipmentType;
+        this.powerPercentage = powerPercentage;
+    }
+
+    public int getImage() {
+        return image;
+    }
+
+    public void setImage(int image) {
+        this.image = image;
+    }
+
+    public String getId() {
         return id;
     }
 
@@ -20,8 +40,24 @@ public abstract class Equipment {
         return activated;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
+    }
+
+    public EquipmentTypes getequipmentType() {
+        return equipmentType;
+    }
+
+    public void setequipmentType(EquipmentTypes equipmentType) {
+        this.equipmentType = equipmentType;
+    }
+
+    public double getpowerPercentage() {
+        return powerPercentage;
+    }
+
+    public void setpowerPercentage(double powerPercentage) {
+        this.powerPercentage = powerPercentage;
     }
 
     public void setActivated(Boolean activated) {

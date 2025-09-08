@@ -4,31 +4,42 @@ import com.example.myhobitapplication.enums.ClothingTypes;
 
 public class Clothing extends Equipment{
 
+
     private ClothingTypes type;
+    private double coef;
 
-    //TODO:SLIKA
-
-    private Float price;
-
-    public Clothing(Integer id, Boolean activated, ClothingTypes type, Float price) {
+    private int fightsCounter;
+    public Clothing(String id, Boolean activated) {
         super(id, activated);
-        this.type = type;
-        this.price = price;
+        this.fightsCounter=0;
     }
+    public Clothing(){}
+
+    public int getFightsCounter() {
+        return fightsCounter;
+    }
+
+    public void setFightsCounter(int fightsCounter) {
+        this.fightsCounter = fightsCounter;
+    }
+
+
 
     public ClothingTypes getType() {
         return type;
-    }
-
-    public Float getPrice() {
-        return price;
     }
 
     public void setType(ClothingTypes type) {
         this.type = type;
     }
 
-    public void setPrice(Float price) {
-        this.price = price;
+    public double getCoef() {
+        return coef;
     }
+
+    public void setCoef(double coef) {
+        this.coef = coef;
+    }
+
+
 }
