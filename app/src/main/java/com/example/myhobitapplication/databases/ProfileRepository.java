@@ -13,6 +13,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class ProfileRepository {
 
@@ -35,6 +36,8 @@ public class ProfileRepository {
         profile1.put("numberOgBadges", profile.getnumberOgbadges());
         profile1.put("badges", profile.getbadges());
         profile1.put("equipment", profile.getequipment());
+        profile1.put("previousLevelDate", profile.getPreviousLevelDate());
+        profile1.put("currentLevelDate", profile.getCurrentLevelDate());
         return profileCollection
                 .add(profile1);
     }
@@ -51,6 +54,7 @@ public class ProfileRepository {
     }).addOnFailureListener(e -> { taskCompletionSource.setException(e);});
          return taskCompletionSource.getTask();
     }
+
 
     public void delete(String uid){
        profileCollection.whereEqualTo("userUid", uid).get().addOnSuccessListener(queryDocumentSnapshots -> {
@@ -81,6 +85,35 @@ public class ProfileRepository {
 
         return tcs.getTask();
 
+    }
+
+    public Task<Profile> getProfileById(String uid) {
+
+        final TaskCompletionSource<Profile> tcs = new TaskCompletionSource<>();
+
+        profileCollection.whereEqualTo("userUid", uid).limit(1).get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+
+                    if (queryDocumentSnapshots.isEmpty()) {
+                        Log.d("Firestore", "No profile found for UID: " + uid);
+                        tcs.setException(new Exception("Profile not found for user."));
+
+                    } else {
+                        DocumentSnapshot document = queryDocumentSnapshots.getDocuments().get(0);
+                        Profile profile = document.toObject(Profile.class);
+
+                        if (profile != null) {
+                            tcs.setResult(profile);
+                        } else {
+                            tcs.setException(new Exception("Failed to parse profile data."));
+                        }
+                    }
+
+                }).addOnFailureListener(e -> {
+                    Log.e("Firestore", "Error getting profile for UID: " + uid, e);
+                    tcs.setException(e);
+                });
+        return tcs.getTask();
     }
 
 

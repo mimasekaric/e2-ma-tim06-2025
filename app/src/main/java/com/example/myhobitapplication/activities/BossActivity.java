@@ -29,6 +29,7 @@ import com.example.myhobitapplication.databinding.ActivityBossBinding;
 import com.example.myhobitapplication.models.Boss;
 import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.viewModels.BattleViewModel;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class BossActivity extends AppCompatActivity implements SensorEventListener {
 
@@ -47,15 +48,18 @@ public class BossActivity extends AppCompatActivity implements SensorEventListen
     private float last_x, last_y, last_z;
     private static final int SHAKE_THRESHOLD = 800;
 
+    private String userUid;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         TaskRepository taskRepository = new TaskRepository(getApplicationContext());
         BossRepository bossRepository = new BossRepository(getApplicationContext());
         ProfileService profileService = new ProfileService();
-        Boss boss = new Boss(2,400,6,400,false,4,200);
+        Boss boss = new Boss(1,200,userUid,200,false,1,200);
         bossRepository.insertBoss(boss);
 
         battleViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
@@ -88,7 +92,7 @@ public class BossActivity extends AppCompatActivity implements SensorEventListen
 
         setupObservers();
         //todo: moracu uzeti logovanog usera ubuduce
-        battleViewModel.loadBattleState(6);
+        battleViewModel.loadBattleState(userUid);
 
         binding.attackButton.setOnClickListener(v -> {
             battleViewModel.performAttack();

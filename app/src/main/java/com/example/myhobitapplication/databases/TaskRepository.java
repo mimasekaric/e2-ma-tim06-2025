@@ -456,12 +456,14 @@ public class TaskRepository {
 
         String selection = AppDataBaseHelper.COLUMN_USER_ID + " = ? AND " +
                 AppDataBaseHelper.COLUMN_STATUS + " = ? AND " +
+                AppDataBaseHelper.COLUMN_IS_AWARDED + " = ? AND " +
                 AppDataBaseHelper.COLUMN_START_DATE + " BETWEEN ? AND ?";
 
 
         String[] selectionArgs = {
                 userUid,
                 status.name(),
+                "1",
                 startDate.toString(),
                 endDate.toString()
         };

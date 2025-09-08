@@ -51,6 +51,7 @@
         <activity android:name=".activities.CategoryEditActivity" />
         <activity android:name=".activities.CategoryViewActivity" />
         <activity android:name=".activities.CategoryCreateActivity" />
+        <activity android:name=".activities.BossActivity" />
 
 
     </application>

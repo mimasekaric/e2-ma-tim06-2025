@@ -1,13 +1,9 @@
 package com.example.myhobitapplication.services;
 
 import com.example.myhobitapplication.databases.CategoryRepository;
-import com.example.myhobitapplication.databases.DataBaseCategoryHelper;
 import com.example.myhobitapplication.dto.CategoryDTO;
 import com.example.myhobitapplication.exceptions.ValidationException;
 import com.example.myhobitapplication.models.Category;
-import com.example.myhobitapplication.models.RecurringTask;
-
-import org.checkerframework.checker.units.qual.C;
 
 import java.util.ArrayList;
 import java.util.List;

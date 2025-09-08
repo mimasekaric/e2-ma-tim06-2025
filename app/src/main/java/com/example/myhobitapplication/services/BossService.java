@@ -15,7 +15,7 @@ public class BossService {
         this.bossRepository = bossRepository;
     }
 
-    public BossDTO getLowestLevelBossForUser(int userId) {
+    public BossDTO getLowestLevelBossForUser(String userId) {
         Boss boss = bossRepository.getAllUndefeatedBossesForUser(userId)
                 .stream()
                 .min(Comparator.comparingInt(Boss::getBossLevel))

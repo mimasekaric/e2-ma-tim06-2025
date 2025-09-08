@@ -39,7 +39,7 @@ public class BossRepository {
         values.put(AppDataBaseHelper.COLUMN_HP, boss.getHP());
         values.put(AppDataBaseHelper.COLUMN_CURRENT_HP, boss.getCurrentHP());
         values.put(AppDataBaseHelper.COLUMN_IS_DEFEATED, boss.getDefeated());
-        values.put(AppDataBaseHelper.COLUMN_USER_ID, boss.getUserId());
+        values.put(AppDataBaseHelper.COLUMN_USER_ID, boss.getUserId().toString());
         values.put(AppDataBaseHelper.COLUMN_BOSS_LEVEL, boss.getBossLevel());
         values.put(AppDataBaseHelper.COLUMN_COINS_REWARD, boss.getCoinsReward());
 
@@ -49,7 +49,7 @@ public class BossRepository {
 
     }
 
-    public List<Boss> getAllBossesForUser(int userId) {
+    public List<Boss> getAllBossesForUser(String userId) {
         List<Boss> bosses = new ArrayList<>();
 
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -73,7 +73,7 @@ public class BossRepository {
             do {
                 Boss boss = new Boss();
                 boss.setId(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_BOSS_ID)));
-                boss.setUserId(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_USER_ID)));
+                boss.setUserId(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_USER_ID)));
                 boss.setHP(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_HP)));
                 boss.setBossLevel(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_BOSS_LEVEL)));
                 boss.setCurrentHP(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CURRENT_HP)));
@@ -94,7 +94,7 @@ public class BossRepository {
     }
 
 
-    public List<Boss> getAllUndefeatedBossesForUser(int userId) {
+    public List<Boss> getAllUndefeatedBossesForUser(String userId) {
         List<Boss> bosses = new ArrayList<>();
 
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -124,7 +124,7 @@ public class BossRepository {
             do {
                 Boss boss = new Boss();
                 boss.setId(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_BOSS_ID)));
-                boss.setUserId(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_USER_ID)));
+                boss.setUserId(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_USER_ID)));
                 boss.setHP(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_HP)));
                 boss.setBossLevel(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_BOSS_LEVEL)));
                 boss.setCurrentHP(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CURRENT_HP)));
@@ -178,7 +178,7 @@ public class BossRepository {
 
 
             boss.setId(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_BOSS_ID)));
-            boss.setUserId(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_USER_ID)));
+            boss.setUserId(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_USER_ID)));
             boss.setHP(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_HP)));
             boss.setBossLevel(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_BOSS_LEVEL)));
             boss.setCurrentHP(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CURRENT_HP)));

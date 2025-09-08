@@ -5,9 +5,11 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.myhobitapplication.databases.BossRepository;
+import com.example.myhobitapplication.databases.ProfileRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.dto.BossDTO;
 import com.example.myhobitapplication.models.Boss;
+import com.example.myhobitapplication.models.Profile;
 import com.example.myhobitapplication.services.BattleService;
 import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.ProfileService;
@@ -16,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.UUID;
 
 public class BattleViewModel extends ViewModel {
 
@@ -24,6 +27,7 @@ public class BattleViewModel extends ViewModel {
     private final TaskService taskService;
     private final BossService bossService;
     private final BattleService battleService;
+    private final ProfileService profileService;
 
     private double hitChance = 1.0;
 
@@ -36,6 +40,7 @@ public class BattleViewModel extends ViewModel {
     private final MutableLiveData<Boolean> _hitAnimationEvent = new MutableLiveData<>();
 
     private final MutableLiveData<Boolean> _attackMissedEvent = new MutableLiveData<>();
+    private final MutableLiveData<Profile> _userProfile = new MutableLiveData<>();
 
     public double getHitChance() {return hitChance;}
     public LiveData<Boolean> getAttackMissedEvent() { return _attackMissedEvent; }
@@ -53,12 +58,13 @@ public class BattleViewModel extends ViewModel {
 
     public BattleViewModel(TaskRepository taskRepository, BossRepository bossRepository, ProfileService profileService){
         this.bossService = new BossService(bossRepository);
+        this.profileService = profileService;
         this.taskService = new TaskService(taskRepository, profileService);
-        this.battleService = new BattleService(taskService, bossService);
+        this.battleService = new BattleService(taskService, bossService, profileService);
         userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
 
-    public void loadBattleState(int userId){
+    public void loadBattleState(String userId){
 
         currentBoss = bossService.getLowestLevelBossForUser(userId);
 
@@ -73,7 +79,13 @@ public class BattleViewModel extends ViewModel {
         //todo: moracu u bosu pamtiti koliko je ostalo pokusaja ubuduce
         _remainingAttacks.setValue(5);
         //todo: moracu koristiti od usera datume levela prethodnog i sadanjeg i moracu povezati taskove sa userom
-        this.hitChance = battleService.calculateChanceForAttack(LocalDate.of(2025, 8, 1), LocalDate.of(2025, 9, 1),userUid);
+        profileService.getProfileById(userUid).addOnSuccessListener(profile -> {
+
+            _userProfile.setValue(profile);
+
+        this.hitChance = battleService.calculateChanceForAttack(profile);
+        }).addOnFailureListener(e -> {
+        });
     }
 
     public void performAttack() {
