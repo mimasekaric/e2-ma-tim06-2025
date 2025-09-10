@@ -24,8 +24,10 @@ import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.databinding.ActivityProfileBinding;
 import com.example.myhobitapplication.dto.UserInfoDTO;
 import com.example.myhobitapplication.enums.Title;
+import com.example.myhobitapplication.models.Avatar;
 import com.example.myhobitapplication.models.Equipment;
 import com.example.myhobitapplication.models.Profile;
+import com.example.myhobitapplication.staticData.AvatarList;
 import com.example.myhobitapplication.viewModels.LoginViewModel;
 import com.example.myhobitapplication.viewModels.ProfileViewModel;
 import com.google.zxing.BarcodeFormat;
@@ -135,6 +137,7 @@ public class ProfileActivity extends Fragment {
                 }
             }
         });
+
         viewModel.getEquipment().observe(getViewLifecycleOwner(), equipmentList -> {
             binding.imgLayout2.removeAllViews();
             for (Equipment res : equipmentList) {
@@ -157,6 +160,12 @@ public class ProfileActivity extends Fragment {
             if (userInfo != null) {
                 this.userInfo = userInfo;
                 binding.putusername.setText(userInfo.getusername());
+
+                for( Avatar a :AvatarList.getAvatarList()){
+                    if (a.getName().equals(viewModel.getUserInfo().getValue().getavatarName())){
+                        binding.imageProf.setImageResource(a.getImage());
+                    }
+                }
             }
         });
 
@@ -204,6 +213,7 @@ public class ProfileActivity extends Fragment {
                 Toast.makeText(getContext(), "Passwords must match!", Toast.LENGTH_SHORT).show();
             }
         });
+
 
         dialog.show();
     }
