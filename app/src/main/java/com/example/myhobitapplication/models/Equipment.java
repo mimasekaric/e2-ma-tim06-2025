@@ -6,20 +6,18 @@ public  class Equipment {
 
     private String id;
 
-    private Boolean activated;
     private EquipmentTypes equipmentType;
     private double powerPercentage;
     private int image;
+    private double coef;
     public Equipment(){}
-    public Equipment(String id, Boolean activated) {
+    public Equipment(String id) {
         this.id = id;
-        this.activated = activated;
         this.equipmentType = equipmentType;
     }
 
-    public Equipment(String id, Boolean activated, EquipmentTypes equipmentType, double powerPercentage) {
+    public Equipment(String id,EquipmentTypes equipmentType, double powerPercentage) {
         this.id = id;
-        this.activated = activated;
         this.equipmentType = equipmentType;
         this.powerPercentage = powerPercentage;
     }
@@ -36,9 +34,6 @@ public  class Equipment {
         return id;
     }
 
-    public Boolean getActivated() {
-        return activated;
-    }
 
     public void setId(String id) {
         this.id = id;
@@ -60,7 +55,11 @@ public  class Equipment {
         this.powerPercentage = powerPercentage;
     }
 
-    public void setActivated(Boolean activated) {
-        this.activated = activated;
+    public double getCoef() {
+        return coef;
+    }
+
+    public void setCoef(double coef) {
+        this.coef = coef;
     }
 }

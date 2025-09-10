@@ -13,17 +13,17 @@ public class WeaponList {
     public static List<Weapon> getWeaponList() {
         List<Weapon> weaponList = new ArrayList<>();
 
-        Weapon sword = new Weapon("7", false);
+        Weapon sword = new Weapon("7");
         sword.setequipmentType(EquipmentTypes.WEAPON);
         sword.setImage(R.mipmap.ic_launcher_sword);
-        sword.setpowerPercentage(0.05);
+        sword.setpowerPercentage(5);
         sword.setType(WeaponTypes.ANDURIL_OF_ARAGORN);
         weaponList.add(sword);
 
-        Weapon bowAndArrow = new Weapon("8", false);
+        Weapon bowAndArrow = new Weapon("8");
         bowAndArrow.setequipmentType(EquipmentTypes.WEAPON);
         bowAndArrow.setImage(R.mipmap.ic_launcher_bow_and_arrow);
-        bowAndArrow.setpowerPercentage(0.05);
+        bowAndArrow.setpowerPercentage(5);
         bowAndArrow.setType(WeaponTypes.BOW_AND_ARROW_OF_LEGOLAS);
         weaponList.add(bowAndArrow);
 

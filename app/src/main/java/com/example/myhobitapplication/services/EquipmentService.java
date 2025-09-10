@@ -1,7 +1,11 @@
 package com.example.myhobitapplication.services;
 
 import com.example.myhobitapplication.databases.EquipmentRepository;
+import com.example.myhobitapplication.enums.EquipmentTypes;
 import com.example.myhobitapplication.models.Category;
+import com.example.myhobitapplication.models.Equipment;
+
+import java.util.List;
 
 public class EquipmentService {
     private final EquipmentRepository repository;
@@ -10,6 +14,8 @@ public class EquipmentService {
         this.repository.open();
     }
 
-    public void buyEquipment(){}
-    public void activateEquipement(){}
+    public List<Equipment> getByType(EquipmentTypes type){
+        return repository.getEquipmentByType(type);
+    }
+
 }

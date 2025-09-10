@@ -7,7 +7,7 @@ public enum PotionTypes {
 
     DEEP_FOREST_ESSENCE,
 
-    ELIXIR_OF_ETERNAL_POWER
+    ETERNAL_POWER_ELIXIR
 
 
 }

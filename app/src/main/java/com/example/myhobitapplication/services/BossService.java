@@ -24,7 +24,9 @@ public class BossService {
         BossDTO bossDTO = new BossDTO(boss);
         return  bossDTO;
     }
-
+    public Boss getPreviousBossForUser(String userId, int userLevel){
+        return bossRepository.getPreviousBossForUser(userId,userLevel);
+    }
     public long updateBoss(BossDTO bossDTO){
 
         Boss boss = new Boss(

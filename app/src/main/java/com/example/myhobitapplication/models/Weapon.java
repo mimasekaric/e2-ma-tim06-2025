@@ -6,12 +6,12 @@ public class Weapon extends Equipment{
 
     private WeaponTypes type;
 
-    public Weapon(String id, Boolean activated, WeaponTypes type) {
-        super(id, activated);
+    public Weapon(String id, WeaponTypes type) {
+        super(id);
         this.type = type;
     }
-    public Weapon(String id, Boolean activated){
-            super(id,activated);
+    public Weapon(String id){
+            super(id);
     }
 
     public Weapon(){}

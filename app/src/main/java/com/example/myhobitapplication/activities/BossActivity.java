@@ -52,7 +52,7 @@ public class BossActivity extends AppCompatActivity implements SensorEventListen
 
         TaskRepository taskRepository = new TaskRepository(getApplicationContext());
         BossRepository bossRepository = new BossRepository(getApplicationContext());
-        Boss boss = new Boss(2,400,6,400,false,4,200);
+        Boss boss = new Boss(2,400,"6",400,false,4,200);
         bossRepository.insertBoss(boss);
 
         battleViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {

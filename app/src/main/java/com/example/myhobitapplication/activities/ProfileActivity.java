@@ -24,6 +24,7 @@ import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.databinding.ActivityProfileBinding;
 import com.example.myhobitapplication.dto.UserInfoDTO;
 import com.example.myhobitapplication.enums.Title;
+import com.example.myhobitapplication.models.Equipment;
 import com.example.myhobitapplication.models.Profile;
 import com.example.myhobitapplication.viewModels.LoginViewModel;
 import com.example.myhobitapplication.viewModels.ProfileViewModel;
@@ -65,7 +66,7 @@ public class ProfileActivity extends Fragment {
             @NonNull
             @Override
             public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-                return (T) new ProfileViewModel();
+                return (T) new ProfileViewModel(requireContext());
             }
         }).get(ProfileViewModel.class);
 
@@ -134,6 +135,23 @@ public class ProfileActivity extends Fragment {
                 }
             }
         });
+        viewModel.getEquipment().observe(getViewLifecycleOwner(), equipmentList -> {
+            binding.imgLayout2.removeAllViews();
+            for (Equipment res : equipmentList) {
+                ImageView imageView2 = new ImageView(getContext());
+                imageView2.setImageResource(res.getImage());
+                int widthInDp = 100;
+                float scale = getResources().getDisplayMetrics().density;
+                int widthInPx = (int) (widthInDp * scale + 0.5f);
+
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                        widthInPx,
+                        LinearLayout.LayoutParams.MATCH_PARENT
+                );
+                imageView2.setLayoutParams(params);
+                binding.imgLayout2.addView(imageView2);
+            }
+        });
 
         viewModel.getUserInfo().observe(getViewLifecycleOwner(), userInfo -> {
             if (userInfo != null) {
@@ -198,13 +216,13 @@ public class ProfileActivity extends Fragment {
                 R.mipmap.ic_launcher_bulb,
                 R.mipmap.ic_launcher_bulb
         };
-        int[] equip = {
+       /* int[] equip = {
                 R.mipmap.ic_launcher_equ,
                 R.mipmap.ic_launcher_equ,
                 R.mipmap.ic_launcher_equ,
                 R.mipmap.ic_launcher_equ,
                 R.mipmap.ic_launcher_equ
-        };
+        };*/
 
         for (int res : images) {
             ImageView imageView = new ImageView(getContext());
@@ -221,9 +239,9 @@ public class ProfileActivity extends Fragment {
             binding.imgLayout1.addView(imageView);
         }
 
-        for (int res : equip) {
+      /*  for (Equipment res : viewModel.getEquipment().getValue()) {
             ImageView imageView2 = new ImageView(getContext());
-            imageView2.setImageResource(res);
+            imageView2.setImageResource(res.getImage());
             int widthInDp = 100;
             float scale = getResources().getDisplayMetrics().density;
             int widthInPx = (int) (widthInDp * scale + 0.5f);
@@ -234,6 +252,6 @@ public class ProfileActivity extends Fragment {
             );
             imageView2.setLayoutParams(params);
             binding.imgLayout2.addView(imageView2);
-        }
+        }*/
     }
 }

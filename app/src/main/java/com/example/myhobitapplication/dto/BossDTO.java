@@ -7,7 +7,7 @@ public class BossDTO {
     private Integer Id;
     private Integer HP;
 
-    private Integer UserId;
+    private String UserId;
 
     private Integer CurrentHP;
 
@@ -25,7 +25,7 @@ public class BossDTO {
     public BossDTO() {
     }
 
-    public BossDTO(Integer id, Integer HP, Integer userId, Integer currentHP, Boolean isDefeated, Integer bossLevel, Integer coinsReward) {
+    public BossDTO(Integer id, Integer HP, String userId, Integer currentHP, Boolean isDefeated, Integer bossLevel, Integer coinsReward) {
         Id = id;
         this.HP = HP;
         UserId = userId;
@@ -35,7 +35,7 @@ public class BossDTO {
         CoinsReward = coinsReward;
     }
 
-    public BossDTO(Integer HP, Integer userId, Integer currentHP, Boolean isDefeated, Integer bossLevel, Integer coinsReward) {
+    public BossDTO(Integer HP, String userId, Integer currentHP, Boolean isDefeated, Integer bossLevel, Integer coinsReward) {
         this.HP = HP;
         UserId = userId;
         CurrentHP = currentHP;
@@ -70,11 +70,11 @@ public class BossDTO {
         this.HP = HP;
     }
 
-    public Integer getUserId() {
+    public String getUserId() {
         return UserId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(String userId) {
         UserId = userId;
     }
 

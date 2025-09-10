@@ -73,7 +73,7 @@ public class BossRepository {
             do {
                 Boss boss = new Boss();
                 boss.setId(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_BOSS_ID)));
-                boss.setUserId(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_USER_ID)));
+                boss.setUserId(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_USER_ID)));
                 boss.setHP(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_HP)));
                 boss.setBossLevel(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_BOSS_LEVEL)));
                 boss.setCurrentHP(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CURRENT_HP)));
@@ -124,7 +124,7 @@ public class BossRepository {
             do {
                 Boss boss = new Boss();
                 boss.setId(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_BOSS_ID)));
-                boss.setUserId(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_USER_ID)));
+                boss.setUserId(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_USER_ID)));
                 boss.setHP(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_HP)));
                 boss.setBossLevel(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_BOSS_LEVEL)));
                 boss.setCurrentHP(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CURRENT_HP)));
@@ -146,7 +146,9 @@ public class BossRepository {
     }
 
 
-    public Boss getPreviousBossForUser(int userId, int previousLevel) {
+    public Boss getPreviousBossForUser(String userId, int userLevel) {
+
+        int previousLevel = userLevel - 1;
         Boss boss = null;
 
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -178,7 +180,7 @@ public class BossRepository {
 
 
             boss.setId(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_BOSS_ID)));
-            boss.setUserId(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_USER_ID)));
+            boss.setUserId(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_USER_ID)));
             boss.setHP(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_HP)));
             boss.setBossLevel(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_BOSS_LEVEL)));
             boss.setCurrentHP(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CURRENT_HP)));

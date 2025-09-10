@@ -5,7 +5,7 @@ public class Boss {
     private Integer Id;
     private Integer HP;
 
-    private Integer UserId;
+    private String UserId;
 
     private Integer CurrentHP;
 
@@ -23,7 +23,7 @@ public class Boss {
     public Boss() {
     }
 
-    public Boss(Integer id, Integer HP, Integer userId, Integer currentHP, Boolean isDefeated, Integer bossLevel, Integer coinsReward) {
+    public Boss(Integer id, Integer HP, String userId, Integer currentHP, Boolean isDefeated, Integer bossLevel, Integer coinsReward) {
         Id = id;
         this.HP = HP;
         UserId = userId;
@@ -33,7 +33,7 @@ public class Boss {
         CoinsReward = coinsReward;
     }
 
-    public Boss(Integer HP, Integer userId, Integer currentHP, Boolean isDefeated, Integer bossLevel, Integer coinsReward) {
+    public Boss(Integer HP, String userId, Integer currentHP, Boolean isDefeated, Integer bossLevel, Integer coinsReward) {
         this.HP = HP;
         UserId = userId;
         CurrentHP = currentHP;
@@ -58,11 +58,11 @@ public class Boss {
         this.HP = HP;
     }
 
-    public Integer getUserId() {
+    public String getUserId() {
         return UserId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(String userId) {
         UserId = userId;
     }
 

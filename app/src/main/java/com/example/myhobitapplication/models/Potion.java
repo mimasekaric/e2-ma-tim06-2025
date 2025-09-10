@@ -4,20 +4,13 @@ import com.example.myhobitapplication.enums.PotionTypes;
 
 public class Potion extends Equipment{
 
-
-
     private PotionTypes type;
 
     private boolean isPermanent;
-    private double coef;
 
-
-
-    public Potion(String id, Boolean activated, PotionTypes type, double coef) {
-        super(id,activated);
+    public Potion(String id, PotionTypes type) {
+        super(id);
         this.type = type;
-        this.coef = coef;
-
     }
 
 
@@ -33,20 +26,11 @@ public class Potion extends Equipment{
         isPermanent = permanent;
     }
 
-    public Potion(String id, Boolean activated) {
-        super(id, activated);
+    public Potion(String id) {
+        super(id);
     }
     public Potion(){
     }
-
-    public double getCoef() {
-        return coef;
-    }
-
-    public void setCoef(double coef) {
-        this.coef = coef;
-    }
-
 
     public PotionTypes getType() {
         return type;

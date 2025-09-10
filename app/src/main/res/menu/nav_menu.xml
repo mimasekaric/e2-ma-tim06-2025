@@ -17,7 +17,12 @@
         <item
             android:id="@+id/nav_tasks"
             android:icon="@mipmap/ic_launcher_xp"
-            android:title="Taks" />
+            android:title="Tasks" />
+
+        <item
+            android:id="@+id/nav_shop"
+            android:icon="@mipmap/ic_launcher_xp"
+            android:title="Shop" />
     </group>
 
 </menu>

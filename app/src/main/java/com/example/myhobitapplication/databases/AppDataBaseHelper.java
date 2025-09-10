@@ -36,6 +36,7 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_STATUS = "status";
 
 
+
     public static final String TABLE_CATEGORIES = "categories";
 
     public static final String COLUMN_CATEGORY_ID = "id";
@@ -74,8 +75,10 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_COEF = "coef";
     public static final String COLUMN_IS_PERMANENT = "is_permanent";
     public static final String COLUMN_FIGHTS_COUNTER = "fights_counter";
-
-
+    public static final String TABLE_USER_EQUIPMENT = "user_equipment";
+    public static final String COLUMN_USER_EQUIPMENT_ID = "id";
+    public static final String COLUMN_EQUIPMENT_EID = "equipment_id";
+    public static final String COLUMN_EQUIPMENT_UID = "user_id";
 
 
     public AppDataBaseHelper(Context context){
@@ -116,21 +119,28 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
                 + COLUMN_IS_DEFEATED + " TEXT,"
                 + COLUMN_BOSS_LEVEL + " TEXT,"
                 + COLUMN_HP + " TEXT,"
-                + COLUMN_COINS_REWARD + " TEXT,"
+                + COLUMN_COINS_REWARD + " INTEGER,"
                 + COLUMN_CURRENT_HP + " TEXT" + ")";
         db.execSQL(CREATE_BOSS_TABLE);
 
         String CREATE_EQUIPMENT_TABLE = "CREATE TABLE " + TABLE_EQUIPMENT + "("
                 + COLUMN_EQUIPMENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + COLUMN_ACTIVATED + " INTEGER,"
                 + COLUMN_EQUIPMENT_TYPE + " TEXT,"
                 + COLUMN_SPECIFIC_TYPE + " TEXT,"
                 + COLUMN_POWER_PERCENTAGE + " REAL,"
                 + COLUMN_IMAGE + " INTEGER,"
                 + COLUMN_COEF + " REAL,"
-                + COLUMN_IS_PERMANENT + " INTEGER,"
-                + COLUMN_FIGHTS_COUNTER + " INTEGER" + ")";
+                + COLUMN_IS_PERMANENT + " INTEGER"
+                 + ")";
         db.execSQL(CREATE_EQUIPMENT_TABLE);
+
+        String CREATE_USER_EQUIPMENT_TABLE = "CREATE TABLE " + TABLE_USER_EQUIPMENT + "("
+                + COLUMN_USER_EQUIPMENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + COLUMN_EQUIPMENT_EID + " TEXT,"
+                + COLUMN_EQUIPMENT_UID + " TEXT,"
+                + COLUMN_ACTIVATED + " INTEGER,"
+                + COLUMN_FIGHTS_COUNTER + " INTEGER" + ")";
+        db.execSQL(CREATE_USER_EQUIPMENT_TABLE);
 
 
         insertInitialData(db);
@@ -141,21 +151,18 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
         List<Potion> initialPotions = PotionList.getPotionList();
         for (Potion potion : initialPotions) {
             ContentValues values = new ContentValues();
-            values.put(COLUMN_ACTIVATED, potion.getActivated() ? 1 : 0);
             values.put(COLUMN_EQUIPMENT_TYPE, EquipmentTypes.POTION.name());
             values.put(COLUMN_SPECIFIC_TYPE, potion.getType().name());
             values.put(COLUMN_POWER_PERCENTAGE, potion.getpowerPercentage());
             values.put(COLUMN_IMAGE, potion.getImage());
             values.put(COLUMN_COEF, potion.getCoef());
             values.put(COLUMN_IS_PERMANENT, potion.isPermanent() ? 1 : 0);
-            values.put(COLUMN_FIGHTS_COUNTER, 0);
             db.insert(TABLE_EQUIPMENT, null, values);
         }
 
         List<Weapon> initialWeapons = WeaponList.getWeaponList();
         for (Weapon weapon : initialWeapons) {
             ContentValues values = new ContentValues();
-            values.put(COLUMN_ACTIVATED, weapon.getActivated() ? 1 : 0);
             values.put(COLUMN_EQUIPMENT_TYPE, EquipmentTypes.WEAPON.name());
             values.put(COLUMN_SPECIFIC_TYPE, weapon.getType().name());
             values.put(COLUMN_POWER_PERCENTAGE, weapon.getpowerPercentage());
@@ -163,7 +170,6 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
 
             values.putNull(COLUMN_COEF);
             values.putNull(COLUMN_IS_PERMANENT);
-            values.putNull(COLUMN_FIGHTS_COUNTER);
 
             db.insert(TABLE_EQUIPMENT, null, values);
         }
@@ -171,7 +177,6 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
         List<Clothing> initialClothing = ClothingList.getClothingList();
         for (Clothing clothing : initialClothing) {
             ContentValues values = new ContentValues();
-            values.put(COLUMN_ACTIVATED, clothing.getActivated() ? 1 : 0);
             values.put(COLUMN_EQUIPMENT_TYPE, EquipmentTypes.CLOTHING.name());
             values.put(COLUMN_SPECIFIC_TYPE, clothing.getType().name());
             values.put(COLUMN_POWER_PERCENTAGE, clothing.getpowerPercentage());
@@ -179,8 +184,6 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
             values.put(COLUMN_COEF, clothing.getCoef());
 
             values.putNull(COLUMN_IS_PERMANENT);
-
-            values.put(COLUMN_FIGHTS_COUNTER, clothing.getFightsCounter());
 
             db.insert(TABLE_EQUIPMENT, null, values);
         }
@@ -192,6 +195,7 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_RECURRING_TASKS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_BOSSES);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_EQUIPMENT);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER_EQUIPMENT);
 
         onCreate(db);
 
