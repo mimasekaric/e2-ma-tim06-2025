@@ -21,9 +21,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class BattleViewModel extends ViewModel {
-
-
-    // Servisi za pristup podacima i logici
     private final TaskService taskService;
     private final BossService bossService;
     private final BattleService battleService;
@@ -83,7 +80,8 @@ public class BattleViewModel extends ViewModel {
 
             _userProfile.setValue(profile);
 
-        this.hitChance = battleService.calculateChanceForAttack(profile);
+       // this.hitChance = battleService.calculateChanceForAttack(profile);
+            this.hitChance = 1.0;
         }).addOnFailureListener(e -> {
         });
     }
@@ -121,6 +119,7 @@ public class BattleViewModel extends ViewModel {
                 currentBoss.setDefeated(true);
 
                 _isBattleOver.setValue(true);
+                battleService.rewardUserWithCoins(currentBoss);
             }
 
 

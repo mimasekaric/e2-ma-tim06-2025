@@ -25,6 +25,16 @@ public class BossService {
         return  bossDTO;
     }
 
+    public BossDTO getLastDefeatedBossForUser(String userId) {
+        Boss boss = bossRepository.getAllDefeatedBossesForUser(userId)
+                .stream()
+                .max(Comparator.comparingInt(Boss::getBossLevel))
+                .orElse(null);
+
+        BossDTO bossDTO = new BossDTO(boss);
+        return  bossDTO;
+    }
+
     public long updateBoss(BossDTO bossDTO){
 
         Boss boss = new Boss(

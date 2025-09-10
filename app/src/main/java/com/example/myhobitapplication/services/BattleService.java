@@ -1,10 +1,8 @@
 package com.example.myhobitapplication.services;
 
-import com.example.myhobitapplication.databases.ProfileRepository;
 import com.example.myhobitapplication.dto.BossDTO;
 import com.example.myhobitapplication.models.Boss;
 import com.example.myhobitapplication.models.Profile;
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -55,5 +53,39 @@ public class BattleService {
         }
 
         return (double)completedTasks /createdTasks;
+    }
+
+    public boolean rewardUserWithCoins(BossDTO bossDTO){
+
+        if(bossDTO.getBossLevel()==1){
+            profileService.incrementProfileFieldValue(bossDTO.getUserId(),"coins",200);
+            bossDTO.setCoinsReward(200);
+            bossService.updateBoss(bossDTO);
+            return true;
+        }
+        else{
+            BossDTO previousBossDTO = bossService.getLastDefeatedBossForUser(bossDTO.getUserId());
+            if(previousBossDTO!=null){
+                Integer previousCoinsReward = previousBossDTO.getCoinsReward();
+                //todo: ovo cu promijeniti da stavim kad se kreira boss
+                double newCoinsReward = previousCoinsReward*0.2;
+                int newCoinsRewardInt = (int)newCoinsReward;
+
+                bossDTO.setCoinsReward(newCoinsRewardInt);
+                long isUpdateSuccessull = bossService.updateBoss(bossDTO);
+                if(isUpdateSuccessull>0){
+                    profileService.incrementProfileFieldValue(bossDTO.getUserId(),"coins",newCoinsRewardInt);
+                    return true;
+                }
+                bossDTO.setCoinsReward(previousCoinsReward);
+                bossService.updateBoss(bossDTO);
+                return false;
+            }
+            else{
+                return false;
+            }
+
+        }
+
     }
 }

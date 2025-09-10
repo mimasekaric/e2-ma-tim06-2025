@@ -10,11 +10,9 @@ import com.example.myhobitapplication.enums.RecurrenceUnit;
 import com.example.myhobitapplication.enums.RecurringTaskStatus;
 import com.example.myhobitapplication.enums.TaskQuote;
 import com.example.myhobitapplication.exceptions.ValidationException;
-import com.example.myhobitapplication.models.Category;
 import com.example.myhobitapplication.models.OneTimeTask;
 import com.example.myhobitapplication.models.RecurringTask;
 import com.example.myhobitapplication.models.Task;
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -379,7 +377,7 @@ public class TaskService {
             task.setAwarded(true);
             task.setStatus(RecurringTaskStatus.COMPLETED);
             repository.updateRecurringTask(task);
-            profileService.updateUserXp(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
+            profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
                         Log.d("Firestore", "XP uspešno ažuriran!");
                     })
                     .addOnFailureListener(e -> {
@@ -403,7 +401,7 @@ public class TaskService {
         if (shouldAwardXp) {
             task.setAwarded(true);
             xpGained = task.getDifficulty() + task.getImportance();
-            profileService.updateUserXp(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
+            profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
                         Log.d("Firestore", "XP uspešno ažuriran!");
                     })
                     .addOnFailureListener(e -> {
@@ -430,7 +428,7 @@ public class TaskService {
             oneTimeTask.setAwarded(true);
             task.setStatus(RecurringTaskStatus.COMPLETED);
             repository.updateOneTimeTask(oneTimeTask);
-            profileService.updateUserXp(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
+            profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
                         Log.d("Firestore", "XP uspešno ažuriran!");
                     })
                     .addOnFailureListener(e -> {
@@ -454,7 +452,7 @@ public class TaskService {
         if (shouldAwardXp) {
             oneTimeTask.setAwarded(true);
             xpGained = oneTimeTask.getDifficulty() + oneTimeTask.getImportance();
-            profileService.updateUserXp(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
+            profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
                         Log.d("Firestore", "XP uspešno ažuriran!");
                     })
                     .addOnFailureListener(e -> {
