@@ -1,5 +1,7 @@
 package com.example.myhobitapplication.activities;
 
+import android.animation.Animator;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.drawable.AnimationDrawable;
 import android.hardware.Sensor;
@@ -9,6 +11,8 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -23,43 +27,51 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.databases.BossRepository;
+import com.example.myhobitapplication.databases.ProfileRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.ActivityBossBinding;
 import com.example.myhobitapplication.models.Boss;
+import com.example.myhobitapplication.services.ProfileService;
+import com.example.myhobitapplication.shakeDetector.ShakeDetector;
 import com.example.myhobitapplication.viewModels.BattleViewModel;
+import com.google.firebase.auth.FirebaseAuth;
 
-public class BossActivity extends AppCompatActivity implements SensorEventListener {
+public class BossActivity extends AppCompatActivity {
 
     private ActivityBossBinding binding;
     private AnimationDrawable currentAnimation;
-    ImageView attackAttemptsImage;
-
-    private ProgressBar hpProgressBar;
-    private TextView hpTextView;
 
     private BattleViewModel battleViewModel;
 
     private SensorManager sensorManager;
     private Sensor accelerometer;
-    private long lastUpdateTime = 0;
-    private float last_x, last_y, last_z;
-    private static final int SHAKE_THRESHOLD = 800;
+
+    private FrameLayout chestOverlayContainer;
+
+    private String userUid;
+
+    private ShakeDetector shakeDetector;
+
+    private boolean isChestPhase = false;
+    private boolean hasChestBeenOpened = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         TaskRepository taskRepository = new TaskRepository(getApplicationContext());
         BossRepository bossRepository = new BossRepository(getApplicationContext());
-        Boss boss = new Boss(2,400,6,400,false,4,200);
+        ProfileService profileService = new ProfileService();
+        Boss boss = new Boss(2,400,userUid,400,false,2,200);
         bossRepository.insertBoss(boss);
 
         battleViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @NonNull
             @Override
             public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-                return (T) new BattleViewModel(taskRepository, bossRepository);
+                return (T) new BattleViewModel(taskRepository, bossRepository, profileService);
             }
         }).get(BattleViewModel.class);
 
@@ -69,7 +81,9 @@ public class BossActivity extends AppCompatActivity implements SensorEventListen
 
         binding = ActivityBossBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        chestOverlayContainer = binding.chestOverlayContainer;
 
+        setupShakeDetector();
 //        Integer userPP = battleViewModel.getUserPP().getValue();
 //
 //        if (userPP == null) return;
@@ -85,7 +99,7 @@ public class BossActivity extends AppCompatActivity implements SensorEventListen
 
         setupObservers();
         //todo: moracu uzeti logovanog usera ubuduce
-        battleViewModel.loadBattleState(6);
+        battleViewModel.loadBattleState(userUid);
 
         binding.attackButton.setOnClickListener(v -> {
             battleViewModel.performAttack();
@@ -126,14 +140,30 @@ public class BossActivity extends AppCompatActivity implements SensorEventListen
 
                 binding.attackButton.setEnabled(false);
 
-                Integer finalHp = battleViewModel.getBossCurrentHp().getValue();
-                if (finalHp != null && finalHp <= 0) {
-                    Toast.makeText(this, "WIN! BOSS IS DEFEATED!", Toast.LENGTH_LONG).show();
-                    //TODO:OTVARANJE KOVCEGA CU STAVITI ODVJE I DBOIJANJE PARA
-                } else {
-                    Toast.makeText(this, "U LOST!", Toast.LENGTH_LONG).show();
-                  //TODO: OVDJE IDE UTJESNA NAGRADA VALJDA
-                }
+
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+
+                    Integer finalHp = battleViewModel.getBossCurrentHp().getValue();
+                    if (finalHp != null && finalHp <= 0) {
+
+                        Toast.makeText(this, "U WIN!", Toast.LENGTH_SHORT).show();
+                        showChestOverlay();
+                    } else {
+
+                        Toast.makeText(this, "U LOST!", Toast.LENGTH_LONG).show();
+
+                    }
+
+                }, 1000);
+
+                //Integer finalHp = battleViewModel.getBossCurrentHp().getValue();
+//                if (finalHp != null && finalHp <= 0) {
+//                    Toast.makeText(this, "WIN! BOSS IS DEFEATED!", Toast.LENGTH_LONG).show();
+//                    //TODO:OTVARANJE KOVCEGA CU STAVITI ODVJE I DBOIJANJE PARA
+//                } else {
+//                    Toast.makeText(this, "U LOST!", Toast.LENGTH_LONG).show();
+//                  //TODO: OVDJE IDE UTJESNA NAGRADA VALJDA
+//                }
             }
         });
 
@@ -230,59 +260,77 @@ public class BossActivity extends AppCompatActivity implements SensorEventListen
         }, hitDuration);
     }
 
+    private void showChestOverlay() {
+        isChestPhase = true;
+        chestOverlayContainer.setVisibility(View.VISIBLE);
+        registerShakeDetector();
+    }
 
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (accelerometer != null) {
-            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+    private void registerShakeDetector() {
+        if (sensorManager != null && accelerometer != null) {
+            sensorManager.registerListener(shakeDetector, accelerometer, SensorManager.SENSOR_DELAY_UI);
         }
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        sensorManager.unregisterListener(this);
+    private void unregisterShakeDetector() {
+        if (sensorManager != null) {
+            sensorManager.unregisterListener(shakeDetector);
+        }
     }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-    }
-
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-
-        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            long currentTime = System.currentTimeMillis();
-
-            if ((currentTime - lastUpdateTime) > 100) {
-                long diffTime = (currentTime - lastUpdateTime);
-                lastUpdateTime = currentTime;
-
-                float x = event.values[0];
-                float y = event.values[1];
-                float z = event.values[2];
-
-
-                float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
-
-
-                if (speed > SHAKE_THRESHOLD) {
-
-
-                    if (binding.attackButton.isEnabled()) {
-                        Toast.makeText(this, "SHAKE ACTIVATED!", Toast.LENGTH_SHORT).show();
-                        battleViewModel.performAttack();
-                    }
+    private void setupShakeDetector() {
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        if (sensorManager != null) {
+            accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            shakeDetector = new ShakeDetector();
+            shakeDetector.setOnShakeListener(count -> {
+                // SADA, na osnovu zastavice, odlučujemo koju logiku da pokrenemo
+                if (isChestPhase) {
+                    handleChestShake();
+                } else {
+                    handleAttackShake();
                 }
-
-                last_x = x;
-                last_y = y;
-                last_z = z;
-            }
+            });
         }
-
     }
+
+    // --- NOVE, ODVOJENE METODE ZA OBRADU SHAKE-a ---
+
+    private void handleAttackShake() {
+        // Logika za napad (tvoj postojeći kod)
+        if (binding.attackButton.isEnabled()) {
+            Toast.makeText(this, "Napad protresanjem!", Toast.LENGTH_SHORT).show();
+            battleViewModel.performAttack();
+        }
+    }
+
+    private void handleChestShake() {
+
+        if (hasChestBeenOpened) return;
+        hasChestBeenOpened = true;
+
+        unregisterShakeDetector();
+        binding.shakeToOpenText.setVisibility(View.GONE);
+        binding.staticChestImage.setVisibility(View.GONE);
+        binding.openingChestAnimation.setVisibility(View.VISIBLE);
+        binding.openingChestAnimation.playAnimation();
+        binding.openingChestAnimation.addAnimatorListener(new Animator.AnimatorListener() {
+            @Override public void onAnimationEnd(Animator animation) {
+
+                displayRewards();
+            }
+            @Override public void onAnimationStart(Animator animation) {}
+            @Override public void onAnimationRepeat(Animator animation) {}
+            @Override public void onAnimationCancel(Animator animation) {}
+        });
+    }
+
+    private void displayRewards() {
+        new AlertDialog.Builder(this)
+                .setTitle("Nagrade!")
+                .setMessage("Osvojio/la si: 200 novčića i Mač Fokusa!")
+                .setPositiveButton("Sjajno!", (dialog, which) -> finish())
+                .setCancelable(false)
+                .show();
+    }
+
 }

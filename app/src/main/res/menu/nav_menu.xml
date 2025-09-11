@@ -18,6 +18,12 @@
             android:id="@+id/nav_tasks"
             android:icon="@mipmap/ic_launcher_xp"
             android:title="Taks" />
+
+        <item
+            android:id="@+id/nav_boss_battle"
+            android:icon="@drawable/idle_dragon_boss_frame_1"
+            android:title="@string/boss" />
+
     </group>
 
 </menu>

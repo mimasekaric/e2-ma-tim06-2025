@@ -1,6 +1,6 @@
-package com.example.myhobitapplication.fragments;
+package com.example.myhobitapplication.fragments.tasksFragments;
 
-import android.content.Context;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -18,27 +18,25 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 
-import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.adapters.CategorySpinnerAdapter;
 import com.example.myhobitapplication.databases.CategoryRepository;
-import com.example.myhobitapplication.databases.DataBaseRecurringTaskHelper;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.FragmentRecurringTaskBinding;
 import com.example.myhobitapplication.enums.RecurrenceUnit;
 import com.example.myhobitapplication.models.Category;
 import com.example.myhobitapplication.services.CategoryService;
+import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.TaskService;
-import com.example.myhobitapplication.viewModels.CategoryViewModel;
-import com.example.myhobitapplication.viewModels.TaskViewModel;
+import com.example.myhobitapplication.viewModels.categoryViewModels.CategoryViewModel;
+import com.example.myhobitapplication.viewModels.taskViewModels.RecurringTaskViewModel;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.List;
 
 public class RecurringTaskFragment extends Fragment {
 
-    private TaskViewModel taskViewModel;
+    private RecurringTaskViewModel taskViewModel;
     private CategoryViewModel categoryViewModel;
     private FragmentRecurringTaskBinding recurringTaskBinding;
 
@@ -49,8 +47,10 @@ public class RecurringTaskFragment extends Fragment {
 
         TaskRepository repository = new TaskRepository(requireContext());
         CategoryRepository categoryRepository = new CategoryRepository(requireContext());
-        TaskService taskService = new TaskService(repository);
+        ProfileService profileService = new ProfileService();
+        TaskService taskService = new TaskService(repository, profileService);
         CategoryService categoryService = new CategoryService(categoryRepository);
+
 
 
 
@@ -58,9 +58,9 @@ public class RecurringTaskFragment extends Fragment {
             @NonNull
             @Override
             public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-                return (T) new TaskViewModel(taskService);
+                return (T) new RecurringTaskViewModel(taskService);
             }
-        }).get(TaskViewModel.class);
+        }).get(RecurringTaskViewModel.class);
 
         categoryViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @NonNull
@@ -86,6 +86,65 @@ public class RecurringTaskFragment extends Fragment {
         ScrollView scrollView = recurringTaskBinding.rtScrollView;
         scrollView.setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
         scrollView.setFocusable(false);
+
+        long today = System.currentTimeMillis();
+        recurringTaskBinding.rtDateStart.setMinDate(today);
+        recurringTaskBinding.rtDateEnd.setMinDate(today);
+
+        android.widget.NumberPicker numberPicker = recurringTaskBinding.etRecurrenceInterval;
+
+        numberPicker.setMinValue(1);
+        numberPicker.setMaxValue(99);
+
+        numberPicker.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, android.view.MotionEvent event) {
+                v.getParent().requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });
+
+
+
+        taskViewModel.getDifficultyXp().observe(getViewLifecycleOwner(), difficultyValue -> {
+            if (difficultyValue != null) {
+
+                for (int i = 0; i < recurringTaskBinding.rgDifficultyOptions.getChildCount(); i++) {
+                    View radioButton = recurringTaskBinding.rgDifficultyOptions.getChildAt(i);
+
+                    if (radioButton.getTag() != null && radioButton.getTag().toString().equals(String.valueOf(difficultyValue))) {
+
+                        ((android.widget.RadioButton) radioButton).setChecked(true);
+                        break;
+                    }
+                }
+            }
+        });
+
+
+        taskViewModel.getImportanceXp().observe(getViewLifecycleOwner(), importanceValue -> {
+            if (importanceValue != null) {
+                for (int i = 0; i < recurringTaskBinding.rgImportanceOptions.getChildCount(); i++) {
+                    View radioButton = recurringTaskBinding.rgImportanceOptions.getChildAt(i);
+                    if (radioButton.getTag() != null && radioButton.getTag().toString().equals(String.valueOf(importanceValue))) {
+                        ((android.widget.RadioButton) radioButton).setChecked(true);
+                        break;
+                    }
+                }
+            }
+        });
+
+
+
+        taskViewModel.isFormValid().observe(getViewLifecycleOwner(), isValid -> {
+            if (isValid != null) {
+                recurringTaskBinding.btnRtask.setEnabled(isValid);
+            }
+        });
+
+        taskViewModel.getTitleError().observe(getViewLifecycleOwner(), error -> {
+            recurringTaskBinding.rtaskName.setError(error);
+        });
 
 
         recurringTaskBinding.rgDifficultyOptions.setOnCheckedChangeListener((group, checkedId) -> {
@@ -197,13 +256,7 @@ public class RecurringTaskFragment extends Fragment {
 
         recurringTaskBinding.btnRtask.setOnClickListener(v -> {
 
-
             taskViewModel.saveRecurringTask();
-
-            Toast.makeText(requireContext(), "Zadatak je uspešno kreiran!", Toast.LENGTH_SHORT).show();
-
-            getParentFragmentManager().setFragmentResult("taskAddedRequest", new Bundle());
-
         });
 
 
@@ -228,6 +281,42 @@ public class RecurringTaskFragment extends Fragment {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+
+        taskViewModel.getExecutionTimeError().observe(getViewLifecycleOwner(), error -> {
+            if (error != null && !error.isEmpty()) {
+                recurringTaskBinding.timeErrorTextView.setText(error);
+                recurringTaskBinding.timeErrorTextView.setVisibility(View.VISIBLE);
+            } else {
+                recurringTaskBinding.timeErrorTextView.setVisibility(View.GONE);
+            }
+        });
+
+        taskViewModel.getSubmissionError().observe(getViewLifecycleOwner(), error -> {
+
+            if (error != null && !error.isEmpty()) {
+                new AlertDialog.Builder(requireContext())
+                        .setTitle("Error with saving task!")
+                        .setMessage(error)
+                        .setPositiveButton("OK", null)
+                        .show();
+            }
+        });
+
+        taskViewModel.getSaveSuccessEvent().observe(getViewLifecycleOwner(), isSuccess -> {
+
+            if (isSuccess != null && isSuccess) {
+
+                Toast.makeText(requireContext(), "Zadatak je uspešno kreiran!", Toast.LENGTH_SHORT).show();
+
+                getParentFragmentManager().setFragmentResult("taskAddedRequest", new Bundle());
+
+                // Opciono: Očisti formu ili se vrati na prethodni ekran
+                // getParentFragmentManager().popBackStack();
+                taskViewModel.onSaveSuccessEventHandled();
+            }
+        });
+
+
 
 
 

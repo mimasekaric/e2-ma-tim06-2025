@@ -9,7 +9,9 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.myhobitapplication.enums.RecurrenceUnit;
 import com.example.myhobitapplication.models.RecurringTask;
+import com.example.myhobitapplication.models.Task;
 import com.example.myhobitapplication.services.TaskService;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -22,9 +24,9 @@ public class TaskCalendarViewModel extends ViewModel {
 
     private final TaskService taskService;
 
-    private final MutableLiveData<List<RecurringTask>> _scheduledTasksLiveData = new MutableLiveData<>();
+    private final MutableLiveData<List<Task>> _scheduledTasksLiveData = new MutableLiveData<>();
 
-    public LiveData<List<RecurringTask>> getScheduledTasksLiveData() {
+    public LiveData<List<Task>> getScheduledTasksLiveData() {
         return _scheduledTasksLiveData;
     }
 
@@ -34,29 +36,32 @@ public class TaskCalendarViewModel extends ViewModel {
         return _selectedDate;
     }
 
+    private String userUid;
+
     public TaskCalendarViewModel(TaskService taskService) {
         this.taskService = taskService;
-        loadAllTasks();
+        userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        loadAllTasks(userUid);
     }
 
-    private void loadAllTasks() {
-        List<RecurringTask> allTasks = taskService.getAllTasks();
+    private void loadAllTasks(String userUid) {
+        List<Task> allTasks = taskService.getAllTasks(userUid);
         _scheduledTasksLiveData.setValue(allTasks);
         Log.d("ViewModelDebug", "LiveData osvežen. Novi broj zadataka: " + (allTasks != null ? allTasks.size() : 0));
     }
 
     public void refreshScheduledTasks() {
         Log.d("ViewModelDebug", "Pozvana je refreshScheduledTasks metoda.");
-        loadAllTasks();
+        loadAllTasks(userUid);
     }
 
     public void selectDate(LocalDate date) {
         _selectedDate.setValue(date);
     }
 
-    public List<RecurringTask> getTasksForDate(LocalDate date) {
+    public List<Task> getTasksForDate(LocalDate date) {
 
-        List<RecurringTask> currentTasks = _scheduledTasksLiveData.getValue();
+        List<Task> currentTasks = _scheduledTasksLiveData.getValue();
 
         if (currentTasks == null || date == null) {
             return Collections.emptyList();

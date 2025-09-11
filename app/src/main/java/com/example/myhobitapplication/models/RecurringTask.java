@@ -11,7 +11,7 @@ public class RecurringTask extends Task {
 
     private int recurrenceInterval;
     private RecurrenceUnit recurrenceUnit;
-    private LocalDate startDate;
+    //private LocalDate startDate;
     private LocalDate endDate;
 
     private RecurringTaskStatus status;
@@ -19,11 +19,11 @@ public class RecurringTask extends Task {
 
     private Integer FirstRecurringTaskId;
 
-    public RecurringTask(Integer id, String name, String description, Integer difficulty, Integer importance, String categoryId, LocalTime executionTime, int recurrenceInterval, RecurrenceUnit recurrenceUnit, LocalDate startDate, LocalDate endDate, RecurringTaskStatus status, Integer firstRecurringTaskId, LocalDate finishedDate, LocalDate creationDate) {
-        super(id, name, description, difficulty, importance, categoryId, executionTime, finishedDate, creationDate);
+    public RecurringTask(Integer id, String name, String description, Integer difficulty, Integer importance, String categoryId, LocalTime executionTime, int recurrenceInterval, RecurrenceUnit recurrenceUnit, LocalDate startDate, LocalDate endDate, RecurringTaskStatus status, Integer firstRecurringTaskId, LocalDate finishedDate, LocalDate creationDate, String userUid) {
+        super(id, name, description, difficulty, importance, categoryId, executionTime, finishedDate, creationDate, startDate, userUid);
         this.recurrenceInterval = recurrenceInterval;
         this.recurrenceUnit = recurrenceUnit;
-        this.startDate = startDate;
+
         this.endDate = endDate;
         this.status = status;
         FirstRecurringTaskId = firstRecurringTaskId;
@@ -36,11 +36,11 @@ public class RecurringTask extends Task {
 
 
 
-    public RecurringTask(String name, String description, Integer difficulty, Integer importance, String categoryId, LocalTime executionTime, int recurrenceInterval, RecurrenceUnit recurrenceUnit, LocalDate startDate, LocalDate endDate, RecurringTaskStatus status, Integer firstRecurringTaskId, LocalDate finishedDate, LocalDate creationDate ) {
-        super(name, description, difficulty, importance, categoryId, executionTime, finishedDate, creationDate);
+    public RecurringTask(String name, String description, Integer difficulty, Integer importance, String categoryId, LocalTime executionTime, int recurrenceInterval, RecurrenceUnit recurrenceUnit, LocalDate startDate, LocalDate endDate, RecurringTaskStatus status, Integer firstRecurringTaskId, LocalDate finishedDate, LocalDate creationDate, String userUid ) {
+        super(name, description, difficulty, importance, categoryId, executionTime, finishedDate, creationDate, startDate, userUid);
         this.recurrenceInterval = recurrenceInterval;
         this.recurrenceUnit = recurrenceUnit;
-        this.startDate = startDate;
+
         this.endDate = endDate;
         this.status = status;
         FirstRecurringTaskId = firstRecurringTaskId;
@@ -54,10 +54,6 @@ public class RecurringTask extends Task {
         return recurrenceUnit;
     }
 
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
     public LocalDate getEndDate() {
         return endDate;
     }
@@ -68,10 +64,6 @@ public class RecurringTask extends Task {
 
     public void setRecurrenceUnit(RecurrenceUnit recurrenceUnit) {
         this.recurrenceUnit = recurrenceUnit;
-    }
-
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
     }
 
     public void setEndDate(LocalDate endDate) {

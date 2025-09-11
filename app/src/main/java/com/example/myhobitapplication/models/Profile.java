@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import com.example.myhobitapplication.enums.Title;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -23,7 +24,10 @@ public class Profile {
 
     private List<String> equipment;//equipment ids
 
-    public Profile(String userUid, Integer coins, Integer xp, Integer level, Integer numberOfbadges, List<String> badges, List<String> equipment, Title title, Integer pp) {
+    private Date previousLevelDate;
+    private Date currentLevelDate;
+
+    public Profile(String userUid, Integer coins, Integer xp, Integer level, Integer numberOfbadges, List<String> badges, List<String> equipment, Title title, Integer pp, Date lastLevelDate, Date currentLevelDate) {
         this.userUid = userUid;
         this.coins = coins;
         this.xp = xp;
@@ -33,6 +37,8 @@ public class Profile {
         this.equipment = equipment;
         this.title=title;
         this.pp=pp;
+        this.currentLevelDate= currentLevelDate;
+        this.previousLevelDate = lastLevelDate;
     }
 
     public Profile(String userUid) {
@@ -45,6 +51,8 @@ public class Profile {
         this.badges = new ArrayList<>();
         this.pp=0;
         this.equipment = new ArrayList<>();
+        this.previousLevelDate = new Date();
+        this.currentLevelDate = new Date();
     }
 
     public Profile(){
@@ -122,5 +130,21 @@ public class Profile {
 
     public void setequipment(List<String> equipment) {
         this.equipment = equipment;
+    }
+
+    public Date getPreviousLevelDate() {
+        return previousLevelDate;
+    }
+
+    public void setPreviousLevelDate(Date previousLevelDate) {
+        this.previousLevelDate = previousLevelDate;
+    }
+
+    public Date getCurrentLevelDate() {
+        return currentLevelDate;
+    }
+
+    public void setCurrentLevelDate(Date currentLevelDate) {
+        this.currentLevelDate = currentLevelDate;
     }
 }

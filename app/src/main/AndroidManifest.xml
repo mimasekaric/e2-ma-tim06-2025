@@ -11,15 +11,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyHobitApplication">
-        <activity
-            android:name=".activities.HomeFirstActivity"
-            android:exported="false" />
+<!--        <activity-->
+<!--            android:name=".activities.HomeFirstActivity"-->
+<!--            android:exported="false" />-->
         <activity
             android:name=".activities.HomeActivity"
             android:exported="false" />
-        <activity
-            android:name=".activities.ProfileActivity"
-            android:exported="false" />
+<!--        <activity-->
+<!--            android:name=".activities.ProfileActivity"-->
+<!--            android:exported="false" />-->
         <!--
    <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -47,7 +47,13 @@
             android:name=".activities.TaskActivity"
             android:exported="false" />
         <activity android:name=".activities.TaskDetailActivity" />
-        <activity android:name=".activities.RecurringTaskEditActivity" />
+        <activity android:name=".activities.TaskEditActivity" />
+        <activity android:name=".activities.CategoryEditActivity" />
+        <activity android:name=".activities.CategoryViewActivity" />
+        <activity android:name=".activities.CategoryCreateActivity" />
+        <activity android:name=".activities.BossActivity" />
+
+
     </application>
 
 </manifest>

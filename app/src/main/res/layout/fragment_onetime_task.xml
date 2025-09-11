@@ -1,14 +1,223 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rt_scroll_view"
     android:layout_width="match_parent"
+    android:descendantFocusability="beforeDescendants"
     android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:text="Ovo je jednokratni zadatak" />
+    <LinearLayout
 
-</FrameLayout>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Izaberi kategoriju"
+            android:layout_marginBottom="8dp"/>
+
+        <Spinner
+            android:id="@+id/category_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:spinnerMode="dropdown"/>
+
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Izaberite tezinu"
+            android:layout_marginBottom="8dp" />
+
+        <RadioGroup
+
+            android:id="@+id/rb_difficulty_options"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RadioButton
+
+                android:id="@+id/rb_very_easy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Very easy - 1 XP"
+                android:textSize="10dp"
+                android:scaleX="0.8"
+                android:scaleY="0.8"
+                android:tag="1" />
+
+            <RadioButton
+
+                android:id="@+id/rb_easy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Easy - 3 XP"
+                android:textSize="10dp"
+                android:scaleX="0.8"
+                android:scaleY="0.8"
+                android:tag="3" />
+
+            <RadioButton
+
+                android:id="@+id/rb_hard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10dp"
+                android:scaleX="0.8"
+                android:scaleY="0.8"
+                android:text="Hard - 7 XP"
+                android:tag="7" />
+
+            <RadioButton
+
+                android:id="@+id/rb_very_hard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10dp"
+                android:scaleX="0.8"
+                android:scaleY="0.8"
+                android:text="Very hard - 20 XP"
+                android:tag="20" />
+
+        </RadioGroup>
+
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Choose importance:"
+            android:layout_marginBottom="8dp" />
+
+        <RadioGroup
+
+            android:id="@+id/rg_importance_options"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RadioButton
+
+                android:id="@+id/rb_normal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Normal - 1 XP"
+                android:textSize="10dp"
+                android:scaleX="0.8"
+                android:scaleY="0.8"
+                android:tag="1" />
+
+            <RadioButton
+
+                android:id="@+id/rb_important"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Important - 3 XP"
+                android:textSize="10dp"
+                android:scaleX="0.8"
+                android:scaleY="0.8"
+                android:tag="3" />
+
+            <RadioButton
+
+                android:id="@+id/rb_very_important"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10dp"
+                android:scaleX="0.8"
+                android:scaleY="0.8"
+                android:text="Very important - 10 XP"
+                android:tag="10" />
+
+            <RadioButton
+
+                android:id="@+id/rb_special"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10dp"
+                android:scaleX="0.8"
+                android:scaleY="0.8"
+                android:text="Special - 100 XP"
+                android:tag="100" />
+        </RadioGroup>
+
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Task name:"/>
+
+        <EditText
+
+            android:id="@+id/otask_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="enter name here..."
+            android:textSize="7pt"
+            />
+
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Description:"/>
+
+        <EditText
+
+            android:id="@+id/otask_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="enter description here..."
+            android:textSize="7pt"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Execution time:"/>
+
+            <TimePicker
+                android:id="@+id/otaskTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:timePickerMode="spinner" />
+            <TextView
+                android:id="@+id/timeErrorTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/holo_red_light"
+                android:visibility="gone"
+                tools:text="Time has already passed."
+                tools:visibility="visible" />
+
+        </LinearLayout>
+
+
+        <DatePicker
+            android:id="@+id/ot_date_start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/btn_otask"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Create task"/>
+
+    </LinearLayout>
+
+
+
+
+
+
+
+
+</ScrollView>

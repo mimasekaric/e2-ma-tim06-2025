@@ -13,19 +13,20 @@ import androidx.annotation.Nullable;
 
 import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.models.RecurringTask;
+import com.example.myhobitapplication.models.Task;
 
 import java.util.List;
 
-public class TaskAdapter extends ArrayAdapter<RecurringTask> {
+public class TaskAdapter extends ArrayAdapter<Task> {
 
-    public TaskAdapter(Context context, List<RecurringTask> taskSlots) {
+    public TaskAdapter(Context context, List<Task> taskSlots) {
         super(context, 0, taskSlots);
     }
 
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        RecurringTask recurringTask = getItem(position);
+        Task recurringTask = getItem(position);
 
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.task_item, parent, false);
