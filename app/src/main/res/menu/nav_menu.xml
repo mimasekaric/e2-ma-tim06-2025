@@ -28,6 +28,10 @@
             android:id="@+id/nav_boss_battle"
             android:icon="@drawable/idle_dragon_boss_frame_1"
             android:title="@string/boss" />
+        <item
+            android:id="@+id/nav_category"
+            android:icon="@mipmap/ic_launcher_xp"
+            android:title="@string/category" />
 
     </group>
 

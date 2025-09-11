@@ -1,153 +1,133 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
+    android:background="@drawable/baccpng"
     tools:context=".fragments.tasksFragments.RecurringTaskDetailsFragment">
 
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/logincard"
+        android:padding="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            
+            <EditText
+                android:id="@+id/task_title_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/educursivebold"
+                android:gravity="center"
+                android:textColorHint="#A8A8A8"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                tools:text="Naslov Zadatka" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+                <View
+                    android:id="@+id/category_color_view"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginEnd="8dp" />
+                <TextView
+                    android:id="@+id/category_name_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/educursivesemibold"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    tools:text="Ime Kategorije" />
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/task_description_text_view"
+                style="@style/FormEditText"
+                android:layout_marginBottom="24dp"
+                android:background="@null"
+                tools:text="Ovo je detaljan opis zadatka." />
+
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:columnCount="2">
+
+                <TextView style="@style/FormLabel" android:text="Težina:" />
+                <Spinner
+                    android:id="@+id/difficulty_spinner"
+                    style="@style/FormSpinner" />
+
+                <TextView style="@style/FormLabel" android:text="Važnost:" />
+                <Spinner
+                    android:id="@+id/importance_spinner"
+                    style="@style/FormSpinner" />
+
+                <TextView style="@style/FormLabel" android:text="Ponavljanje:" />
+                <TextView android:id="@+id/recurrence_text_view" style="@style/FormValue" tools:text="Svake 2 nedelje" />
+
+                <TextView style="@style/FormLabel" android:text="Vreme:" />
+                <TextView android:id="@+id/time_text_view" style="@style/FormValue" tools:text="09:30" />
+
+                <TextView style="@style/FormLabel" android:text="Počinje:" />
+                <TextView android:id="@+id/start_date_text_view" style="@style/FormValue" tools:text="2025-01-01" />
+
+                <TextView style="@style/FormLabel" android:text="Završava:" />
+                <TextView android:id="@+id/end_date_text_view" style="@style/FormValue" tools:text="2025-12-31" />
+
+                <TextView style="@style/FormLabel" android:text="Status:" />
+                <TextView android:id="@+id/rct_status" style="@style/FormValue" tools:text="AKTIVAN" />
+
+            </GridLayout>
+        </LinearLayout>
+    </ScrollView>
+
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/buttonContainer"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="24dp">
+        android:orientation="horizontal"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <EditText
-            android:id="@+id/task_title_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:gravity="center"
-            android:textColor="@android:color/black"
-            android:textSize="28sp"
-            android:textStyle="bold"
-            tools:text="Task Title" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <View
-                android:id="@+id/category_color_view"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginEnd="8dp"
-                android:background="@drawable/rounded_square_shape" />
-
-            <TextView
-                android:id="@+id/category_name_text_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="18sp"
-                tools:text="Category Name" />
-        </LinearLayout>
-
-        <EditText
-            android:id="@+id/task_description_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:background="@drawable/card_background"
-            android:padding="16dp"
-            android:textSize="16sp"
-            tools:text="This is a detailed description of the recurring task." />
-
-        <GridLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:columnCount="2">
-
-            <TextView
-                style="@style/DetailHeader"
-                android:text="Difficulty:" />
-
-            <Spinner
-                android:id="@+id/difficulty_spinner"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_gravity="fill_horizontal"
-                android:spinnerMode="dropdown"/>
-
-            <TextView
-                style="@style/DetailHeader"
-                android:text="Importance:" />
-
-            <Spinner
-                android:id="@+id/importance_spinner"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_gravity="fill_horizontal"
-                android:spinnerMode="dropdown"/>
-
-            <TextView
-                style="@style/DetailHeader"
-                android:text="Recurrence:" />
-
-            <TextView
-                android:id="@+id/recurrence_text_view"
-                style="@style/DetailValue"
-                tools:text="Every 2 weeks" />
-
-            <TextView
-                style="@style/DetailHeader"
-                android:text="Execution Time:" />
-
-            <TextView
-                android:id="@+id/time_text_view"
-                style="@style/DetailValue"
-                tools:text="09:30 AM" />
-
-            <TextView
-                style="@style/DetailHeader"
-                android:text="Start Date:" />
-
-            <TextView
-                android:id="@+id/start_date_text_view"
-                style="@style/DetailValue"
-                tools:text="2025-01-01" />
-
-            <TextView
-                style="@style/DetailHeader"
-                android:text="End Date:" />
-
-            <TextView
-                android:id="@+id/end_date_text_view"
-                style="@style/DetailValue"
-                tools:text="2025-12-31" />
-            <TextView
-                style="@style/DetailHeader"
-                android:text="Status:" />
-
-            <TextView
-                android:id="@+id/rct_status"
-                style="@style/DetailValue"
-                tools:text="status" />
-
-        </GridLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:orientation="horizontal"
-            android:gravity="center">
-
-            <Button
-                android:id="@+id/edit_task_button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:text="Edit" />
-
-
-        </LinearLayout>
+        <Button
+            style="@style/Widget.App.Button.OutlinedButton.IconOnly"
+                    android:id="@+id/edit_task_button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/button"
+                    android:text="Edit"
+                    android:fontFamily="@font/educursivesemibold"
+                    android:textSize="18sp"
+                    app:backgroundTint="@null" />
 
     </LinearLayout>
 
-</ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

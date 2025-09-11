@@ -284,10 +284,10 @@ public class RecurringTaskFragment extends Fragment {
 
         taskViewModel.getExecutionTimeError().observe(getViewLifecycleOwner(), error -> {
             if (error != null && !error.isEmpty()) {
-                recurringTaskBinding.timeErrorTextView.setText(error);
-                recurringTaskBinding.timeErrorTextView.setVisibility(View.VISIBLE);
+               // recurringTaskBinding.timeErrorTextView.setText(error);
+              //  recurringTaskBinding.timeErrorTextView.setVisibility(View.VISIBLE);
             } else {
-                recurringTaskBinding.timeErrorTextView.setVisibility(View.GONE);
+               // recurringTaskBinding.timeErrorTextView.setVisibility(View.GONE);
             }
         });
 

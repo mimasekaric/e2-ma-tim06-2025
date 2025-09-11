@@ -1,251 +1,179 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/rt_scroll_view"
     android:layout_width="match_parent"
-    android:descendantFocusability="beforeDescendants"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/baccpng"
+    tools:context=".fragments.tasksFragments.RecurringTaskFragment">
 
-    <LinearLayout
-
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_marginTop="24dp"
+        android:fontFamily="@font/educursivebold"
+        android:text="Novi Ponavljajući Zadatak"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="28sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Izaberi kategoriju"
-            android:layout_marginBottom="8dp"/>
-
-        <Spinner
-            android:id="@+id/category_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:spinnerMode="dropdown"/>
-
-        <TextView
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Izaberite tezinu"
-            android:layout_marginBottom="8dp" />
-
-        <RadioGroup
-
-            android:id="@+id/rg_difficulty_options"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <RadioButton
-
-                android:id="@+id/rb_very_easy"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Very easy - 1 XP"
-                android:textSize="10dp"
-                android:scaleX="0.8"
-                android:scaleY="0.8"
-                android:tag="1" />
-
-            <RadioButton
-
-                android:id="@+id/rb_easy"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Easy - 3 XP"
-                android:textSize="10dp"
-                android:scaleX="0.8"
-                android:scaleY="0.8"
-                android:tag="3" />
-
-            <RadioButton
-
-                android:id="@+id/rb_hard"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="10dp"
-                android:scaleX="0.8"
-                android:scaleY="0.8"
-                android:text="Hard - 7 XP"
-                android:tag="7" />
-
-            <RadioButton
-
-                android:id="@+id/rb_very_hard"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="10dp"
-                android:scaleX="0.8"
-                android:scaleY="0.8"
-                android:text="Very hard - 20 XP"
-                android:tag="20" />
-
-        </RadioGroup>
-
-        <TextView
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Choose importance:"
-            android:layout_marginBottom="8dp" />
-
-        <RadioGroup
-
-            android:id="@+id/rg_importance_options"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <RadioButton
-
-                android:id="@+id/rb_normal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Normal - 1 XP"
-                android:textSize="10dp"
-                android:scaleX="0.8"
-                android:scaleY="0.8"
-                android:tag="1" />
-
-            <RadioButton
-
-                android:id="@+id/rb_important"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Important - 3 XP"
-                android:textSize="10dp"
-                android:scaleX="0.8"
-                android:scaleY="0.8"
-                android:tag="3" />
-
-            <RadioButton
-
-                android:id="@+id/rb_very_important"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="10dp"
-                android:scaleX="0.8"
-                android:scaleY="0.8"
-                android:text="Very important - 10 XP"
-                android:tag="10" />
-
-            <RadioButton
-
-                android:id="@+id/rb_special"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="10dp"
-                android:scaleX="0.8"
-                android:scaleY="0.8"
-                android:text="Special - 100 XP"
-                android:tag="100" />
-        </RadioGroup>
-
-        <TextView
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Task name:"/>
-
-        <EditText
-
-            android:id="@+id/rtask_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="enter name here..."
-            android:textSize="7pt"
-            />
-
-        <TextView
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Description:"/>
-
-        <EditText
-
-            android:id="@+id/rtask_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="enter description here..."
-            android:textSize="7pt"/>
+    <ScrollView
+        android:id="@+id/rt_scroll_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/logincard"
+        android:padding="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_rtask"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-        <TextView
 
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Execution time:"/>
 
-        <TimePicker
-            android:id="@+id/rtask_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:timePickerMode="spinner" />
             <TextView
-                android:id="@+id/timeErrorTextView"
+                style="@style/FormLabel"
+                android:text="Naziv" />
+            <EditText
+                android:id="@+id/rtask_name"
+                style="@style/FormEditText"
+                android:hint="Unesi naziv zadatka..."
+                android:inputType="textCapSentences" />
+
+
+            <TextView
+                style="@style/FormLabel"
+                android:text="Opis (opciono)" />
+            <EditText
+                android:id="@+id/rtask_description"
+                style="@style/FormEditText"
+                android:hint="Unesi detalje..."
+                android:inputType="textMultiLine"
+                android:minLines="2" />
+
+
+            <TextView
+                style="@style/FormLabel"
+                android:text="Kategorija" />
+            <Spinner
+                android:id="@+id/category_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginBottom="16dp"
+                android:background="@android:drawable/btn_dropdown"
+                android:spinnerMode="dropdown" />
+
+
+            <TextView
+                style="@style/FormLabel"
+                android:text="Težina" />
+            <RadioGroup
+                android:id="@+id/rg_difficulty_options"
+                style="@style/FormRadioGroup">
+                <RadioButton style="@style/FormRadioButton" android:id="@+id/rb_very_easy" android:text="Veoma lak - 1 XP" android:tag="1" />
+                <RadioButton style="@style/FormRadioButton" android:id="@+id/rb_easy" android:text="Lak - 3 XP" android:tag="3" />
+                <RadioButton style="@style/FormRadioButton" android:id="@+id/rb_hard" android:text="Težak - 7 XP" android:tag="7" />
+                <RadioButton style="@style/FormRadioButton" android:id="@+id/rb_very_hard" android:text="Ekstremno težak - 20 XP" android:tag="20" />
+            </RadioGroup>
+
+
+            <TextView
+                style="@style/FormLabel"
+                android:text="Važnost" />
+            <RadioGroup
+                android:id="@+id/rg_importance_options"
+                style="@style/FormRadioGroup">
+                <RadioButton style="@style/FormRadioButton" android:id="@+id/rb_normal" android:text="Normalan - 1 XP" android:tag="1" />
+                <RadioButton style="@style/FormRadioButton" android:id="@+id/rb_important" android:text="Važan - 3 XP" android:tag="3" />
+                <RadioButton style="@style/FormRadioButton" android:id="@+id/rb_very_important" android:text="Veoma važan - 10 XP" android:tag="10" />
+                <RadioButton style="@style/FormRadioButton" android:id="@+id/rb_special" android:text="Specijalan - 100 XP" android:tag="100" />
+            </RadioGroup>
+
+
+            <TextView
+                style="@style/FormLabel"
+                android:text="Vreme Izvršenja" />
+            <TimePicker
+                android:id="@+id/rtask_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/holo_red_light"
-                android:visibility="gone"
-                tools:text="Time has already passed."
-                tools:visibility="visible" />
+                android:layout_gravity="center_horizontal"
+                android:timePickerMode="spinner" />
+
+
+            <TextView
+                style="@style/FormLabel"
+                android:text="Ponavlja se svakih:" />
+            <NumberPicker
+                android:id="@+id/et_recurrence_interval"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"/>
+
+
+            <TextView
+                style="@style/FormLabel"
+                android:text="Jedinica:" />
+            <Spinner
+                android:id="@+id/spinner_recurrence_unit"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginBottom="16dp"
+                android:background="@android:drawable/btn_dropdown"
+                android:entries="@array/recurrence_units" />
+
+            <TextView
+                style="@style/FormLabel"
+                android:text="Početni Datum" />
+            <DatePicker
+                android:id="@+id/rt_date_start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:calendarViewShown="false"
+                android:datePickerMode="spinner"/>
+
+            <TextView
+                style="@style/FormLabel"
+                android:text="Krajnji Datum" />
+            <DatePicker
+                android:id="@+id/rt_date_end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:calendarViewShown="false"
+                android:datePickerMode="spinner"/>
 
         </LinearLayout>
+    </ScrollView>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Reccurency interval:" />
+    <Button
+        android:id="@+id/btn_rtask"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:backgroundTint="#115938"
+        android:fontFamily="@font/educursivesemibold"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:text="Kreiraj Zadatak"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <NumberPicker
-            android:id="@+id/et_recurrence_interval"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Recurrency unit:" />
-
-        <Spinner
-            android:id="@+id/spinner_recurrence_unit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:entries="@array/recurrence_units" />
-
-        <DatePicker
-            android:id="@+id/rt_date_start"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <DatePicker
-            android:id="@+id/rt_date_end"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <Button
-            android:id="@+id/btn_rtask"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Create task"/>
-
-    </LinearLayout>
-
-
-
-
-
-
-
-
-</ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
