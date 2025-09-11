@@ -11,7 +11,7 @@ public class ShakeDetector implements SensorEventListener {
 
     private static final int SHAKE_SLOP_TIME_MS = 500;
 
-    private OnShakeListener mListener; // Referenca na "gazdu" (našu BossActivity)
+    private OnShakeListener mListener;
 
 
     public void setOnShakeListener(OnShakeListener listener) {
@@ -20,7 +20,7 @@ public class ShakeDetector implements SensorEventListener {
 
 
     public interface OnShakeListener {
-        void onShake(int count); // Javićemo mu da se desio shake
+        void onShake(int count);
     }
 
 

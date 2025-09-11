@@ -40,18 +40,11 @@ public class BossActivity extends AppCompatActivity {
 
     private ActivityBossBinding binding;
     private AnimationDrawable currentAnimation;
-    ImageView attackAttemptsImage;
-
-    private ProgressBar hpProgressBar;
-    private TextView hpTextView;
 
     private BattleViewModel battleViewModel;
 
     private SensorManager sensorManager;
     private Sensor accelerometer;
-    private long lastUpdateTime = 0;
-    private float last_x, last_y, last_z;
-    private static final int SHAKE_THRESHOLD = 800;
 
     private FrameLayout chestOverlayContainer;
 
@@ -59,7 +52,6 @@ public class BossActivity extends AppCompatActivity {
 
     private ShakeDetector shakeDetector;
 
-    // Zastavica koja nam govori da li je borba gotova i da li čekamo shake za kovčeg
     private boolean isChestPhase = false;
     private boolean hasChestBeenOpened = false;
 
@@ -153,25 +145,16 @@ public class BossActivity extends AppCompatActivity {
 
                     Integer finalHp = battleViewModel.getBossCurrentHp().getValue();
                     if (finalHp != null && finalHp <= 0) {
-                        // POBEDA!
+
                         Toast.makeText(this, "U WIN!", Toast.LENGTH_SHORT).show();
-                        showChestOverlay(); // Prikaži sloj sa kovčegom
+                        showChestOverlay();
                     } else {
-                        // PORAZ!
+
                         Toast.makeText(this, "U LOST!", Toast.LENGTH_LONG).show();
-                        // Ovde možeš prikazati dijalog za poraz i opciju za povratak
-                        // ili jednostavno zatvoriti aktivnost nakon par sekundi
+
                     }
 
                 }, 1000);
-
-
-
-
-
-
-
-
 
                 //Integer finalHp = battleViewModel.getBossCurrentHp().getValue();
 //                if (finalHp != null && finalHp <= 0) {
@@ -278,13 +261,8 @@ public class BossActivity extends AppCompatActivity {
     }
 
     private void showChestOverlay() {
-        // 1. Postavi zastavicu na 'true'. Sada će svaki shake pokrenuti 'handleChestShake'.
         isChestPhase = true;
-
-        // 2. Učini ceo sloj vidljivim
         chestOverlayContainer.setVisibility(View.VISIBLE);
-
-        // 3. PONOVO REGISTRUJ listener za senzor da počne da sluša za shake kovčega
         registerShakeDetector();
     }
 
@@ -294,10 +272,6 @@ public class BossActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Pomoćna metoda za odjavljivanje (prestanak slušanja) senzora.
-     * Ovo je VAŽNO da bi se sačuvala baterija.
-     */
     private void unregisterShakeDetector() {
         if (sensorManager != null) {
             sensorManager.unregisterListener(shakeDetector);
@@ -330,25 +304,18 @@ public class BossActivity extends AppCompatActivity {
     }
 
     private void handleChestShake() {
-        // Logika za otvaranje kovčega (kod koji si tražio/la)
-        if (hasChestBeenOpened) return; // Spreči višestruko otvaranje
+
+        if (hasChestBeenOpened) return;
         hasChestBeenOpened = true;
 
-        // Odjavi listener da ne bi mogao ponovo da se aktivira
         unregisterShakeDetector();
-
-        // Sakrij tekst "Protresi..."
         binding.shakeToOpenText.setVisibility(View.GONE);
-
-        // Sakrij statičnu sliku i prikaži/pokreni Lottie animaciju
         binding.staticChestImage.setVisibility(View.GONE);
         binding.openingChestAnimation.setVisibility(View.VISIBLE);
         binding.openingChestAnimation.playAnimation();
-
-        // Listener za kraj Lottie animacije
         binding.openingChestAnimation.addAnimatorListener(new Animator.AnimatorListener() {
             @Override public void onAnimationEnd(Animator animation) {
-                // Kada se otvaranje završi, prikaži nagrade
+
                 displayRewards();
             }
             @Override public void onAnimationStart(Animator animation) {}
@@ -357,7 +324,6 @@ public class BossActivity extends AppCompatActivity {
         });
     }
 
-    // Pomoćna metoda za prikaz nagrada
     private void displayRewards() {
         new AlertDialog.Builder(this)
                 .setTitle("Nagrade!")
@@ -367,39 +333,4 @@ public class BossActivity extends AppCompatActivity {
                 .show();
     }
 
-
-//    @Override
-//    public void onSensorChanged(SensorEvent event) {
-//
-//        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-//            long currentTime = System.currentTimeMillis();
-//
-//            if ((currentTime - lastUpdateTime) > 100) {
-//                long diffTime = (currentTime - lastUpdateTime);
-//                lastUpdateTime = currentTime;
-//
-//                float x = event.values[0];
-//                float y = event.values[1];
-//                float z = event.values[2];
-//
-//
-//                float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
-//
-//
-//                if (speed > SHAKE_THRESHOLD) {
-//
-//
-//                    if (binding.attackButton.isEnabled()) {
-//                        Toast.makeText(this, "SHAKE ACTIVATED!", Toast.LENGTH_SHORT).show();
-//                        battleViewModel.performAttack();
-//                    }
-//                }
-//
-//                last_x = x;
-//                last_y = y;
-//                last_z = z;
-//            }
-//        }
-//
-//    }
 }

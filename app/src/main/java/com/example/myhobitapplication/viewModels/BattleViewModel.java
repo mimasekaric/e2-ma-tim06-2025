@@ -73,9 +73,9 @@ public class BattleViewModel extends ViewModel {
         _bossMaxHp.setValue(currentBoss.getHP());
         _userPP.setValue(userPower);
 
-        //todo: moracu u bosu pamtiti koliko je ostalo pokusaja ubuduce
+        //todo: moracu u bosu pamtiti koliko je ostalo pokusaja ubuduce?
         _remainingAttacks.setValue(5);
-        //todo: moracu koristiti od usera datume levela prethodnog i sadanjeg i moracu povezati taskove sa userom
+        //todo: moracu koristiti od usera datume levela prethodnog i sadanjeg i moracu povezati taskove sa userom - URADILA
         profileService.getProfileById(userUid).addOnSuccessListener(profile -> {
 
             _userProfile.setValue(profile);

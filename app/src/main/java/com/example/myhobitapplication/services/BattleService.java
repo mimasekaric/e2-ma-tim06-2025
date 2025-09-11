@@ -57,35 +57,69 @@ public class BattleService {
 
     public boolean rewardUserWithCoins(BossDTO bossDTO){
 
-        if(bossDTO.getBossLevel()==1){
-            profileService.incrementProfileFieldValue(bossDTO.getUserId(),"coins",200);
-            bossDTO.setCoinsReward(200);
-            bossService.updateBoss(bossDTO);
-            return true;
-        }
-        else{
-            BossDTO previousBossDTO = bossService.getLastDefeatedBossForUser(bossDTO.getUserId());
-            if(previousBossDTO!=null){
-                Integer previousCoinsReward = previousBossDTO.getCoinsReward();
-                //todo: ovo cu promijeniti da stavim kad se kreira boss
-                double newCoinsReward = previousCoinsReward*0.2;
-                int newCoinsRewardInt = (int)newCoinsReward;
+        if(bossDTO!=null) {
 
-                bossDTO.setCoinsReward(newCoinsRewardInt);
-                long isUpdateSuccessull = bossService.updateBoss(bossDTO);
-                if(isUpdateSuccessull>0){
-                    profileService.incrementProfileFieldValue(bossDTO.getUserId(),"coins",newCoinsRewardInt);
-                    return true;
-                }
-                bossDTO.setCoinsReward(previousCoinsReward);
-                bossService.updateBoss(bossDTO);
-                return false;
+            if(bossDTO.getBossLevel()==0){
+                profileService.incrementProfileFieldValue(bossDTO.getUserId(),"coins",200);
+                return true;
             }
             else{
-                return false;
+                    profileService.incrementProfileFieldValue(bossDTO.getUserId(),"coins",bossDTO.getCoinsReward());
+                    return true;
             }
 
         }
+        return false;
 
+    }
+
+    public int calculateCoinsRewardForBoss(int bossLevel, String userId){
+
+            if(bossLevel == 0){
+                return 200;
+            }
+            else {
+                BossDTO previousBossDTO = bossService.getPreviousBossForUser(userId,bossLevel-1);
+                if (previousBossDTO != null) {
+                    Integer previousCoinsReward = previousBossDTO.getCoinsReward();
+                    double newCoinsReward = previousCoinsReward * 0.2;
+                    return (int) newCoinsReward;
+                } else {
+                    return 0;
+                }
+            }
+    }
+
+    public int calculateHPForBoss(int bossLevel, String userId){
+
+        if(bossLevel==0){
+            return 200;
+        }
+        else {
+            BossDTO previousBossDTO = bossService.getPreviousBossForUser(userId,bossLevel-1);
+            if (previousBossDTO != null) {
+                Integer previousHP = previousBossDTO.getHP();
+                double newHP = previousHP * 2 + previousHP/2;
+                return (int) newHP;
+            } else {
+                return 0;
+            }
+        }
+    }
+
+    public long generateBossForUser(String userId, int newLevel){
+
+        BossDTO bossDTO = new BossDTO();
+        bossDTO.setUserId(userId);
+        bossDTO.setBossLevel(newLevel-1);
+        bossDTO.setDefeated(false);
+
+        int coinsReward = calculateCoinsRewardForBoss(newLevel-1, userId);
+        int HP = calculateHPForBoss(newLevel-1,userId);
+
+        bossDTO.setCoinsReward(coinsReward);
+        bossDTO.setHP(HP);
+        bossDTO.setCurrentHP(HP);
+        return bossService.createBoss(bossDTO);
     }
 }

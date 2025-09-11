@@ -121,51 +121,51 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-<!--    <FrameLayout-->
-<!--        android:id="@+id/chestOverlayContainer"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:visibility="gone"-->
-<!--        tools:visibility="visible">-->
+    <FrameLayout
+        android:id="@+id/chestOverlayContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        tools:visibility="visible">
 
 
-<!--        <FrameLayout-->
-<!--            android:id="@+id/chestContainer"-->
-<!--            android:layout_width="300dp"-->
-<!--            android:layout_height="300dp"-->
-<!--            android:layout_gravity="center">-->
+        <FrameLayout
+            android:id="@+id/chestContainer"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_gravity="center">
 
 
-<!--            <ImageView-->
-<!--                android:id="@+id/staticChestImage"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent"-->
-<!--                android:src="@drawable/idle_chest"-->
-<!--                android:visibility="visible" />-->
+            <ImageView
+                android:id="@+id/staticChestImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/idle_chest"
+                android:visibility="visible" />
 
 
-<!--            <com.airbnb.lottie.LottieAnimationView-->
-<!--                android:id="@+id/openingChestAnimation"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent"-->
-<!--                android:visibility="gone"-->
-<!--                app:lottie_rawRes="@raw/chest_animation"-->
-<!--                app:lottie_autoPlay="false"-->
-<!--                app:lottie_loop="false" />-->
-<!--        </FrameLayout>-->
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/openingChestAnimation"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                app:lottie_rawRes="@raw/chest_animation"
+                app:lottie_autoPlay="false"
+                app:lottie_loop="false" />
+        </FrameLayout>
 
 
-<!--        <TextView-->
-<!--            android:id="@+id/shakeToOpenText"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_gravity="center_horizontal|bottom"-->
-<!--            android:layout_marginBottom="100dp"-->
-<!--            android:text="Protresi telefon da otvoriš nagrade!"-->
-<!--            android:textColor="@android:color/white"-->
-<!--            android:textSize="20sp"-->
-<!--            android:textStyle="bold" />-->
+        <TextView
+            android:id="@+id/shakeToOpenText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_marginBottom="100dp"
+            android:text="Protresi telefon da otvoriš nagrade!"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
-<!--    </FrameLayout>-->
+    </FrameLayout>
 
 </RelativeLayout>

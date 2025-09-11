@@ -146,7 +146,7 @@ public class BossRepository {
     }
 
 
-    public Boss getPreviousBossForUser(int userId, int previousLevel) {
+    public Boss getPreviousBossForUser(String userId, int previousLevel) {
         Boss boss = null;
 
         SQLiteDatabase db = dbHelper.getReadableDatabase();

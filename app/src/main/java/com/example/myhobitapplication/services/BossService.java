@@ -53,5 +53,22 @@ public class BossService {
 
     }
 
+    public long createBoss(BossDTO bossDTO){
+        Boss boss = new Boss(
 
+                bossDTO.getId(),
+                bossDTO.getHP(),
+                bossDTO.getUserId(),
+                bossDTO.getCurrentHP(),
+                bossDTO.getDefeated(),
+                bossDTO.getBossLevel(),
+                bossDTO.getCoinsReward()
+        );
+        return bossRepository.insertBoss(boss);
+    }
+
+    public BossDTO getPreviousBossForUser(String userId, int previousBossLevel){
+        Boss boss = bossRepository.getPreviousBossForUser(userId, previousBossLevel);
+        return new BossDTO(boss);
+    }
 }
