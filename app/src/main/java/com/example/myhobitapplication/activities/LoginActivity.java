@@ -1,6 +1,7 @@
 package com.example.myhobitapplication.activities;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -18,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.myhobitapplication.R;
+import com.example.myhobitapplication.databases.AppDataBaseHelper;
 import com.example.myhobitapplication.databases.ProfileRepository;
 import com.example.myhobitapplication.databases.UserRepository;
 import com.example.myhobitapplication.databinding.ActivityLoginBinding;
@@ -35,6 +37,8 @@ public class LoginActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AppDataBaseHelper dbHelper = new AppDataBaseHelper(this);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         animationView = binding.registrationLoading;
         animationView.setAnimation(R.raw.waiting);

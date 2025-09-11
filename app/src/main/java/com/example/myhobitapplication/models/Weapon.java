@@ -6,12 +6,15 @@ public class Weapon extends Equipment{
 
     private WeaponTypes type;
 
-    //TODO:SLIKA
-
-    public Weapon(Integer id, Boolean activated, WeaponTypes type) {
-        super(id, activated);
+    public Weapon(String id, WeaponTypes type) {
+        super(id);
         this.type = type;
     }
+    public Weapon(String id){
+            super(id);
+    }
+
+    public Weapon(){}
 
     public WeaponTypes getType() {
         return type;

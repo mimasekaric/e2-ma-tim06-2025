@@ -36,8 +36,8 @@ public class UserRepository {
     public Task<DocumentReference> getUserInfo(String uid){
         final TaskCompletionSource<DocumentReference> taskCompletionSource = new TaskCompletionSource<>();
         usersCollection.whereEqualTo("uid", uid).get().addOnSuccessListener(queryDocumentSnapshots ->{
-            if(!queryDocumentSnapshots.isEmpty())
-            taskCompletionSource.setResult(queryDocumentSnapshots.getDocuments().get(0).getReference());
+            if(!queryDocumentSnapshots.isEmpty()){
+            taskCompletionSource.setResult(queryDocumentSnapshots.getDocuments().get(0).getReference());}
         }) .addOnFailureListener(e -> taskCompletionSource.setException(new Exception("Coudnt retrieve user data")));
         return taskCompletionSource.getTask();
     }

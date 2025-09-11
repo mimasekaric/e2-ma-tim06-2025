@@ -6,14 +6,30 @@ public class Potion extends Equipment{
 
     private PotionTypes type;
 
-    private Float price;
+    private boolean isPermanent;
 
-    //TODO: FALI SLIKA AL NE ZNAM KAKO DA JE INTERPRETIRAMO
-
-    public Potion(Integer id, Boolean activated, PotionTypes type, Float price) {
-        super(id, activated);
+    public Potion(String id, PotionTypes type) {
+        super(id);
         this.type = type;
-        this.price = price;
+    }
+
+
+    public void setpotionDescription(String potionDescription) {
+        potionDescription = potionDescription;
+    }
+
+    public boolean isPermanent() {
+        return isPermanent;
+    }
+
+    public void setPermanent(boolean permanent) {
+        isPermanent = permanent;
+    }
+
+    public Potion(String id) {
+        super(id);
+    }
+    public Potion(){
     }
 
     public PotionTypes getType() {
@@ -24,11 +40,4 @@ public class Potion extends Equipment{
         this.type = type;
     }
 
-    public Float getPrice() {
-        return price;
-    }
-
-    public void setPrice(Float price) {
-        this.price = price;
-    }
 }

@@ -67,7 +67,6 @@ public class AvatarSpinnerAdapter extends ArrayAdapter<Avatar> {
 
 
     private View initView(int position, View convertView, ViewGroup parent) {
-        // Proveravamo da li već postoji View koji možemo da recikliramo (convertView).
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(
                     R.layout.item_avatar, parent, false

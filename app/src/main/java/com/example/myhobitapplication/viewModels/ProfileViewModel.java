@@ -1,26 +1,32 @@
 package com.example.myhobitapplication.viewModels;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.myhobitapplication.dto.UserInfoDTO;
+import com.example.myhobitapplication.models.Equipment;
 import com.example.myhobitapplication.models.Profile;
 import com.example.myhobitapplication.models.User;
 import com.example.myhobitapplication.services.ProfileService;
+import com.example.myhobitapplication.services.UserEquipmentService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProfileViewModel extends ViewModel {
 
-
+    private final UserEquipmentService userEquipmentService;
     private final ProfileService profileService;
     private final MutableLiveData<Profile> profile = new MutableLiveData<>(new Profile());
     private final MutableLiveData<UserInfoDTO> userInfo = new MutableLiveData<>(new UserInfoDTO());
     private final MutableLiveData<String> response = new MutableLiveData<>("");
     private final MutableLiveData<Boolean> loadSuccess = new MutableLiveData<>(false);
-
-    public ProfileViewModel() {
-        this.profileService = new ProfileService();
+    private final  MutableLiveData<List<Equipment>>  equipment = new MutableLiveData<>(new ArrayList<>());
+    public ProfileViewModel(Context context) {
+        this.profileService = new ProfileService(); this.userEquipmentService= new UserEquipmentService(context);
     }
 
     public MutableLiveData<Profile> getProfile() {
@@ -37,6 +43,8 @@ public class ProfileViewModel extends ViewModel {
         return loadSuccess;
     }
 
+    public MutableLiveData<List<Equipment>> getEquipment(){return equipment;}
+
     public void loadProfile(String userUid) {
         response.setValue("");
         loadSuccess.setValue(false);
@@ -46,6 +54,7 @@ public class ProfileViewModel extends ViewModel {
                             if (documentSnapshot.exists()) {
                                 Profile loadedProfile = documentSnapshot.toObject(Profile.class);
                                 profile.setValue(loadedProfile);
+                                equipment.setValue(userEquipmentService.getUserEquipment(loadedProfile.getuserUid()));
                                 Log.d("Firestore", " profile found with title: "+ loadedProfile.getTitle() );
                                 response.setValue("Profile loaded successfully!");
                                 loadSuccess.setValue(true);

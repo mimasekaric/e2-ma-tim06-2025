@@ -43,7 +43,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toStartOf="@+id/guideline_vertical0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar_profile"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/guideline_vertical0">
 
 
@@ -122,9 +122,10 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <ImageView
+            android:id="@+id/imageProf"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            app:srcCompat="@mipmap/ic_launcher_wizard" />
+            app:srcCompat="@mipmap/ic_launcher_badgetry" />
 
         <TextView
             android:id="@+id/putusername"

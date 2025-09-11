@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/baccpng"
+    android:layout_height="match_parent"
+    tools:context=".fragments.ShopFragment">
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="match_parent"
+        android:layout_height="78dp"
+        android:fontFamily="@font/educursivebold"
+        android:gravity="center"
+        android:text="SHOP"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textColor="#EFEBEB"
+        android:textSize="20sp" />
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/text9"
+    android:orientation="horizontal"
+    app:layout_constraintTop_toBottomOf="@id/textView9">
+
+    <TextView
+        android:id="@+id/textViewCoins"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.33"
+        android:gravity="center_vertical|end"
+        android:text="200.00"
+        android:textColor="@color/white"
+        android:textSize="23sp" />
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.13"
+        android:foregroundGravity="right"
+        app:srcCompat="@mipmap/ic_launcher_coins" />
+
+
+</LinearLayout>
+    <LinearLayout
+        android:id="@+id/layout"
+        android:layout_width="match_parent"
+        android:layout_height="47dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/text9">
+
+        <Button
+            android:id="@+id/buttonClothing"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.45"
+            android:backgroundTint="#115938"
+            android:fontFamily="@font/educursivesemibold"
+            android:text="CLOTHING" />
+        <Button
+            android:id="@+id/buttonPotions"
+            android:layout_width="0dp"
+            android:text="POTIONS"
+            android:backgroundTint="#115938"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.45"
+            android:fontFamily="@font/educursivesemibold"/>
+    </LinearLayout>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/shopRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:backgroundTint="#253E24"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

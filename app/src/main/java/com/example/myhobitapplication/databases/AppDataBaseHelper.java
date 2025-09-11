@@ -5,7 +5,16 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.myhobitapplication.enums.EquipmentTypes;
+import com.example.myhobitapplication.models.Clothing;
+import com.example.myhobitapplication.models.Potion;
 import com.example.myhobitapplication.models.RecurringTask;
+import com.example.myhobitapplication.models.Weapon;
+import com.example.myhobitapplication.staticData.ClothingList;
+import com.example.myhobitapplication.staticData.PotionList;
+import com.example.myhobitapplication.staticData.WeaponList;
+
+import java.util.List;
 
 public class AppDataBaseHelper extends SQLiteOpenHelper {
 
@@ -25,6 +34,7 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
 
     public static final String COLUMN_EXECUTION_TIME = "execution_time";
     public static final String COLUMN_STATUS = "status";
+
 
 
     public static final String TABLE_CATEGORIES = "categories";
@@ -52,10 +62,27 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_BOSS_LEVEL = "boss_level";
     public static final String COLUMN_COINS_REWARD = "coins_reward";
 
+    public static final String TABLE_EQUIPMENT = "equipment";
     public static final String TABLE_ONE_TIME_TASKS = "one_time_tasks";
 
+    public static final String COLUMN_EQUIPMENT_ID = "id";
+    public static final String COLUMN_ACTIVATED = "activated";
+    public static final String COLUMN_EQUIPMENT_TYPE = "equipment_type";
+    public static final String COLUMN_SPECIFIC_TYPE = "specific_type";
     public static final String COLUMN_ONE_TIME_TASK_ID = "id";
     public static final String COLUMN_IS_AWARDED = "is_awarded";
+
+    public static final String COLUMN_POWER_PERCENTAGE = "power_percentage";
+
+    public static final String COLUMN_IMAGE = "image";
+    public static final String COLUMN_COEF = "coef";
+    public static final String COLUMN_IS_PERMANENT = "is_permanent";
+    public static final String COLUMN_FIGHTS_COUNTER = "fights_counter";
+    public static final String TABLE_USER_EQUIPMENT = "user_equipment";
+    public static final String COLUMN_USER_EQUIPMENT_ID = "id";
+    public static final String COLUMN_EQUIPMENT_EID = "equipment_id";
+    public static final String COLUMN_EQUIPMENT_UID = "user_id";
+
 
 
 
@@ -115,12 +142,75 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
                 + COLUMN_IS_DEFEATED + " TEXT,"
                 + COLUMN_BOSS_LEVEL + " TEXT,"
                 + COLUMN_HP + " TEXT,"
-                + COLUMN_COINS_REWARD + " TEXT,"
+                + COLUMN_COINS_REWARD + " INTEGER,"
                 + COLUMN_CURRENT_HP + " TEXT" + ")";
         db.execSQL(CREATE_BOSS_TABLE);
 
+        String CREATE_EQUIPMENT_TABLE = "CREATE TABLE " + TABLE_EQUIPMENT + "("
+                + COLUMN_EQUIPMENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + COLUMN_EQUIPMENT_TYPE + " TEXT,"
+                + COLUMN_SPECIFIC_TYPE + " TEXT,"
+                + COLUMN_POWER_PERCENTAGE + " REAL,"
+                + COLUMN_IMAGE + " INTEGER,"
+                + COLUMN_COEF + " REAL,"
+                + COLUMN_IS_PERMANENT + " INTEGER"
+                 + ")";
+        db.execSQL(CREATE_EQUIPMENT_TABLE);
+
+        String CREATE_USER_EQUIPMENT_TABLE = "CREATE TABLE " + TABLE_USER_EQUIPMENT + "("
+                + COLUMN_USER_EQUIPMENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + COLUMN_EQUIPMENT_EID + " TEXT,"
+                + COLUMN_EQUIPMENT_UID + " TEXT,"
+                + COLUMN_ACTIVATED + " INTEGER,"
+                + COLUMN_FIGHTS_COUNTER + " INTEGER" + ")";
+        db.execSQL(CREATE_USER_EQUIPMENT_TABLE);
+
+
+        insertInitialData(db);
     }
 
+    private void insertInitialData(SQLiteDatabase db) {
+
+        List<Potion> initialPotions = PotionList.getPotionList();
+        for (Potion potion : initialPotions) {
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_EQUIPMENT_TYPE, EquipmentTypes.POTION.name());
+            values.put(COLUMN_SPECIFIC_TYPE, potion.getType().name());
+            values.put(COLUMN_POWER_PERCENTAGE, potion.getpowerPercentage());
+            values.put(COLUMN_IMAGE, potion.getImage());
+            values.put(COLUMN_COEF, potion.getCoef());
+            values.put(COLUMN_IS_PERMANENT, potion.isPermanent() ? 1 : 0);
+            db.insert(TABLE_EQUIPMENT, null, values);
+        }
+
+        List<Weapon> initialWeapons = WeaponList.getWeaponList();
+        for (Weapon weapon : initialWeapons) {
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_EQUIPMENT_TYPE, EquipmentTypes.WEAPON.name());
+            values.put(COLUMN_SPECIFIC_TYPE, weapon.getType().name());
+            values.put(COLUMN_POWER_PERCENTAGE, weapon.getpowerPercentage());
+            values.put(COLUMN_IMAGE, weapon.getImage());
+
+            values.putNull(COLUMN_COEF);
+            values.putNull(COLUMN_IS_PERMANENT);
+
+            db.insert(TABLE_EQUIPMENT, null, values);
+        }
+
+        List<Clothing> initialClothing = ClothingList.getClothingList();
+        for (Clothing clothing : initialClothing) {
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_EQUIPMENT_TYPE, EquipmentTypes.CLOTHING.name());
+            values.put(COLUMN_SPECIFIC_TYPE, clothing.getType().name());
+            values.put(COLUMN_POWER_PERCENTAGE, clothing.getpowerPercentage());
+            values.put(COLUMN_IMAGE, clothing.getImage());
+            values.put(COLUMN_COEF, clothing.getCoef());
+
+            values.putNull(COLUMN_IS_PERMANENT);
+
+            db.insert(TABLE_EQUIPMENT, null, values);
+        }
+    }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
@@ -128,6 +218,8 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_RECURRING_TASKS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ONE_TIME_TASKS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_BOSSES);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EQUIPMENT);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER_EQUIPMENT);
 
 
         onCreate(db);

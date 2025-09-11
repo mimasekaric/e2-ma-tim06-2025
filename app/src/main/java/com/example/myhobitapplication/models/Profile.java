@@ -18,7 +18,7 @@ public class Profile {
     private Integer xp;
     private Integer level;
 
-   // private Bitmap QRCode;
+    // private Bitmap QRCode;
     private Integer numberOgBadges;
     private List<String> badges;
 

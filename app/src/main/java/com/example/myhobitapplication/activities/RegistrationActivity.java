@@ -22,13 +22,10 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.myhobitapplication.R;
-import com.example.myhobitapplication.databases.ProfileRepository;
 import com.example.myhobitapplication.models.Avatar;
 import com.example.myhobitapplication.adapters.AvatarSpinnerAdapter;
-import com.example.myhobitapplication.databases.UserRepository;
 import com.example.myhobitapplication.databinding.ActivityRegistrationBinding;
-import com.example.myhobitapplication.models.AvatarList;
-import com.example.myhobitapplication.services.UserService;
+import com.example.myhobitapplication.staticData.AvatarList;
 import com.example.myhobitapplication.viewModels.RegistrationViewModel;
 import com.google.firebase.FirebaseApp;
 
