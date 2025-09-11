@@ -6,8 +6,8 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.example.myhobitapplication.fragments.CategoryFragment;
-import com.example.myhobitapplication.fragments.OneTimeTaskFragment;
-import com.example.myhobitapplication.fragments.RecurringTaskFragment;
+import com.example.myhobitapplication.fragments.tasksFragments.OneTimeTaskFragment;
+import com.example.myhobitapplication.fragments.tasksFragments.RecurringTaskFragment;
 import com.example.myhobitapplication.fragments.TaskCalendarFragment;
 
 public class TaskPagerAdapter extends FragmentStateAdapter {

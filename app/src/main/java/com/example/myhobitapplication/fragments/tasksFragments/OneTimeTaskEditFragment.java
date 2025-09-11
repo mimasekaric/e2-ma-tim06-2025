@@ -1,4 +1,4 @@
-package com.example.myhobitapplication.fragments;
+package com.example.myhobitapplication.fragments.tasksFragments;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,8 +12,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -22,25 +20,24 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myhobitapplication.adapters.DifficultySpinnerAdapter;
 import com.example.myhobitapplication.adapters.ImportanceSpinnerAdapter;
-import com.example.myhobitapplication.databases.CategoryRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
-import com.example.myhobitapplication.databinding.FragmentRecurringTaskBinding;
-import com.example.myhobitapplication.databinding.FragmentRecurringTaskEditBinding;
-import com.example.myhobitapplication.databinding.FragmentTaskDetailsBinding;
-import com.example.myhobitapplication.models.Category;
+import com.example.myhobitapplication.databinding.FragmentOnetimeTaskEditBinding;
+import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.TaskService;
-import com.example.myhobitapplication.viewModels.RecurringTaskEditViewModel;
-import com.example.myhobitapplication.viewModels.TaskDetailsViewModel;
+import com.example.myhobitapplication.viewModels.taskViewModels.OneTimeTaskEditViewModel;
 
-public class RecurringTaskEditFragment extends Fragment {
+public class OneTimeTaskEditFragment extends Fragment {
+
 
     TaskService taskService;
     TaskRepository taskRepository;
 
 
-    RecurringTaskEditViewModel taskEditViewModel;
+    OneTimeTaskEditViewModel taskEditViewModel;
 
-    FragmentRecurringTaskEditBinding binding;
+    //FragmentOneTimeTasKedi binding;
+
+    FragmentOnetimeTaskEditBinding binding;
 
 
 
@@ -49,8 +46,8 @@ public class RecurringTaskEditFragment extends Fragment {
     private int taskId;
 
 
-    public static RecurringTaskEditFragment newInstance(int taskId) {
-        RecurringTaskEditFragment fragment = new RecurringTaskEditFragment();
+    public static OneTimeTaskEditFragment newInstance(int taskId) {
+        OneTimeTaskEditFragment fragment = new OneTimeTaskEditFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_TASK_TO_EDIT_ID, taskId);
         fragment.setArguments(args);
@@ -66,16 +63,16 @@ public class RecurringTaskEditFragment extends Fragment {
         }
 
         taskRepository = new TaskRepository(getContext());
-
-        taskService = new TaskService(taskRepository);
+        ProfileService profileService = new ProfileService();
+        taskService = new TaskService(taskRepository, profileService);
 
         taskEditViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @NonNull
             @Override
             public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-                return (T) new RecurringTaskEditViewModel(taskService);
+                return (T) new OneTimeTaskEditViewModel(taskService);
             }
-        }).get(RecurringTaskEditViewModel.class);
+        }).get(OneTimeTaskEditViewModel.class);
 
         if (taskId != -1) {
             taskEditViewModel.loadTaskDetails(taskId);
@@ -87,7 +84,7 @@ public class RecurringTaskEditFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = FragmentRecurringTaskEditBinding.inflate(inflater, container, false);
+        binding = FragmentOnetimeTaskEditBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
@@ -124,13 +121,7 @@ public class RecurringTaskEditFragment extends Fragment {
 
                 binding.taskTitleTextView.setText(task.getName());
                 binding.taskDescriptionTextView.setText(task.getDescription());
-              //  binding.difficultyTextView.setText(String.valueOf(task.getDifficulty()));
-              //  binding.importanceTextView.setText("");
-                binding.recurrenceTextView.setText(String.valueOf(task.getRecurrenceInterval()));
-                binding.endDateTextView.setText(task.getEndDate().toString());
-                binding.startDateTextView.setText(task.getStartDate().toString());
                 binding.timeTextView.setText(task.getExecutionTime().toString());
-                binding.rctStatus.setText(String.valueOf(task.getStatus()));
 
                 try {
                     int color = Color.parseColor(task.getCategoryColour());
@@ -201,19 +192,14 @@ public class RecurringTaskEditFragment extends Fragment {
 
         binding.editTaskButton.setOnClickListener(v -> {
 
-            taskEditViewModel.editRecurringTask();
+            taskEditViewModel.editOneTimeTask();
 
-            Toast.makeText(requireContext(), "Izmene su sačuvane!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "Task edited!", Toast.LENGTH_SHORT).show();
 
-            // --- NOVI DEO: VRATI REZULTAT ---
-            // Kreiraj prazan Intent. Ne trebaju nam podaci, samo signal.
             Intent resultIntent = new Intent();
 
-            // Postavi rezultat na "USPEŠNO" (RESULT_OK) i priloži Intent
-            // getActivity() se odnosi na EditTaskActivity
             getActivity().setResult(Activity.RESULT_OK, resultIntent);
 
-            // Zatvori EditTaskActivity. Ovo će automatski poslati rezultat nazad.
             getActivity().finish();
         });
 
@@ -223,6 +209,12 @@ public class RecurringTaskEditFragment extends Fragment {
 
 
     }
+
+
+
+
+
+
 
 
 

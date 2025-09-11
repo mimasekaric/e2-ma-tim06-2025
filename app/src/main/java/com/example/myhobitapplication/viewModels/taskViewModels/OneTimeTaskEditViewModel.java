@@ -1,23 +1,20 @@
-package com.example.myhobitapplication.viewModels;
+package com.example.myhobitapplication.viewModels.taskViewModels;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.myhobitapplication.databases.CategoryRepository;
+import com.example.myhobitapplication.dto.OneTimeTaskDTO;
 import com.example.myhobitapplication.dto.RecurringTaskDTO;
-import com.example.myhobitapplication.models.Category;
-import com.example.myhobitapplication.services.CategoryService;
 import com.example.myhobitapplication.services.TaskService;
 
-public class RecurringTaskEditViewModel extends ViewModel {
-
+public class OneTimeTaskEditViewModel extends ViewModel {
 
 
     private final MutableLiveData<Boolean> _isFormDirty = new MutableLiveData<>(false);
 
     private final TaskService taskService;
-    private final MutableLiveData<RecurringTaskDTO> taskDetails = new MutableLiveData<>();
+    private final MutableLiveData<OneTimeTaskDTO> taskDetails = new MutableLiveData<>();
 
     private final MutableLiveData<Integer> difficulty = new MutableLiveData<>();
     private final MutableLiveData<Integer> importance = new MutableLiveData<>();
@@ -32,33 +29,32 @@ public class RecurringTaskEditViewModel extends ViewModel {
     public void setImportance(Integer importanceData) { importance.setValue(importanceData); }
     public void setTitle(String newTitle) { title.setValue(newTitle); }
     public void setDescription(String newDescription) { description.setValue(newDescription); }
-    public RecurringTaskEditViewModel(TaskService taskService) {
+    public OneTimeTaskEditViewModel(TaskService taskService) {
         this.taskService = taskService;
-
 
     }
 
     public LiveData<Boolean> isFormDirty() {
         return _isFormDirty;
     }
-    public LiveData<RecurringTaskDTO> getTaskDetails() {
+    public LiveData<OneTimeTaskDTO> getTaskDetails() {
         return taskDetails;
     }
 
     public void loadTaskDetails(long taskId) {
 
-        RecurringTaskDTO recurringTaskDTO = taskService.getTaskById(taskId);
+        OneTimeTaskDTO oneTimeTaskDTO = taskService.getOneTimeTaskById(taskId);
 
-        if (recurringTaskDTO != null) {
+        if (oneTimeTaskDTO != null) {
 
 
-            taskDetails.setValue(recurringTaskDTO);
+            taskDetails.setValue(oneTimeTaskDTO);
         }
     }
 
-    public void editRecurringTask(){
+    public void editOneTimeTask(){
 
-        RecurringTaskDTO originalDto = taskDetails.getValue();
+        OneTimeTaskDTO originalDto = taskDetails.getValue();
 
         if (originalDto == null) {
             return;
@@ -81,11 +77,19 @@ public class RecurringTaskEditViewModel extends ViewModel {
             originalDto.setImportance(importance.getValue());
         }
 
-
-        taskService.editRecurringTask(taskDetails.getValue());
+        taskService.editOneTimeTask(taskDetails.getValue());
 
 
     }
+
+
+
+
+
+
+
+
+
 
 
 

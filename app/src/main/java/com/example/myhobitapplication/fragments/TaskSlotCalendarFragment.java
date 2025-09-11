@@ -26,8 +26,11 @@ import com.example.myhobitapplication.activities.TaskDetailActivity;
 import com.example.myhobitapplication.adapters.TaskAdapter;
 import com.example.myhobitapplication.databases.CategoryRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
+import com.example.myhobitapplication.models.OneTimeTask;
 import com.example.myhobitapplication.models.RecurringTask;
+import com.example.myhobitapplication.models.Task;
 import com.example.myhobitapplication.services.CategoryService;
+import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.TaskService;
 import com.example.myhobitapplication.viewModels.TaskCalendarViewModel;
 import com.example.myhobitapplication.viewModels.TaskCalendarViewModelFactory;
@@ -45,7 +48,7 @@ public class TaskSlotCalendarFragment extends Fragment {
 
 
     private TaskAdapter adapter;
-    private List<RecurringTask> tasks;
+    private List<Task> tasks;
 
 
     private TaskCalendarViewModel taskCalendarViewModel;
@@ -81,8 +84,9 @@ public class TaskSlotCalendarFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         repository = new TaskRepository(getContext());
+        ProfileService profileService = new ProfileService();
 
-        TaskService taskService = new TaskService(repository);
+        TaskService taskService = new TaskService(repository, profileService);
         categoryRepository = new CategoryRepository(getContext());
         categoryService = new CategoryService(categoryRepository);
 
@@ -117,15 +121,42 @@ public class TaskSlotCalendarFragment extends Fragment {
 
 
         taskListView.setOnItemClickListener((parent, view1, position, id) -> {
-            RecurringTask selectedTask = tasks.get(position);
 
-            if (selectedTask != null) {
-                int taskId = selectedTask.getId();
+            Task selectedTask = tasks.get(position);
+
+            if (selectedTask == null) {
+                return;
+            }
+
+
+
+            if (selectedTask instanceof RecurringTask) {
+
+                RecurringTask recurringTask = (RecurringTask) selectedTask;
+
                 Intent intent = new Intent(getActivity(), TaskDetailActivity.class);
-                intent.putExtra("TASK_ID_EXTRA", taskId);
 
-                // POKRENI AKTIVNOST PREKO LAUNCHER-a!
+                intent.putExtra("TASK_ID_EXTRA", recurringTask.getId());
+                intent.putExtra("TASK_TYPE_EXTRA", "RECURRING");
+
                 taskDetailsLauncher.launch(intent);
+                Toast.makeText(getContext(), "Recurring task opening...", Toast.LENGTH_SHORT).show();
+
+            } else if (selectedTask instanceof OneTimeTask) {
+
+                OneTimeTask oneTimeTask = (OneTimeTask) selectedTask;
+
+                Intent intent = new Intent(getActivity(), TaskDetailActivity.class);
+
+                intent.putExtra("TASK_ID_EXTRA", oneTimeTask.getId());
+                intent.putExtra("TASK_TYPE_EXTRA", "ONE_TIME");
+
+                taskDetailsLauncher.launch(intent);
+
+                Toast.makeText(getContext(), "One-Time task opening...", Toast.LENGTH_SHORT).show();
+
+            } else {
+                Toast.makeText(getContext(), "UNKNOWN TASK TYPE", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -158,7 +189,7 @@ public class TaskSlotCalendarFragment extends Fragment {
                 // Ova metoda će se automatski pozvati svaki put kada se datum u ViewModelu promeni.
                 if (selectedDate != null) {
                     // 1. Dobavi nove zadatke za taj datum
-                    List<RecurringTask> newTasks = taskCalendarViewModel.getTasksForDate(selectedDate);
+                    List<Task> newTasks = taskCalendarViewModel.getTasksForDate(selectedDate);
 
                     // 2. Očisti staru listu i dodaj nove podatke
                     tasks.clear();

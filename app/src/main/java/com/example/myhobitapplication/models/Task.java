@@ -1,5 +1,7 @@
 package com.example.myhobitapplication.models;
 
+import com.example.myhobitapplication.enums.TaskQuote;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -21,8 +23,14 @@ public abstract class Task {
     private LocalDate finishedDate;
     private LocalDate creationDate;
 
+    private LocalDate startDate;
+    private String userUid;
+
+    private boolean isAwarded = false;
+
+
     public Task(){}
-    public Task(Integer id, String name, String description, Integer difficulty, Integer importance, String categoryColour, LocalTime executionTime, LocalDate finishedDate, LocalDate creationDate) {
+    public Task(Integer id, String name, String description, Integer difficulty, Integer importance, String categoryColour, LocalTime executionTime, LocalDate finishedDate, LocalDate creationDate, LocalDate startDate, String userUid) {
         Id = id;
         Name = name;
         Description = description;
@@ -32,8 +40,10 @@ public abstract class Task {
         this.executionTime = executionTime;
         this.finishedDate = finishedDate;
         this.creationDate = creationDate;
+        this.startDate = startDate;
+        this.userUid = userUid;
     }
-    public Task(String name, String description, Integer difficulty, Integer importance, String categoryColour, LocalTime executionTime, LocalDate finishedDate, LocalDate creationDate) {
+    public Task(String name, String description, Integer difficulty, Integer importance, String categoryColour, LocalTime executionTime, LocalDate finishedDate, LocalDate creationDate, LocalDate startDate, String userUid) {
         Name = name;
         Description = description;
         Difficulty = difficulty;
@@ -42,7 +52,12 @@ public abstract class Task {
         this.executionTime = executionTime;
         this.finishedDate = finishedDate;
         this.creationDate = creationDate;
+        this.startDate = startDate;
+        this.userUid = userUid;
     }
+
+
+
 
     public Integer getId() {
         return Id;
@@ -116,4 +131,60 @@ public abstract class Task {
     public void setCreationDate(LocalDate creationDate) {
         this.creationDate = creationDate;
     }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public String getUserUid() {
+        return userUid;
+    }
+
+    public void setUserUid(String userUid) {
+        this.userUid = userUid;
+    }
+
+    public boolean isAwarded() {
+        return isAwarded;
+    }
+
+    public void setAwarded(boolean awarded) {
+        isAwarded = awarded;
+    }
+
+    public TaskQuote getQuotaCategory() {
+
+        if (this.Difficulty == null || this.Importance == null) {
+            return TaskQuote.NO_QUOTA;
+        }
+
+        if (this.Difficulty == 1 && this.Importance == 1) {
+            return TaskQuote.EASY_NORMAL;
+        }
+        if (this.Difficulty == 3 && this.Importance == 3) {
+            return TaskQuote.EASY_IMPORTANT;
+        }
+        if (this.Difficulty == 7 && this.Importance == 10) {
+            return TaskQuote.HARD_EXTREME;
+        }
+        if (this.Difficulty == 20) {
+            return TaskQuote.EXTREMELY_HARD;
+        }
+        if (this.Importance == 100) {
+            return TaskQuote.SPECIAL;
+        }
+
+        return TaskQuote.NO_QUOTA;
+    }
+
+    public int getTotalXp() {
+        int difficultyXp = (this.Difficulty != null) ? this.Difficulty : 0;
+        int importanceXp = (this.Importance != null) ? this.Importance : 0;
+        return difficultyXp + importanceXp;
+    }
+
 }

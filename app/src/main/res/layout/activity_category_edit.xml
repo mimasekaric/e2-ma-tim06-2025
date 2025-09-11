@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/categoryNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Daj naziv kategorije"/>
+
+
+    <EditText
+        android:id="@+id/ctg_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="name.."/>
+
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Odaberi boju kategorije"/>
+
+
+    <View
+        android:id="@+id/selectedColorPreview"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="#B16262"
+        android:layout_marginBottom="16dp"/>
+
+    <Button
+        android:id="@+id/pickColorButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Odaberi boju"/>
+
+    <Button
+        android:id="@+id/setColorButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Primeni boju"/>
+
+    <Button
+        android:id="@+id/btn_addCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Category"/>
+
+
+</LinearLayout>

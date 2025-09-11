@@ -1,6 +1,4 @@
-package com.example.myhobitapplication.viewModels;
-
-import android.widget.Toast;
+package com.example.myhobitapplication.viewModels.taskViewModels;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -8,16 +6,14 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.myhobitapplication.databases.CategoryRepository;
 import com.example.myhobitapplication.dto.RecurringTaskDTO;
-import com.example.myhobitapplication.dto.TaskDetailsDTO;
 import com.example.myhobitapplication.enums.RecurringTaskStatus;
 import com.example.myhobitapplication.models.Category;
-import com.example.myhobitapplication.models.RecurringTask;
 import com.example.myhobitapplication.services.CategoryService;
 import com.example.myhobitapplication.services.TaskService;
 
 import java.time.LocalDate;
 
-public class TaskDetailsViewModel extends ViewModel {
+public class RecurringTaskDetailsViewModel extends ViewModel {
 
     private final TaskService taskService;
     private final CategoryService categoryService;
@@ -30,7 +26,7 @@ public class TaskDetailsViewModel extends ViewModel {
     public LiveData<Boolean> getTaskDeletedEvent() {
         return _taskDeletedEvent;
     }
-    public TaskDetailsViewModel(TaskService taskService, CategoryRepository categoryRepository) {
+    public RecurringTaskDetailsViewModel(TaskService taskService, CategoryRepository categoryRepository) {
         this.taskService = taskService;
         this.categoryService = new CategoryService(categoryRepository);
 
@@ -93,7 +89,7 @@ public class TaskDetailsViewModel extends ViewModel {
             currentTaskDto.setStatus(RecurringTaskStatus.COMPLETED);
             currentTaskDto.setFinishedDate(LocalDate.now());
 
-            taskService.editRecurringTask(currentTaskDto);
+            taskService.markRecurringTaskAsDone(taskDetails.getValue().getId(), taskDetails.getValue().getUserUid());
 
             loadTaskDetails(currentTaskDto.getId());
 

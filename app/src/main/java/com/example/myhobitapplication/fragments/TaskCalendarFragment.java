@@ -6,24 +6,24 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.activities.TaskDetailActivity;
-import com.example.myhobitapplication.databases.DataBaseRecurringTaskHelper;
+import com.example.myhobitapplication.databases.ProfileRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.FragmentTaskCalendarBinding;
+import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.TaskService;
 import com.example.myhobitapplication.viewModels.TaskCalendarViewModel;
 import com.example.myhobitapplication.viewModels.TaskCalendarViewModelFactory;
-import com.example.myhobitapplication.viewModels.TaskViewModel;
 import com.kizitonwose.calendar.core.CalendarDay;
 import com.kizitonwose.calendar.core.CalendarMonth;
 import com.kizitonwose.calendar.view.CalendarView;
@@ -33,7 +33,7 @@ import com.kizitonwose.calendar.view.ViewContainer;
 
 import java.time.DayOfWeek;
 import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
 import java.util.Locale;
 
 
@@ -70,8 +70,11 @@ public class TaskCalendarFragment extends Fragment {
         calendarView = calendarBinding.calendarView;
 
         TaskRepository repository = new TaskRepository(getContext());
-
-        TaskService taskService = new TaskService(repository);
+        ProfileService profileService =  new ProfileService();
+        TaskService taskService = new TaskService(repository, profileService);
+        TextView monthTextView = view.findViewById(R.id.calendarMonthText);
+        ImageView prevButton = view.findViewById(R.id.previousMonthButton);
+        ImageView nextButton = view.findViewById(R.id.nextMonthButton);
 
         TaskCalendarViewModelFactory factory = new TaskCalendarViewModelFactory(taskService);
 
@@ -163,21 +166,68 @@ public class TaskCalendarFragment extends Fragment {
             }
         });
 
-        calendarView.setMonthHeaderBinder(new MonthHeaderFooterBinder<MonthViewContainer>() {
-            @NonNull
-            @Override
-            public MonthViewContainer create(@NonNull View view) {
-                return new MonthViewContainer(view);
-            }
+//        calendarView.setMonthHeaderBinder(new MonthHeaderFooterBinder<MonthViewContainer>() {
+//            @NonNull
+//            @Override
+//            public MonthViewContainer create(@NonNull View view) {
+//                return new MonthViewContainer(view);
+//            }
+//
+//            @Override
+//            public void bind(@NonNull MonthViewContainer container, @NonNull CalendarMonth month) {
+//                String header = month.getYearMonth().getMonth().getDisplayName(java.time.format.TextStyle.FULL, Locale.getDefault()) + " " + month.getYearMonth();
+//                container.getCalendarMonthText().setText(header);
+//
+//
+//                container.previousButton.setOnClickListener(v -> {
+//                    calendarView.smoothScrollToMonth(month.getYearMonth().minusMonths(1));
+//                });
+//
+//
+//                container.nextButton.setOnClickListener(v -> {
+//                    calendarView.smoothScrollToMonth(month.getYearMonth().plusMonths(1));
+//                });
+//            }
+//        });
 
-            @Override
-            public void bind(@NonNull MonthViewContainer container, @NonNull CalendarMonth month) {
-                String header = month.getYearMonth().getMonth().getDisplayName(java.time.format.TextStyle.FULL, Locale.getDefault()) + " " + month.getYearMonth();
-                container.getCalendarMonthText().setText(header);
+        calendarView.setMonthScrollListener(calendarMonth -> {
+
+            String title = calendarMonth.getYearMonth().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault())
+                    + " " + calendarMonth.getYearMonth().getYear();
+            monthTextView.setText(title);
+
+
+            return kotlin.Unit.INSTANCE;
+        });
+
+
+        prevButton.setOnClickListener(v -> {
+
+            YearMonth current = findFirstVisibleMonth();
+            if (current != null) {
+                calendarView.smoothScrollToMonth(current.minusMonths(1));
             }
         });
 
 
+        nextButton.setOnClickListener(v -> {
+            YearMonth current = findFirstVisibleMonth();
+            if (current != null) {
+                calendarView.smoothScrollToMonth(current.plusMonths(1));
+            }
+        });
+
+
+
+
+
+    }
+
+    private YearMonth findFirstVisibleMonth() {
+        if (calendarView.findFirstVisibleMonth() != null) {
+            return calendarView.findFirstVisibleMonth().getYearMonth();
+        }
+        return null;
     }
 
 
@@ -203,10 +253,14 @@ public class TaskCalendarFragment extends Fragment {
 
     private static class MonthViewContainer extends ViewContainer {
         private final TextView calendarMonthText;
+        final ImageView previousButton;
+        final ImageView nextButton;
 
         public MonthViewContainer(@NonNull View view) {
             super(view);
             calendarMonthText = view.findViewById(R.id.calendarMonthText);
+            previousButton = view.findViewById(R.id.previousMonthButton);
+            nextButton = view.findViewById(R.id.nextMonthButton);
         }
 
         public TextView getCalendarMonthText() {

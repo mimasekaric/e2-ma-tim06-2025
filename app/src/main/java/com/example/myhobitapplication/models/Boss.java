@@ -1,5 +1,7 @@
 package com.example.myhobitapplication.models;
 
+import java.util.UUID;
+
 public class Boss {
 
     private Integer Id;

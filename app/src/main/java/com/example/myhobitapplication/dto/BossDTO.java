@@ -2,6 +2,8 @@ package com.example.myhobitapplication.dto;
 
 import com.example.myhobitapplication.models.Boss;
 
+import java.util.UUID;
+
 public class BossDTO {
 
     private Integer Id;

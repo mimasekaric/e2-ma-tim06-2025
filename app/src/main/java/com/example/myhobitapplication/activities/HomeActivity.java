@@ -111,6 +111,7 @@ public class HomeActivity extends AppCompatActivity {
                     Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
                     startActivity(intent);
                     finish();
+
                 }else if(id == R.id.nav_tasks) {
                     Intent intent = new Intent(HomeActivity.this, TaskActivity.class);
                     startActivity(intent);
@@ -120,6 +121,10 @@ public class HomeActivity extends AppCompatActivity {
                             .replace(R.id.fragment_container, shopFragment)
                             .addToBackStack(null)
                             .commit();
+                }
+                else if (id == R.id.nav_boss_battle) {
+                    Intent intent = new Intent(HomeActivity.this, BossActivity.class);
+                    startActivity(intent);
                 }
 
 
