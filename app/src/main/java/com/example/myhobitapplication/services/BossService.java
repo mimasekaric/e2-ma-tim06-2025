@@ -70,7 +70,7 @@ public class BossService {
         return bossRepository.insertBoss(boss);
     }
 
-    public BossDTO getPreviousBossForUser(String userId, int previousBossLevel){
+    public BossDTO getPrevioussBossForUser(String userId, int previousBossLevel){
         Boss boss = bossRepository.getPreviousBossForUser(userId, previousBossLevel);
         return new BossDTO(boss);
     }

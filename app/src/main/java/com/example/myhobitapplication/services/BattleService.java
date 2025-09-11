@@ -79,7 +79,7 @@ public class BattleService {
                 return 200;
             }
             else {
-                BossDTO previousBossDTO = bossService.getPreviousBossForUser(userId,bossLevel-1);
+                BossDTO previousBossDTO = bossService.getPrevioussBossForUser(userId,bossLevel-1);
                 if (previousBossDTO != null) {
                     Integer previousCoinsReward = previousBossDTO.getCoinsReward();
                     double newCoinsReward = previousCoinsReward * 0.2;
@@ -96,7 +96,7 @@ public class BattleService {
             return 200;
         }
         else {
-            BossDTO previousBossDTO = bossService.getPreviousBossForUser(userId,bossLevel-1);
+            BossDTO previousBossDTO = bossService.getPrevioussBossForUser(userId,bossLevel-1);
             if (previousBossDTO != null) {
                 Integer previousHP = previousBossDTO.getHP();
                 double newHP = previousHP * 2 + previousHP/2;
