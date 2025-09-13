@@ -54,16 +54,16 @@ public class CategoryCreateActivity extends AppCompatActivity {
         }).get(CategoryViewModel.class);
 
 
-        binding.selectedColorPreview.setBackgroundColor(selectedColor);
+//        binding.selectedColorPreview.setBackgroundColor(selectedColor);
 
         binding.pickColorButton.setOnClickListener(v -> {
             openColorPickerDialog();
         });
 
-        binding.setColorButton.setOnClickListener(v -> {
-            String hexColor = String.format("#%06X", (0xFFFFFF & selectedColor));
-            categoryViewModel.setColour(hexColor);
-        });
+//        binding.setColorButton.setOnClickListener(v -> {
+//            String hexColor = String.format("#%06X", (0xFFFFFF & selectedColor));
+//            categoryViewModel.setColour(hexColor);
+//        });
 
         categoryViewModel.isFormValid().observe(this, isValid -> {
             if (isValid != null) {
@@ -99,6 +99,16 @@ public class CategoryCreateActivity extends AppCompatActivity {
             }
         });
 
+        categoryViewModel.getColour().observe(this, hexColor -> {
+            if (hexColor != null) {
+                try {
+                    binding.selectedColorPreview.setBackgroundColor(Color.parseColor(hexColor));
+                } catch (IllegalArgumentException e) {
+                    binding.selectedColorPreview.setBackgroundColor(Color.BLACK);
+                }
+            }
+        });
+
         categoryViewModel.getSaveSuccessEvent().observe(this, isSuccess -> {
             if (isSuccess != null && isSuccess) {
 
@@ -114,25 +124,30 @@ public class CategoryCreateActivity extends AppCompatActivity {
 
 
         binding.btnAddCategory.setOnClickListener(v -> {
-            String hexColor = String.format("#%06X", (0xFFFFFF & selectedColor));
-            categoryViewModel.setColour(hexColor);
             categoryViewModel.saveCategory();
         });
     }
 
     private void openColorPickerDialog() {
+        String currentColorHex = categoryViewModel.getColour().getValue();
+        int initialColor = Color.BLACK;
+        if (currentColorHex != null) {
+            try {
+                initialColor = Color.parseColor(currentColorHex);
+            } catch (IllegalArgumentException e) {
+            }
+        }
 
-        AmbilWarnaDialog dialog = new AmbilWarnaDialog(this, selectedColor, new AmbilWarnaDialog.OnAmbilWarnaListener() {
+        AmbilWarnaDialog dialog = new AmbilWarnaDialog(this, initialColor, new AmbilWarnaDialog.OnAmbilWarnaListener() {
             @Override
             public void onCancel(AmbilWarnaDialog dialog) {}
 
             @Override
             public void onOk(AmbilWarnaDialog dialog, int color) {
-                selectedColor = color;
-                binding.selectedColorPreview.setBackgroundColor(selectedColor);
+                String hexColor = String.format("#%06X", (0xFFFFFF & color));
+                categoryViewModel.setColour(hexColor);
             }
         });
-
         dialog.show();
     }
 }

@@ -168,7 +168,7 @@ public class RecurringTaskDetailsFragment extends Fragment {
         taskDetailsViewModel.getTaskDetails().observe(getViewLifecycleOwner(), task -> {
             if (task != null) {
 
-
+                binding.categoryName.setText(task.getCategoryColour());
                 binding.taskTitleTextView.setText(task.getName());
                 binding.taskDescriptionTextView.setText(task.getDescription());
                 binding.difficultyTextView.setText(String.valueOf(task.getDifficulty()));

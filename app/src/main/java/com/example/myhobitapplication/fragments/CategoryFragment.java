@@ -69,12 +69,12 @@ public class CategoryFragment extends Fragment {
             openColorPickerDialog();
            } );
 
-        categoryBinding.setColorButton.setOnClickListener(v -> {
-
-            String hexColor = String.format("#%06X", (0xFFFFFF & selectedColor));
-            categoryViewModel.setColour(hexColor);
-
-        });
+//        categoryBinding.setColorButton.setOnClickListener(v -> {
+//
+//            String hexColor = String.format("#%06X", (0xFFFFFF & selectedColor));
+//            categoryViewModel.setColour(hexColor);
+//
+//        });
 
         categoryBinding.ctgName.addTextChangedListener(new TextWatcher() {
             @Override

@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:fontFamily="@font/educursivebold"
-        android:text="Novi Ponavljajući Zadatak"
+        android:text="Create your recurring task"
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="28sp"
@@ -44,7 +44,8 @@
 
             <TextView
                 style="@style/FormLabel"
-                android:text="Naziv" />
+                android:textColor="#fca103"
+                android:text="Title:" />
             <EditText
                 android:id="@+id/rtask_name"
                 style="@style/FormEditText"
@@ -54,18 +55,20 @@
 
             <TextView
                 style="@style/FormLabel"
-                android:text="Opis (opciono)" />
+                android:textColor="#fca103"
+                android:text="Description (optional)" />
             <EditText
                 android:id="@+id/rtask_description"
                 style="@style/FormEditText"
-                android:hint="Unesi detalje..."
+                android:hint="Enter details..."
                 android:inputType="textMultiLine"
                 android:minLines="2" />
 
 
             <TextView
                 style="@style/FormLabel"
-                android:text="Kategorija" />
+                android:textColor="#fca103"
+                android:text="Category:" />
             <Spinner
                 android:id="@+id/category_spinner"
                 android:layout_width="match_parent"
@@ -76,8 +79,9 @@
 
 
             <TextView
+                android:textColor="#fca103"
                 style="@style/FormLabel"
-                android:text="Težina" />
+                android:text="Difficulty" />
             <RadioGroup
                 android:id="@+id/rg_difficulty_options"
                 style="@style/FormRadioGroup">
@@ -90,7 +94,8 @@
 
             <TextView
                 style="@style/FormLabel"
-                android:text="Važnost" />
+                android:textColor="#fca103"
+                android:text="Importance" />
             <RadioGroup
                 android:id="@+id/rg_importance_options"
                 style="@style/FormRadioGroup">
@@ -103,7 +108,8 @@
 
             <TextView
                 style="@style/FormLabel"
-                android:text="Vreme Izvršenja" />
+                android:textColor="#fca103"
+                android:text="Execition time:" />
             <TimePicker
                 android:id="@+id/rtask_time"
                 android:layout_width="wrap_content"
@@ -114,7 +120,8 @@
 
             <TextView
                 style="@style/FormLabel"
-                android:text="Ponavlja se svakih:" />
+                android:textColor="#fca103"
+                android:text="It repeats every:" />
             <NumberPicker
                 android:id="@+id/et_recurrence_interval"
                 android:layout_width="wrap_content"
@@ -124,7 +131,8 @@
 
             <TextView
                 style="@style/FormLabel"
-                android:text="Jedinica:" />
+                android:textColor="#fca103"
+                android:text="Recurring interval:" />
             <Spinner
                 android:id="@+id/spinner_recurrence_unit"
                 android:layout_width="match_parent"
@@ -135,25 +143,27 @@
 
             <TextView
                 style="@style/FormLabel"
-                android:text="Početni Datum" />
+                android:textColor="#fca103"
+                android:text="Start date:" />
             <DatePicker
                 android:id="@+id/rt_date_start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:calendarViewShown="false"
-                android:datePickerMode="spinner"/>
+                android:datePickerMode="calendar"/>
 
             <TextView
                 style="@style/FormLabel"
-                android:text="Krajnji Datum" />
+                android:textColor="#fca103"
+                android:text="End date:" />
             <DatePicker
                 android:id="@+id/rt_date_end"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:calendarViewShown="false"
-                android:datePickerMode="spinner"/>
+                android:datePickerMode="calendar"/>
 
         </LinearLayout>
     </ScrollView>
@@ -165,11 +175,12 @@
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
-        android:backgroundTint="#115938"
+        android:background="@drawable/button"
+        app:backgroundTint="@null"
         android:fontFamily="@font/educursivesemibold"
         android:paddingTop="12dp"
         android:paddingBottom="12dp"
-        android:text="Kreiraj Zadatak"
+        android:text="CREATE"
         android:textColor="@color/white"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
