@@ -22,7 +22,6 @@ public class RecurringTaskDetailsViewModel extends ViewModel {
 
     private final MutableLiveData<Boolean> _taskDeletedEvent = new MutableLiveData<>();
 
-    // Javni, nepromenljivi LiveData koji će Fragment posmatrati
     public LiveData<Boolean> getTaskDeletedEvent() {
         return _taskDeletedEvent;
     }

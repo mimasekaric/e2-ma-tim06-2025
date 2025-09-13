@@ -118,20 +118,7 @@
                     android:layout_columnWeight="1"
                     android:spinnerMode="dropdown"/>
 
-                <TextView
-                    style="@style/DetailHeader"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/educursivebold"
-                    android:text="Recurrence:"
-                    android:textColor="#fca103" />
 
-                <TextView
-                    android:id="@+id/recurrence_text_view"
-                    style="@style/DetailValue"
-                    android:fontFamily="@font/educursiveregular"
-                    android:textColor="@color/white"
-                    tools:text="Every 2 weeks" />
 
                 <TextView
                     style="@style/DetailHeader"
@@ -146,44 +133,6 @@
                     android:textColor="@color/white"
                     tools:text="09:30 AM" />
 
-                <TextView
-                    style="@style/DetailHeader"
-                    android:fontFamily="@font/educursivebold"
-                    android:text="Start Date:"
-                    android:textColor="#fca103" />
-
-                <TextView
-                    android:id="@+id/start_date_text_view"
-                    style="@style/DetailValue"
-                    android:fontFamily="@font/educursiveregular"
-                    android:textColor="@color/white"
-                    tools:text="2025-01-01" />
-
-                <TextView
-                    style="@style/DetailHeader"
-                    android:fontFamily="@font/educursivebold"
-                    android:text="End Date:"
-                    android:textColor="#fca103" />
-
-                <TextView
-                    android:id="@+id/end_date_text_view"
-                    style="@style/DetailValue"
-                    android:fontFamily="@font/educursiveregular"
-                    android:textColor="@color/white"
-                    tools:text="2025-12-31" />
-
-                <TextView
-                    style="@style/DetailHeader"
-                    android:fontFamily="@font/educursivebold"
-                    android:text="Status:"
-                    android:textColor="#fca103" />
-
-                <TextView
-                    android:id="@+id/rct_status"
-                    style="@style/DetailValue"
-                    android:fontFamily="@font/educursivemedium"
-                    android:textColor="@color/white"
-                    tools:text="status" />
 
             </GridLayout>
 

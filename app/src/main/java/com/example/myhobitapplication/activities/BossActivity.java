@@ -37,6 +37,7 @@ import com.example.myhobitapplication.shakeDetector.ShakeDetector;
 import com.example.myhobitapplication.staticData.AvatarList;
 import com.example.myhobitapplication.viewModels.BattleViewModel;
 import com.example.myhobitapplication.viewModels.ProfileViewModel;
+import com.example.myhobitapplication.viewModels.ProfileViewModelFactory;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class BossActivity extends AppCompatActivity {
@@ -80,8 +81,9 @@ public class BossActivity extends AppCompatActivity {
         }).get(BattleViewModel.class);
 
 
-        profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
-        profileViewModel.loadProfile(userUid);
+        ProfileViewModelFactory profileFactory = new ProfileViewModelFactory(getApplicationContext());
+
+        profileViewModel = new ViewModelProvider(this, profileFactory).get(ProfileViewModel.class);
 
         EdgeToEdge.enable(this);
 
@@ -104,7 +106,7 @@ public class BossActivity extends AppCompatActivity {
         currentAnimation.start();
 
         setupObservers();
-        //todo: moracu uzeti logovanog usera ubuduce
+
         battleViewModel.loadBattleState(userUid);
 
         binding.attackButton.setOnClickListener(v -> {

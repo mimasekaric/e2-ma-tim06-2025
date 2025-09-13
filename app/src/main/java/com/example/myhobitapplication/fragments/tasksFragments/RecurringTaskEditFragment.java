@@ -120,11 +120,7 @@ public class RecurringTaskEditFragment extends Fragment {
                 binding.taskDescriptionTextView.setText(task.getDescription());
               //  binding.difficultyTextView.setText(String.valueOf(task.getDifficulty()));
               //  binding.importanceTextView.setText("");
-                binding.recurrenceTextView.setText(String.valueOf(task.getRecurrenceInterval()));
-                binding.endDateTextView.setText(task.getEndDate().toString());
-                binding.startDateTextView.setText(task.getStartDate().toString());
                 binding.timeTextView.setText(task.getExecutionTime().toString());
-                binding.rctStatus.setText(String.valueOf(task.getStatus()));
 
                 try {
                     int color = Color.parseColor(task.getCategoryColour());

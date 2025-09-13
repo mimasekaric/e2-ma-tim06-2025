@@ -172,7 +172,7 @@ public class RecurringTaskDetailsFragment extends Fragment {
                 binding.taskTitleTextView.setText(task.getName());
                 binding.taskDescriptionTextView.setText(task.getDescription());
                 binding.difficultyTextView.setText(String.valueOf(task.getDifficulty()));
-                binding.importanceTextView.setText("");
+                binding.importanceTextView.setText(String.valueOf(task.getImportance()));
                 binding.recurrenceTextView.setText(String.valueOf(task.getRecurrenceInterval()));
                 binding.endDateTextView.setText(task.getEndDate().toString());
                 binding.startDateTextView.setText(task.getStartDate().toString());

@@ -120,10 +120,10 @@ public class OneTimeTaskDetailsFragment extends Fragment {
                 binding.taskTitleTextView.setText(task.getName());
                 binding.taskDescriptionTextView.setText(task.getDescription());
                 binding.difficultyTextView.setText(String.valueOf(task.getDifficulty()));
-                binding.importanceTextView.setText("");
+                binding.importanceTextView.setText(String.valueOf(task.getImportance()));
                 binding.startDateTextView.setText(task.getStartDate().toString());
                 binding.timeTextView.setText(task.getExecutionTime().toString());
-                binding.otStatus.setText(String.valueOf(task.getStatus()));
+                binding.oStatus.setText(String.valueOf(task.getStatus()));
 
                 try {
                     int color = Color.parseColor(task.getCategoryColour());

@@ -7,8 +7,10 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.example.myhobitapplication.fragments.CategoryFragment;
 import com.example.myhobitapplication.fragments.tasksFragments.OneTimeTaskFragment;
+import com.example.myhobitapplication.fragments.tasksFragments.OneTimeTaskViewFragment;
 import com.example.myhobitapplication.fragments.tasksFragments.RecurringTaskFragment;
 import com.example.myhobitapplication.fragments.TaskCalendarFragment;
+import com.example.myhobitapplication.fragments.tasksFragments.RecurringTaskViewFragment;
 
 public class TaskPagerAdapter extends FragmentStateAdapter {
 
@@ -20,21 +22,21 @@ public class TaskPagerAdapter extends FragmentStateAdapter {
     @Override
     public Fragment createFragment(int position) {
         if (position == 0) {
-            return new OneTimeTaskFragment();
+            return new OneTimeTaskViewFragment();
         } else if (position == 1) {
-            return new RecurringTaskFragment();
-        } else if (position == 2){
+            return new RecurringTaskViewFragment();
+        } else {
             return new TaskCalendarFragment();
         }
-        else
-        {
-            return new CategoryFragment();
-        }
+//        else
+//        {
+//            return new RecurringTaskViewFragment();
+//        }
     }
 
     @Override
     public int getItemCount() {
-        return 4;
+        return 3;
     }
 
 }

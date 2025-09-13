@@ -80,17 +80,25 @@ public class TaskCalendarFragment extends Fragment {
 
         calendarViewModel = new ViewModelProvider(requireActivity(), factory).get(TaskCalendarViewModel.class);
 
-        getParentFragmentManager().setFragmentResultListener("taskAddedRequest", getViewLifecycleOwner(), (requestKey, bundle) -> {
+//        getParentFragmentManager().setFragmentResultListener("taskAddedRequest", getViewLifecycleOwner(), (requestKey, bundle) -> {
+//
+//            // Signal je primljen!
+//            Toast.makeText(getContext(), "Kalendar se osvežava...", Toast.LENGTH_SHORT).show();
+//
+//            // 1. Naredi ViewModel-u da osveži svoje interne podatke iz baze.
+//            //    Ovo je važno da oba fragmenta rade sa istim, svežim podacima.
+//            calendarViewModel.refreshScheduledTasks();
+//
+//            // 2. Naredi UI-ju (samom kalendaru) da se ponovo iscrta.
+//            //    Ovo će naterati biblioteku da ponovo pozove `bind` metodu za sve vidljive dane.
+//            if (calendarView != null) {
+//                calendarView.notifyCalendarChanged();
+//            }
+//        });
 
-            // Signal je primljen!
-            Toast.makeText(getContext(), "Kalendar se osvežava...", Toast.LENGTH_SHORT).show();
-
-            // 1. Naredi ViewModel-u da osveži svoje interne podatke iz baze.
-            //    Ovo je važno da oba fragmenta rade sa istim, svežim podacima.
+        requireActivity().getSupportFragmentManager().setFragmentResultListener("taskAddedRequest", getViewLifecycleOwner(), (requestKey, bundle) -> {
+            Toast.makeText(getContext(), "Kalendar je primio signal!", Toast.LENGTH_SHORT).show();
             calendarViewModel.refreshScheduledTasks();
-
-            // 2. Naredi UI-ju (samom kalendaru) da se ponovo iscrta.
-            //    Ovo će naterati biblioteku da ponovo pozove `bind` metodu za sve vidljive dane.
             if (calendarView != null) {
                 calendarView.notifyCalendarChanged();
             }

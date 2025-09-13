@@ -2,6 +2,8 @@ package com.example.myhobitapplication.fragments.tasksFragments;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -308,8 +310,8 @@ public class RecurringTaskFragment extends Fragment {
 
                 Toast.makeText(requireContext(), "Zadatak je uspešno kreiran!", Toast.LENGTH_SHORT).show();
 
-                getParentFragmentManager().setFragmentResult("taskAddedRequest", new Bundle());
-
+                requireActivity().getSupportFragmentManager().setFragmentResult("taskAddedRequest", new Bundle());
+                requireActivity().getSupportFragmentManager().setFragmentResult("taskUpdated_ForList", new Bundle());
                 // Opciono: Očisti formu ili se vrati na prethodni ekran
                 // getParentFragmentManager().popBackStack();
                 taskViewModel.onSaveSuccessEventHandled();
