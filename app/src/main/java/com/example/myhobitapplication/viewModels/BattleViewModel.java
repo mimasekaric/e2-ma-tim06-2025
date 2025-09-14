@@ -8,15 +8,22 @@ import com.example.myhobitapplication.databases.BossRepository;
 import com.example.myhobitapplication.databases.ProfileRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.dto.BossDTO;
+import com.example.myhobitapplication.dto.UserEquipmentDTO;
+import com.example.myhobitapplication.enums.ClothingTypes;
+import com.example.myhobitapplication.enums.EquipmentTypes;
 import com.example.myhobitapplication.models.Boss;
+import com.example.myhobitapplication.models.Clothing;
 import com.example.myhobitapplication.models.Profile;
+import com.example.myhobitapplication.models.UserEquipment;
 import com.example.myhobitapplication.services.BattleService;
 import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.TaskService;
+import com.example.myhobitapplication.services.UserEquipmentService;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,6 +32,8 @@ public class BattleViewModel extends ViewModel {
     private final BossService bossService;
     private final BattleService battleService;
     private final ProfileService profileService;
+
+    private final UserEquipmentService userEquipmentService;
 
     private double hitChance = 1.0;
 
@@ -51,19 +60,22 @@ public class BattleViewModel extends ViewModel {
     private final MutableLiveData<Boolean> _isBattleOver = new MutableLiveData<>(false);
     public LiveData<Boolean> isBattleOver() { return _isBattleOver; }
 
+
     private BossDTO currentBoss;
 
-    public BattleViewModel(TaskRepository taskRepository, BossRepository bossRepository, ProfileService profileService){
+    public BattleViewModel(TaskRepository taskRepository, BossRepository bossRepository, ProfileService profileService, UserEquipmentService userEquipmentService){
         this.bossService = new BossService(bossRepository);
         this.profileService = profileService;
         this.taskService = new TaskService(taskRepository, profileService);
         this.battleService = new BattleService(taskService, bossService, profileService);
+        this.userEquipmentService = userEquipmentService;
         userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
 
     public void loadBattleState(String userId){
 
         currentBoss = bossService.getLowestLevelBossForUser(userId);
+
 
         //int userPower = battleService.calculateUserAttackPower(userId);
 
@@ -72,22 +84,32 @@ public class BattleViewModel extends ViewModel {
         _bossCurrentHp.setValue(currentBoss.getCurrentHP());
         _bossMaxHp.setValue(currentBoss.getHP());
         _userPP.setValue(userPower);
-
+        this.hitChance = 1.0;
         //todo: moracu u bosu pamtiti koliko je ostalo pokusaja ubuduce?
         _remainingAttacks.setValue(5);
         //todo: moracu koristiti od usera datume levela prethodnog i sadanjeg i moracu povezati taskove sa userom - URADILA
         profileService.getProfileById(userUid).addOnSuccessListener(profile -> {
-
+            userEquipmentService.activatedEquipmentEffect(profile);
             _userProfile.setValue(profile);
+            List<UserEquipmentDTO> ueList= userEquipmentService.getUserActivatedEquipment(profile.getuserUid());
+            for(UserEquipmentDTO u :  ueList){
+                if (u.getEquipment().getequipmentType().equals(EquipmentTypes.CLOTHING)){
+                    if(((Clothing)u.getEquipment()).getType().equals(ClothingTypes.SHIELD)){
+                        hitChance = hitChance + (hitChance * ((Clothing)u.getEquipment()).getpowerPercentage()/100);
+                    }
+                    if(((Clothing)u.getEquipment()).getType().equals(ClothingTypes.BOOTS)){
+                        _remainingAttacks.setValue(_remainingAttacks.getValue() + 1);
+                    }
+                }
+            }
 
        // this.hitChance = battleService.calculateChanceForAttack(profile);
-            this.hitChance = 1.0;
+
         }).addOnFailureListener(e -> {
         });
     }
 
     public void performAttack() {
-
 
 
         Integer attacksLeft = _remainingAttacks.getValue();
@@ -115,10 +137,9 @@ public class BattleViewModel extends ViewModel {
             boolean isBossDefeated = (newHp <= 0);
 
             if (isBossDefeated) {
-
                 currentBoss.setDefeated(true);
-
                 _isBattleOver.setValue(true);
+                userEquipmentService.incrementFightsCounter(userUid,_userProfile.getValue());
                 battleService.rewardUserWithCoins(currentBoss);
             }
 
@@ -134,6 +155,7 @@ public class BattleViewModel extends ViewModel {
 
         if (_remainingAttacks.getValue() <= 0 && currentBoss.getCurrentHP() > 0) {
             _isBattleOver.setValue(true);
+            //userEquipmentService.incrementFightsCounter();
         }
 
 

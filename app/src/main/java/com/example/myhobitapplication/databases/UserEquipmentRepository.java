@@ -32,6 +32,7 @@ public class UserEquipmentRepository {
         values.put(AppDataBaseHelper.COLUMN_EQUIPMENT_UID, ue.getUserId());
         values.put(AppDataBaseHelper.COLUMN_ACTIVATED, ue.getActivated() ? 1 : 0);
         values.put(AppDataBaseHelper.COLUMN_FIGHTS_COUNTER, ue.getFightsCounter());
+        values.put(AppDataBaseHelper.COLUMN_COEF, ue.getCoef());
         return database.insert(AppDataBaseHelper.TABLE_USER_EQUIPMENT, null, values);
     }
 
@@ -39,6 +40,7 @@ public class UserEquipmentRepository {
         ContentValues values = new ContentValues();
         values.put(AppDataBaseHelper.COLUMN_ACTIVATED, ue.getActivated() ? 1 : 0);
         values.put(AppDataBaseHelper.COLUMN_FIGHTS_COUNTER, ue.getFightsCounter());
+        values.put(AppDataBaseHelper.COLUMN_COEF, ue.getCoef());
 
 
         String whereClause = AppDataBaseHelper.COLUMN_USER_EQUIPMENT_ID + "=?";
@@ -71,6 +73,7 @@ public class UserEquipmentRepository {
                 ue.setUserId(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_EQUIPMENT_UID)));
                 ue.setActivated(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_ACTIVATED)) == 1);
                 ue.setFightsCounter(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_FIGHTS_COUNTER)));
+                ue.setFightsCounter(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_COEF)));
                 list.add(ue);
             }
             cursor.close();
@@ -98,6 +101,40 @@ public class UserEquipmentRepository {
                 ue.setUserId(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_EQUIPMENT_UID)));
                 ue.setActivated(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_ACTIVATED)) == 1);
                 ue.setFightsCounter(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_FIGHTS_COUNTER)));
+                ue.setFightsCounter(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_COEF)));
+            }
+            cursor.close();
+        }
+        return ue;
+    }
+
+    public void delete(UserEquipment userEquipment){
+        database.delete(
+                AppDataBaseHelper.TABLE_USER_EQUIPMENT,
+                AppDataBaseHelper.COLUMN_USER_EQUIPMENT_ID + "=?",
+                new String[]{String.valueOf(userEquipment.getId())}
+        );
+    }
+    public UserEquipment getByEquipmentId(String id) {
+        UserEquipment ue = null;
+        Cursor cursor = database.query(
+                AppDataBaseHelper.TABLE_USER_EQUIPMENT,
+                null,
+                AppDataBaseHelper.COLUMN_EQUIPMENT_EID + "=?",
+                new String[]{String.valueOf(id)},
+                null,
+                null,
+                null);
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                ue = new UserEquipment();
+                ue.setId(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_USER_EQUIPMENT_ID)));
+                ue.setEquipmentId(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_EQUIPMENT_EID)));
+                ue.setUserId(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_EQUIPMENT_UID)));
+                ue.setActivated(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_ACTIVATED)) == 1);
+                ue.setFightsCounter(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_FIGHTS_COUNTER)));
+                ue.setFightsCounter(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_COEF)));
             }
             cursor.close();
         }

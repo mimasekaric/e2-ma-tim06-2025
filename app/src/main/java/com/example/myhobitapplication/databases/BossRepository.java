@@ -42,6 +42,7 @@ public class BossRepository {
         values.put(AppDataBaseHelper.COLUMN_USER_ID, boss.getUserId().toString());
         values.put(AppDataBaseHelper.COLUMN_BOSS_LEVEL, boss.getBossLevel());
         values.put(AppDataBaseHelper.COLUMN_COINS_REWARD, boss.getCoinsReward());
+        values.put(AppDataBaseHelper.COLUMN_COINS_REWARD_PERCENT, boss.getCoinsRewardPercent());
 
         long newRowId = database.insert(AppDataBaseHelper.TABLE_BOSSES, null, values);
         database.close();
@@ -78,7 +79,7 @@ public class BossRepository {
                 boss.setBossLevel(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_BOSS_LEVEL)));
                 boss.setCurrentHP(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CURRENT_HP)));
                 boss.setCoinsReward(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_COINS_REWARD)));
-
+                boss.setCoinsRewardPercent(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_COINS_REWARD_PERCENT)));
                 String isDefeated = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IS_DEFEATED));
                 boss.setDefeated(Boolean.parseBoolean(isDefeated));
 
@@ -129,7 +130,7 @@ public class BossRepository {
                 boss.setBossLevel(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_BOSS_LEVEL)));
                 boss.setCurrentHP(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CURRENT_HP)));
                 boss.setCoinsReward(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_COINS_REWARD)));
-
+                boss.setCoinsRewardPercent(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_COINS_REWARD_PERCENT)));
 
                 String isDefeated = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IS_DEFEATED));
                 boss.setDefeated(Boolean.parseBoolean(isDefeated));
@@ -146,9 +147,8 @@ public class BossRepository {
     }
 
 
-    public Boss getPreviousBossForUser(String userId, int userLevel) {
+    public Boss getPreviousBossForUser(String userId, int previousBossLevel) {
 
-        int previousLevel = userLevel - 1;
         Boss boss = null;
 
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -158,7 +158,7 @@ public class BossRepository {
 
         String[] selectionArgs = {
                 String.valueOf(userId),
-                String.valueOf(previousLevel)
+                String.valueOf(previousBossLevel)
         };
 
         Cursor cursor = db.query(
@@ -185,6 +185,7 @@ public class BossRepository {
             boss.setBossLevel(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_BOSS_LEVEL)));
             boss.setCurrentHP(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CURRENT_HP)));
             boss.setCoinsReward(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_COINS_REWARD)));
+            boss.setCoinsRewardPercent(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_COINS_REWARD_PERCENT)));
 
             int isDefeatedInt = cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IS_DEFEATED));
             boss.setDefeated(isDefeatedInt == 1);
@@ -211,6 +212,7 @@ public class BossRepository {
         values.put(AppDataBaseHelper.COLUMN_USER_ID, boss.getUserId());
         values.put(AppDataBaseHelper.COLUMN_BOSS_LEVEL, boss.getBossLevel());
         values.put(AppDataBaseHelper.COLUMN_COINS_REWARD, boss.getCoinsReward());
+        values.put(AppDataBaseHelper.COLUMN_COINS_REWARD_PERCENT, boss.getCoinsRewardPercent());
 
         String selection = AppDataBaseHelper.COLUMN_BOSS_ID + " = ?";
         String[] selectionArgs = { String.valueOf(boss.getId()) };
@@ -259,6 +261,7 @@ public class BossRepository {
                 boss.setBossLevel(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_BOSS_LEVEL)));
                 boss.setCurrentHP(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CURRENT_HP)));
                 boss.setCoinsReward(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_COINS_REWARD)));
+                boss.setCoinsRewardPercent(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_COINS_REWARD_PERCENT)));
 
 
                 String isDefeated = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IS_DEFEATED));

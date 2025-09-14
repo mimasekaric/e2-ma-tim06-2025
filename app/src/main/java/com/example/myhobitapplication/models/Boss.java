@@ -16,6 +16,7 @@ public class Boss {
     private Integer BossLevel;
 
     private Integer CoinsReward;
+    private double CoinsRewardPercent;
 
     public Boss(Integer HP) {
 
@@ -25,7 +26,7 @@ public class Boss {
     public Boss() {
     }
 
-    public Boss(Integer id, Integer HP, String userId, Integer currentHP, Boolean isDefeated, Integer bossLevel, Integer coinsReward) {
+    public Boss(Integer id, Integer HP, String userId, Integer currentHP, Boolean isDefeated, Integer bossLevel, Integer coinsReward, double coinsRewardPercent) {
         Id = id;
         this.HP = HP;
         UserId = userId;
@@ -33,6 +34,7 @@ public class Boss {
         IsDefeated = isDefeated;
         BossLevel = bossLevel;
         CoinsReward = coinsReward;
+        CoinsRewardPercent = coinsRewardPercent;
     }
 
     public Boss(Integer HP, String userId, Integer currentHP, Boolean isDefeated, Integer bossLevel, Integer coinsReward) {
@@ -50,6 +52,14 @@ public class Boss {
 
     public Integer getHP() {
         return HP;
+    }
+
+    public double getCoinsRewardPercent() {
+        return CoinsRewardPercent;
+    }
+
+    public void setCoinsRewardPercent(double coinsRewardPercent) {
+        CoinsRewardPercent = coinsRewardPercent;
     }
 
     public void setId(Integer id) {

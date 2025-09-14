@@ -8,7 +8,7 @@ public class BossDTO {
 
     private Integer Id;
     private Integer HP;
-
+    private double CoinRewardPercent;
     private String UserId;
 
     private Integer CurrentHP;
@@ -54,10 +54,19 @@ public class BossDTO {
         IsDefeated = boss.getDefeated();
         BossLevel = boss.getBossLevel();
         CoinsReward = boss.getCoinsReward();
+        CoinRewardPercent = boss.getCoinsRewardPercent();
     }
 
     public Integer getId() {
         return Id;
+    }
+
+    public double getCoinRewardPercent() {
+        return CoinRewardPercent;
+    }
+
+    public void setCoinRewardPercent(double coinRewardPercent) {
+        CoinRewardPercent = coinRewardPercent;
     }
 
     public Integer getHP() {

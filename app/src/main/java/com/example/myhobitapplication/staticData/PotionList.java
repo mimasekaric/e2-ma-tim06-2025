@@ -45,7 +45,7 @@ public class PotionList {
         potion40.setType(PotionTypes.ETERNAL_POWER_ELIXIR);
         potion40.setImage(R.mipmap.ic_launcher_potion40);
         potion40.setCoef(0.7);
-        potion40.setpowerPercentage(0.4);
+        potion40.setpowerPercentage(40);
         potion40.setPermanent(false);
         potionList.add(potion40);
 

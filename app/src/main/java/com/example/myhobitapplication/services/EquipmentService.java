@@ -14,8 +14,16 @@ public class EquipmentService {
         this.repository.open();
     }
 
-    public List<Equipment> getByType(EquipmentTypes type){
+    public List<Equipment> getEquipmentByType(EquipmentTypes type){
         return repository.getEquipmentByType(type);
+    }
+
+    public Equipment getEquipmentById(String id){
+        return repository.getEquipmentById(id);
+    }
+
+    public int updateEquipment(Equipment eq){
+        return   repository.updateEquipment(eq);
     }
 
 }
