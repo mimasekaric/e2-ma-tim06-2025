@@ -50,11 +50,11 @@
 
         <TextView
             android:id="@+id/putcoins"
-            android:layout_width="50dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="30"
+            android:text="3000"
             android:textColor="@color/white"
-            android:textSize="30dp"
+            android:textSize="29dp"
             />
 
         <ImageView
@@ -73,7 +73,7 @@
         app:layout_constraintTop_toTopOf="@+id/layout0">
         <TextView
             android:id="@+id/putxp"
-            android:layout_width="50dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="30"
             android:textSize="30dp"
@@ -96,7 +96,7 @@
         app:layout_constraintTop_toTopOf="@+id/layout0">
         <TextView
             android:id="@+id/putpp"
-            android:layout_width="50dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="30"
             android:textSize="30dp"

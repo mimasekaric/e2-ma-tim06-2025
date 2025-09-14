@@ -82,7 +82,7 @@ public class BattleService {
                 BossDTO previousBossDTO = bossService.getPrevioussBossForUser(userId,bossLevel-1);
                 if (previousBossDTO != null) {
                     Integer previousCoinsReward = previousBossDTO.getCoinsReward();
-                    double newCoinsReward = previousCoinsReward * 0.2;
+                    double newCoinsReward = previousCoinsReward * calculatePercentage(bossLevel, userId);
                     return (int) newCoinsReward;
                 } else {
                     return 0;
@@ -107,6 +107,21 @@ public class BattleService {
         }
     }
 
+    public double calculatePercentage(int bossLevel, String userId){
+
+        if(bossLevel==0){
+            return 0.2;
+        }
+        else {
+            BossDTO previousBossDTO = bossService.getPrevioussBossForUser(userId,bossLevel-1);
+            if (previousBossDTO != null) {
+                double previousPercentage = previousBossDTO.getCoinRewardPercent();
+                return previousPercentage;
+            } else {
+                return 0.2;
+            }
+        }
+    }
     public long generateBossForUser(String userId, int newLevel){
 
         BossDTO bossDTO = new BossDTO();
@@ -114,12 +129,16 @@ public class BattleService {
         bossDTO.setBossLevel(newLevel-1);
         bossDTO.setDefeated(false);
 
+        double percentage = calculatePercentage(newLevel, userId);
+
         int coinsReward = calculateCoinsRewardForBoss(newLevel-1, userId);
         int HP = calculateHPForBoss(newLevel-1,userId);
 
+        bossDTO.setCoinRewardPercent(percentage);
         bossDTO.setCoinsReward(coinsReward);
         bossDTO.setHP(HP);
         bossDTO.setCurrentHP(HP);
+        bossDTO.setCoinRewardPercent(0.2);
         return bossService.createBoss(bossDTO);
     }
 }

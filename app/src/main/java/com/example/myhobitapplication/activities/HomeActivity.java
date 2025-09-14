@@ -16,10 +16,16 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myhobitapplication.R;
+import com.example.myhobitapplication.databases.BossRepository;
+import com.example.myhobitapplication.databases.EquipmentRepository;
 import com.example.myhobitapplication.databinding.ActivityHomeBBinding;
 import com.example.myhobitapplication.activities.ProfileActivity;
+import com.example.myhobitapplication.fragments.ActivateEquipmentFragment;
 import com.example.myhobitapplication.fragments.ShopFragment;
 import com.example.myhobitapplication.models.Profile;
+import com.example.myhobitapplication.services.BossService;
+import com.example.myhobitapplication.services.EquipmentService;
+import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.viewModels.LoginViewModel;
 import com.example.myhobitapplication.viewModels.ProfileViewModel;
 import com.google.android.material.navigation.NavigationView;
@@ -47,6 +53,10 @@ public class HomeActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.mipmap.ic_launcher_menu);
+        BossRepository bossRepository = new BossRepository(HomeActivity.this);
+        EquipmentRepository equipmentRepository = new EquipmentRepository(HomeActivity.this);
+        BossService bossService = new BossService(bossRepository);
+        EquipmentService equipmentService = new EquipmentService(equipmentRepository);
 
         drawerLayout = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
@@ -54,7 +64,7 @@ public class HomeActivity extends AppCompatActivity {
             @NonNull
             @Override
             public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-                return (T) new ProfileViewModel(HomeActivity.this);
+                return (T) new ProfileViewModel(HomeActivity.this, bossService, equipmentService);
             }
         }).get(ProfileViewModel.class);
 
@@ -119,6 +129,14 @@ public class HomeActivity extends AppCompatActivity {
                     ShopFragment shopFragment = new ShopFragment();
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_container, shopFragment)
+                            .addToBackStack(null)
+                            .commit();
+                }
+
+                else if(id == R.id.nav_activate) {
+                    ActivateEquipmentFragment activateFragment = new ActivateEquipmentFragment();
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, activateFragment)
                             .addToBackStack(null)
                             .commit();
                 }

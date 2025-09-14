@@ -30,4 +30,12 @@ public class ProfileService {
     public Task<Profile> getProfileById(String userUid){
         return profileRepository.getProfileById(userUid);
     }
+
+    public Task<Void> updatePp( String uid,int newValue){
+        return  profileRepository.updatePp(uid, newValue);
+    }
+
+    public Task<Void> updateCoins( String uid,int newValue){
+        return  profileRepository.updateCoins(uid, newValue);
+    }
 }

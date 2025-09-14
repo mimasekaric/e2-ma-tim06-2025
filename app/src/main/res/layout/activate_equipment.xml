@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/baccpng"
+    android:layout_height="match_parent"
+    tools:context=".fragments.ActivateEquipmentFragment">
+
+    <TextView
+        android:id="@+id/activate"
+        android:layout_width="match_parent"
+        android:layout_height="78dp"
+        android:fontFamily="@font/educursivebold"
+        android:gravity="center"
+        android:text="ACTIVATE EQUIPMENT"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textColor="#EFEBEB"
+        android:textSize="20sp" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/shopRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:backgroundTint="#253E24"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/activate" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

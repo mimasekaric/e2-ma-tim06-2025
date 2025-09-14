@@ -61,6 +61,7 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
 
     public static final String COLUMN_BOSS_LEVEL = "boss_level";
     public static final String COLUMN_COINS_REWARD = "coins_reward";
+    public static final String COLUMN_COINS_REWARD_PERCENT = "coins_reward_percent";
 
     public static final String TABLE_EQUIPMENT = "equipment";
     public static final String TABLE_ONE_TIME_TASKS = "one_time_tasks";
@@ -143,6 +144,7 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
                 + COLUMN_BOSS_LEVEL + " TEXT,"
                 + COLUMN_HP + " TEXT,"
                 + COLUMN_COINS_REWARD + " INTEGER,"
+                + COLUMN_COINS_REWARD_PERCENT + " REAL,"
                 + COLUMN_CURRENT_HP + " TEXT" + ")";
         db.execSQL(CREATE_BOSS_TABLE);
 
@@ -161,6 +163,7 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
                 + COLUMN_USER_EQUIPMENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + COLUMN_EQUIPMENT_EID + " TEXT,"
                 + COLUMN_EQUIPMENT_UID + " TEXT,"
+                + COLUMN_COEF + " REAL,"
                 + COLUMN_ACTIVATED + " INTEGER,"
                 + COLUMN_FIGHTS_COUNTER + " INTEGER" + ")";
         db.execSQL(CREATE_USER_EQUIPMENT_TABLE);

@@ -27,11 +27,15 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.databases.BossRepository;
+import com.example.myhobitapplication.databases.EquipmentRepository;
 import com.example.myhobitapplication.databases.ProfileRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.ActivityBossBinding;
 import com.example.myhobitapplication.models.Boss;
+import com.example.myhobitapplication.services.BossService;
+import com.example.myhobitapplication.services.EquipmentService;
 import com.example.myhobitapplication.services.ProfileService;
+import com.example.myhobitapplication.services.UserEquipmentService;
 import com.example.myhobitapplication.shakeDetector.ShakeDetector;
 import com.example.myhobitapplication.viewModels.BattleViewModel;
 import com.google.firebase.auth.FirebaseAuth;
@@ -63,15 +67,17 @@ public class BossActivity extends AppCompatActivity {
 
         TaskRepository taskRepository = new TaskRepository(getApplicationContext());
         BossRepository bossRepository = new BossRepository(getApplicationContext());
+        EquipmentRepository equipmentRepository = new EquipmentRepository(getApplicationContext());
         ProfileService profileService = new ProfileService();
-        Boss boss = new Boss(2,400,userUid,400,false,2,200);
+        Boss boss = new Boss(2,400,userUid,400,false,2,200, 0.2);
         bossRepository.insertBoss(boss);
-
+        BossService bossService = new BossService(bossRepository);
+        EquipmentService equipmentService = new EquipmentService(equipmentRepository);
         battleViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @NonNull
             @Override
             public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-                return (T) new BattleViewModel(taskRepository, bossRepository, profileService);
+                return (T) new BattleViewModel(taskRepository, bossRepository, profileService, new UserEquipmentService(getApplicationContext(), profileService, bossService, equipmentService));
             }
         }).get(BattleViewModel.class);
 

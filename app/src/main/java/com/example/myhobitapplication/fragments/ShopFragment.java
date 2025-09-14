@@ -23,12 +23,17 @@ import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.activities.RegistrationActivity;
 import com.example.myhobitapplication.adapters.AvatarSpinnerAdapter;
 import com.example.myhobitapplication.adapters.ShopItemsAdapter;
+import com.example.myhobitapplication.databases.BossRepository;
+import com.example.myhobitapplication.databases.EquipmentRepository;
 import com.example.myhobitapplication.databinding.ActivityProfileBinding;
 import com.example.myhobitapplication.databinding.FragmentShopBinding;
 import com.example.myhobitapplication.dto.EquipmentWithPriceDTO;
 import com.example.myhobitapplication.enums.EquipmentTypes;
 import com.example.myhobitapplication.models.Equipment;
 import com.example.myhobitapplication.models.Profile;
+import com.example.myhobitapplication.services.BossService;
+import com.example.myhobitapplication.services.EquipmentService;
+import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.staticData.AvatarList;
 import com.example.myhobitapplication.viewModels.ProfileViewModel;
 import com.example.myhobitapplication.viewModels.UserEquipmentViewModel;
@@ -62,12 +67,16 @@ public class ShopFragment extends Fragment {
         type = EquipmentTypes.CLOTHING;
         profileViewModel = new ViewModelProvider(requireActivity()).get(ProfileViewModel.class);
         String userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
+        BossRepository bossRepository = new BossRepository(requireContext());
+        EquipmentRepository equipmentRepository = new EquipmentRepository(requireContext());
+        ProfileService profileService = new ProfileService();
+        BossService bossService = new BossService(bossRepository);
+        EquipmentService equipmentService = new EquipmentService(equipmentRepository);
         viewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @NonNull
             @Override
             public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-                return (T) new UserEquipmentViewModel(requireContext(),profileViewModel);
+                return (T) new UserEquipmentViewModel(requireContext(),bossService,equipmentService,profileService);
             }
         }).get(UserEquipmentViewModel.class);
         observeViewModels();
@@ -117,6 +126,7 @@ public class ShopFragment extends Fragment {
                             public void onClick(DialogInterface dialog, int which) {
                                 boolean response=viewModel.buyEquipment(profile,item.getEquipment());
                                 if(response){
+                                    profileViewModel.loadProfile(profile.getuserUid());
                                     Toast.makeText(requireContext(),"Bought Succesfully", Toast.LENGTH_SHORT).show();
                                 }else{
                                     Toast.makeText(requireContext(),"Couldn't buy item", Toast.LENGTH_SHORT).show();
@@ -133,7 +143,6 @@ public class ShopFragment extends Fragment {
                 alert.show();
             }
         });
-        recyclerView.setAdapter(shopItemsAdapter);
         recyclerView.setAdapter(shopItemsAdapter);
     }
 }
