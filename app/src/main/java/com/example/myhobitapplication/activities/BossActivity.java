@@ -87,7 +87,7 @@ public class BossActivity extends AppCompatActivity {
         }).get(BattleViewModel.class);
 
 
-        ProfileViewModelFactory profileFactory = new ProfileViewModelFactory(getApplicationContext());
+        ProfileViewModelFactory profileFactory = new ProfileViewModelFactory(getApplicationContext(),bossService,equipmentService);
 
         profileViewModel = new ViewModelProvider(this, profileFactory).get(ProfileViewModel.class);
 
