@@ -52,6 +52,7 @@ import java.util.List;
         public int getItemCount() {
             return equipmentList.size();
         }
+
         public interface OnItemButtonClickListener {
             void onButtonClick(EquipmentWithPriceDTO item);
         }

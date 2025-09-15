@@ -7,15 +7,26 @@ public class UserEquipment{
     private String userId;
     private Boolean activated;
     private int fightsCounter;
+    private double coef;
 
 
     public UserEquipment(){}
-    public UserEquipment(Integer id, String equipmentId,String userId, Boolean activated, int fightsCounter) {
+    public UserEquipment(Integer id, String equipmentId,String userId, Boolean activated, int fightsCounter, double coef) {
         this.id = id;
         this.equipmentId = equipmentId;
         this.activated = activated;
         this.fightsCounter = fightsCounter;
         this.userId=userId;
+        this.coef = coef;
+
+    }
+
+    public double getCoef() {
+        return coef;
+    }
+
+    public void setCoef(double coef) {
+        this.coef = coef;
     }
 
     public String getUserId() {

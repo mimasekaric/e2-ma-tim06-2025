@@ -21,24 +21,36 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myhobitapplication.R;
+import com.example.myhobitapplication.databases.BossRepository;
+import com.example.myhobitapplication.databases.EquipmentRepository;
+import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.ActivityProfileBinding;
 import com.example.myhobitapplication.dto.UserInfoDTO;
 import com.example.myhobitapplication.enums.Title;
 import com.example.myhobitapplication.models.Avatar;
+import com.example.myhobitapplication.models.Boss;
 import com.example.myhobitapplication.models.Equipment;
 import com.example.myhobitapplication.models.Profile;
+import com.example.myhobitapplication.services.BossService;
+import com.example.myhobitapplication.services.EquipmentService;
+import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.staticData.AvatarList;
 import com.example.myhobitapplication.viewModels.LoginViewModel;
 import com.example.myhobitapplication.viewModels.ProfileViewModel;
+import com.example.myhobitapplication.viewModels.UserEquipmentViewModel;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
+import java.util.List;
+
 public class ProfileActivity extends Fragment {
 
     private LoginViewModel loginViewModel;
     private ProfileViewModel viewModel;
+
+    private UserEquipmentViewModel userEquipmentViewModel;
     private ActivityProfileBinding binding;
 
     private String profileUrl = "";
@@ -63,14 +75,19 @@ public class ProfileActivity extends Fragment {
         if (getArguments() != null) {
             userId = getArguments().getString("USER_ID");
         }
-
-        viewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
+        BossRepository bossRepository = new BossRepository(requireContext());
+        EquipmentRepository equipmentRepository = new EquipmentRepository(requireContext());
+        ProfileService profileService = new ProfileService();
+        BossService bossService = new BossService(bossRepository);
+        EquipmentService equipmentService = new EquipmentService(equipmentRepository);
+        viewModel = new ViewModelProvider(requireActivity()).get(ProfileViewModel.class);
+        userEquipmentViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @NonNull
             @Override
             public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-                return (T) new ProfileViewModel(requireContext());
+                return (T) new UserEquipmentViewModel(requireContext(), bossService, equipmentService, profileService);
             }
-        }).get(ProfileViewModel.class);
+        }).get(UserEquipmentViewModel.class);
 
         loginViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @NonNull
@@ -136,9 +153,8 @@ public class ProfileActivity extends Fragment {
                     }
                 }
             }
-        });
 
-        viewModel.getEquipment().observe(getViewLifecycleOwner(), equipmentList -> {
+            List<Equipment> equipmentList = userEquipmentViewModel.getEquipmentForUser(profile.getuserUid());
             binding.imgLayout2.removeAllViews();
             for (Equipment res : equipmentList) {
                 ImageView imageView2 = new ImageView(getContext());
@@ -155,6 +171,8 @@ public class ProfileActivity extends Fragment {
                 binding.imgLayout2.addView(imageView2);
             }
         });
+
+
 
         viewModel.getUserInfo().observe(getViewLifecycleOwner(), userInfo -> {
             if (userInfo != null) {
@@ -249,19 +267,5 @@ public class ProfileActivity extends Fragment {
             binding.imgLayout1.addView(imageView);
         }
 
-      /*  for (Equipment res : viewModel.getEquipment().getValue()) {
-            ImageView imageView2 = new ImageView(getContext());
-            imageView2.setImageResource(res.getImage());
-            int widthInDp = 100;
-            float scale = getResources().getDisplayMetrics().density;
-            int widthInPx = (int) (widthInDp * scale + 0.5f);
-
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    widthInPx,
-                    LinearLayout.LayoutParams.MATCH_PARENT
-            );
-            imageView2.setLayoutParams(params);
-            binding.imgLayout2.addView(imageView2);
-        }*/
     }
 }

@@ -92,14 +92,18 @@ public class EquipmentRepository {
                     case POTION:
                         Potion p = new Potion();
                         p.setCoef(cursor.getDouble(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_COEF)));
+                        p.setType(PotionTypes.valueOf(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_SPECIFIC_TYPE))));
                         p.setPermanent(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IS_PERMANENT)) == 1);
                         eq = p;
                         break;
                     case WEAPON:
-                        eq = new Weapon();
+                        Weapon w = new Weapon();
+                        w.setType(WeaponTypes.valueOf(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_SPECIFIC_TYPE))));
+                        eq=w;
                         break;
                     case CLOTHING:
                         Clothing c = new Clothing();
+                        c.setType(ClothingTypes.valueOf(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_SPECIFIC_TYPE))));
                         c.setCoef(cursor.getDouble(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_COEF)));
                         eq = c;
                         break;
