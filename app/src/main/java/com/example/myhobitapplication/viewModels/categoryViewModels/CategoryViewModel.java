@@ -15,7 +15,6 @@ public class CategoryViewModel extends ViewModel {
     private CategoryService categoryService;
 
     private final MutableLiveData<String> name = new MutableLiveData<>("");
-    private final MutableLiveData<String> colour = new MutableLiveData<>("");
     private final MutableLiveData<List<Category>> categories = new MutableLiveData<>();
 
     private final MutableLiveData<String> _nameError = new MutableLiveData<>(null);
@@ -30,6 +29,9 @@ public class CategoryViewModel extends ViewModel {
 
     private final MutableLiveData<Boolean> _saveSuccessEvent = new MutableLiveData<>();
     public LiveData<Boolean> getSaveSuccessEvent() { return _saveSuccessEvent; }
+
+    private final MutableLiveData<String> colour = new MutableLiveData<>("#000000"); // Počni sa crnom
+
 
     public CategoryViewModel(CategoryService categoryService){
         this.categoryService = categoryService;

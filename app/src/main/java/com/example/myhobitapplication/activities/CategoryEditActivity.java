@@ -1,6 +1,7 @@
 package com.example.myhobitapplication.activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
@@ -14,6 +15,7 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myhobitapplication.databases.CategoryRepository;
+import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.ActivityCategoryEditBinding;
 import com.example.myhobitapplication.services.CategoryService;
 import com.example.myhobitapplication.viewModels.categoryViewModels.CategoryEditViewModel;
@@ -38,7 +40,8 @@ public class CategoryEditActivity extends AppCompatActivity {
         int categoryId = getIntent().getIntExtra("CATEGORY_ID_EXTRA", -1);
 
         CategoryRepository repository = new CategoryRepository(this);
-        CategoryService categoryService = new CategoryService(repository);
+        TaskRepository taskRepository = new TaskRepository(this);
+        CategoryService categoryService = new CategoryService(repository,taskRepository);
 
 
         categoryEditViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
@@ -96,15 +99,42 @@ public class CategoryEditActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {}
         });
-
         binding.btnAddCategory.setOnClickListener(v -> {
-
             categoryEditViewModel.updateCategory();
+        });
 
-            Toast.makeText(this, "Kategorija je uspješno azurirana!", Toast.LENGTH_SHORT).show();
+        categoryEditViewModel.getSubmissionError().observe(this, error -> {
+            if (error != null && !error.isEmpty()) {
+                new AlertDialog.Builder(this)
+                        .setTitle("Error saving")
+                        .setMessage(error)
+                        .setPositiveButton("OK", null)
+                        .show();
+            }
+        });
 
-            setResult(Activity.RESULT_OK);
-            finish();
+        categoryEditViewModel.getSaveSuccessEvent().observe(this, isSuccess -> {
+            if (isSuccess != null && isSuccess) {
+
+                Toast.makeText(this, "Category successfully saved!", Toast.LENGTH_SHORT).show();
+
+                setResult(Activity.RESULT_OK);
+
+                finish();
+
+                categoryEditViewModel.onSaveSuccessEventHandled();
+            }
+        });categoryEditViewModel.getSaveSuccessEvent().observe(this, isSuccess -> {
+            if (isSuccess != null && isSuccess) {
+
+                Toast.makeText(this, "Kategorija je uspešno ažurirana!", Toast.LENGTH_SHORT).show();
+
+                setResult(Activity.RESULT_OK);
+
+                finish();
+
+                categoryEditViewModel.onSaveSuccessEventHandled();
+            }
         });
     }
 

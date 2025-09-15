@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
+import androidx.annotation.Nullable;
+
 import com.example.myhobitapplication.models.Category;
 import com.example.myhobitapplication.models.OneTimeTask;
 import com.example.myhobitapplication.models.RecurringTask;
@@ -130,5 +132,139 @@ public class CategoryRepository {
         database.close();
 
         return count > 0;
+    }
+    public boolean doesUpdateCategoryNameExist(String name, @Nullable Integer categoryIdToIgnore) {
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+        int count = 0;
+
+        try {
+            db = dbHelper.getReadableDatabase();
+
+            String query;
+            String[] selectionArgs;
+
+            if (categoryIdToIgnore != null && categoryIdToIgnore > 0) {
+                query = "SELECT COUNT(*) FROM " + AppDataBaseHelper.TABLE_CATEGORIES +
+                        " WHERE " + AppDataBaseHelper.COLUMN_NAME + " = ? COLLATE NOCASE" +
+                        " AND " + AppDataBaseHelper.COLUMN_CATEGORY_ID + " != ?";
+
+                selectionArgs = new String[]{name.trim(), String.valueOf(categoryIdToIgnore)};
+
+            } else {
+
+                query = "SELECT COUNT(*) FROM " + AppDataBaseHelper.TABLE_CATEGORIES +
+                        " WHERE " + AppDataBaseHelper.COLUMN_NAME + " = ? COLLATE NOCASE";
+
+                selectionArgs = new String[]{name.trim()};
+            }
+
+            cursor = db.rawQuery(query, selectionArgs);
+
+            if (cursor != null && cursor.moveToFirst()) {
+                count = cursor.getInt(0);
+            }
+
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db != null && db.isOpen()) {
+                db.close();
+            }
+        }
+
+        return count > 0;
+    }
+    public boolean doesUpdateCategoryColourExist(String colour, @Nullable Integer categoryIdToIgnore) {
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+        int count = 0;
+
+        try {
+            db = dbHelper.getReadableDatabase();
+
+            String query;
+            String[] selectionArgs;
+
+            if (categoryIdToIgnore != null && categoryIdToIgnore > 0) {
+                query = "SELECT COUNT(*) FROM " + AppDataBaseHelper.TABLE_CATEGORIES +
+                        " WHERE " + AppDataBaseHelper.COLUMN_COLOUR + " = ? COLLATE NOCASE" +
+                        " AND " + AppDataBaseHelper.COLUMN_CATEGORY_ID + " != ?";
+
+                selectionArgs = new String[]{colour.trim(), String.valueOf(categoryIdToIgnore)};
+
+            } else {
+
+                query = "SELECT COUNT(*) FROM " + AppDataBaseHelper.TABLE_CATEGORIES +
+                        " WHERE " + AppDataBaseHelper.COLUMN_COLOUR + " = ? COLLATE NOCASE";
+
+                selectionArgs = new String[]{colour.trim()};
+            }
+
+            cursor = db.rawQuery(query, selectionArgs);
+
+            if (cursor != null && cursor.moveToFirst()) {
+                count = cursor.getInt(0);
+            }
+
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db != null && db.isOpen()) {
+                db.close();
+            }
+        }
+
+        return count > 0;
+    }
+
+    public boolean doesCategoryColourExists(String colour) {
+        database = dbHelper.getWritableDatabase();
+
+        String query = "SELECT COUNT(*) FROM " + AppDataBaseHelper.TABLE_CATEGORIES + " WHERE " + AppDataBaseHelper.COLUMN_COLOUR + " = ? COLLATE NOCASE";
+        Cursor cursor = database.rawQuery(query, new String[]{colour.trim()});
+
+        int count = 0;
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(0);
+            }
+            cursor.close();
+        }
+        database.close();
+
+        return count > 0;
+    }
+
+    public void updateCategoryAndTasksTransactional(Category categoryToUpdate, String oldColour, TaskRepository taskRepository) {
+
+        database = dbHelper.getWritableDatabase();
+
+
+        database.beginTransaction();
+        try {
+
+            ContentValues values = new ContentValues();
+            values.put(AppDataBaseHelper.COLUMN_NAME, categoryToUpdate.getName());
+            values.put(AppDataBaseHelper.COLUMN_COLOUR, categoryToUpdate.getColour());
+
+            String selection = AppDataBaseHelper.COLUMN_CATEGORY_ID + " = ?";
+            String[] selectionArgs = { String.valueOf(categoryToUpdate.getId()) };
+
+            database.update(AppDataBaseHelper.TABLE_CATEGORIES, values, selection, selectionArgs);
+
+
+            taskRepository.updateTaskCategoryColour(oldColour, categoryToUpdate.getColour(), database);
+
+
+            database.setTransactionSuccessful();
+
+        } finally {
+
+            database.endTransaction();
+            database.close();
+        }
     }
 }

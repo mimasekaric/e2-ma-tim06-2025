@@ -156,7 +156,8 @@ public class TaskService {
     }
 
 
-    public long editRecurringTask(RecurringTaskDTO recurringTaskDTO){
+    public long editRecurringTask(RecurringTaskDTO recurringTaskDTO) throws ValidationException {
+
 
 
         RecurringTask recurringTask = new RecurringTask(
@@ -178,6 +179,7 @@ public class TaskService {
                 recurringTaskDTO.getCreationDate(),
                 recurringTaskDTO.getUserUid()
         );
+        validateRecurringTask(recurringTask);
 
         long editedRow = repository.updateRecurringTask(recurringTask);
 
@@ -263,8 +265,9 @@ public class TaskService {
         return repository.getAllOneTimeTasks(userUid);
     }
 
-    public void editOneTimeTask(OneTimeTaskDTO taskDTO){
+    public void editOneTimeTask(OneTimeTaskDTO taskDTO) throws ValidationException {
 
+        validateOneTimeTask(taskDTO);
 
         OneTimeTask oneTimeTask = new OneTimeTask(
 
@@ -281,6 +284,8 @@ public class TaskService {
                 taskDTO.getStartDate(),
                 taskDTO.getUserUid()
         );
+
+
         repository.updateOneTimeTask(oneTimeTask);
     }
 
@@ -528,6 +533,10 @@ public class TaskService {
                 return taskDate;
         }
     }
+
+
+
+
 
 
 

@@ -5,8 +5,10 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.myhobitapplication.databases.CategoryRepository;
+import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.dto.RecurringTaskDTO;
 import com.example.myhobitapplication.enums.RecurringTaskStatus;
+import com.example.myhobitapplication.exceptions.ValidationException;
 import com.example.myhobitapplication.models.Category;
 import com.example.myhobitapplication.services.CategoryService;
 import com.example.myhobitapplication.services.TaskService;
@@ -22,13 +24,12 @@ public class RecurringTaskDetailsViewModel extends ViewModel {
 
     private final MutableLiveData<Boolean> _taskDeletedEvent = new MutableLiveData<>();
 
-    // Javni, nepromenljivi LiveData koji će Fragment posmatrati
     public LiveData<Boolean> getTaskDeletedEvent() {
         return _taskDeletedEvent;
     }
-    public RecurringTaskDetailsViewModel(TaskService taskService, CategoryRepository categoryRepository) {
+    public RecurringTaskDetailsViewModel(TaskService taskService, CategoryRepository categoryRepository, TaskRepository taskRepository) {
         this.taskService = taskService;
-        this.categoryService = new CategoryService(categoryRepository);
+        this.categoryService = new CategoryService(categoryRepository,taskRepository);
 
     }
 
@@ -103,7 +104,12 @@ public class RecurringTaskDetailsViewModel extends ViewModel {
         if(!currentTaskDto.getStatus().equals(RecurringTaskStatus.CANCELED) && !currentTaskDto.getStatus().equals(RecurringTaskStatus.INCOMPLETE) && !currentTaskDto.getStatus().equals(RecurringTaskStatus.COMPLETED)) {
             currentTaskDto.setStatus(RecurringTaskStatus.CANCELED);
 
-            taskService.editRecurringTask(currentTaskDto);
+            try{
+                taskService.editRecurringTask(currentTaskDto);
+            } catch (ValidationException e) {
+                throw new RuntimeException(e);
+            }
+
 
             loadTaskDetails(currentTaskDto.getId());
         }
@@ -117,7 +123,12 @@ public class RecurringTaskDetailsViewModel extends ViewModel {
         if(!currentTaskDto.getStatus().equals(RecurringTaskStatus.CANCELED) && !currentTaskDto.getStatus().equals(RecurringTaskStatus.INCOMPLETE) && !currentTaskDto.getStatus().equals(RecurringTaskStatus.PAUSED)) {
             currentTaskDto.setStatus(RecurringTaskStatus.PAUSED);
 
-            taskService.editRecurringTask(currentTaskDto);
+            try{
+                taskService.editRecurringTask(currentTaskDto);
+            } catch (ValidationException e) {
+                throw new RuntimeException(e);
+            }
+
 
             loadTaskDetails(currentTaskDto.getId());
         }

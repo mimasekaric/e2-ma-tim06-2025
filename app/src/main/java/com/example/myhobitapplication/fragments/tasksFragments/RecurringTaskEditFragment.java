@@ -26,6 +26,8 @@ import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.TaskService;
 import com.example.myhobitapplication.viewModels.taskViewModels.RecurringTaskEditViewModel;
 
+import java.time.LocalTime;
+
 public class RecurringTaskEditFragment extends Fragment {
 
     TaskService taskService;
@@ -90,7 +92,16 @@ public class RecurringTaskEditFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        binding.editTaskButton.setEnabled(false);
+        taskEditViewModel.isFormValid().observe(getViewLifecycleOwner(), isValid -> {
+            if (isValid != null) {
+                binding.editTaskButton.setEnabled(isValid);
+            }
+        });
 
+        taskEditViewModel.getTitleError().observe(getViewLifecycleOwner(), error -> {
+            binding.taskTitleTextView.setError(error);
+        });
 
         DifficultySpinnerAdapter difficultyAdapter = new DifficultySpinnerAdapter(requireContext());
         binding.difficultySpinner.setAdapter(difficultyAdapter);
@@ -120,11 +131,16 @@ public class RecurringTaskEditFragment extends Fragment {
                 binding.taskDescriptionTextView.setText(task.getDescription());
               //  binding.difficultyTextView.setText(String.valueOf(task.getDifficulty()));
               //  binding.importanceTextView.setText("");
-                binding.recurrenceTextView.setText(String.valueOf(task.getRecurrenceInterval()));
-                binding.endDateTextView.setText(task.getEndDate().toString());
-                binding.startDateTextView.setText(task.getStartDate().toString());
-                binding.timeTextView.setText(task.getExecutionTime().toString());
-                binding.rctStatus.setText(String.valueOf(task.getStatus()));
+                LocalTime initialTime = task.getExecutionTime();
+                if (initialTime != null) {
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                        binding.executionTimePicker.setHour(initialTime.getHour());
+                        binding.executionTimePicker.setMinute(initialTime.getMinute());
+                    } else {
+                        binding.executionTimePicker.setCurrentHour(initialTime.getHour());
+                        binding.executionTimePicker.setCurrentMinute(initialTime.getMinute());
+                    }
+                }
 
                 try {
                     int color = Color.parseColor(task.getCategoryColour());
@@ -177,6 +193,7 @@ public class RecurringTaskEditFragment extends Fragment {
 
         });
 
+
         binding.taskDescriptionTextView.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
@@ -199,6 +216,8 @@ public class RecurringTaskEditFragment extends Fragment {
 
             Toast.makeText(requireContext(), "Task edited!", Toast.LENGTH_SHORT).show();
 
+            requireActivity().getSupportFragmentManager().setFragmentResult("taskAddedRequest", new Bundle());
+            requireActivity().getSupportFragmentManager().setFragmentResult("for_list_signal", new Bundle());
             // --- NOVI DEO: VRATI REZULTAT ---
             // Kreiraj prazan Intent. Ne trebaju nam podaci, samo signal.
             Intent resultIntent = new Intent();
@@ -211,6 +230,10 @@ public class RecurringTaskEditFragment extends Fragment {
             getActivity().finish();
         });
 
+        binding.executionTimePicker.setOnTimeChangedListener((timePickerView, hourOfDay, minute) -> {
+            LocalTime selectedTime = LocalTime.of(hourOfDay, minute);
+            taskEditViewModel.setExecutionTime(selectedTime);
+        });
 
 
 

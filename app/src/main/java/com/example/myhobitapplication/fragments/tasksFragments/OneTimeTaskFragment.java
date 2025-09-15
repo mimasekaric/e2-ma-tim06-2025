@@ -48,7 +48,7 @@ public class OneTimeTaskFragment extends Fragment {
         CategoryRepository categoryRepository = new CategoryRepository(requireContext());
         ProfileService profileService = new ProfileService();
         TaskService taskService = new TaskService(repository, profileService);
-        CategoryService categoryService = new CategoryService(categoryRepository);
+        CategoryService categoryService = new CategoryService(categoryRepository,repository);
 
 
 
@@ -272,6 +272,7 @@ public class OneTimeTaskFragment extends Fragment {
                 Toast.makeText(requireContext(), "Task successfully created!", Toast.LENGTH_SHORT).show();
 
                 getParentFragmentManager().setFragmentResult("taskAddedRequest", new Bundle());
+                getParentFragmentManager().setFragmentResult("for_list_signal", new Bundle());
 
                 // Opciono: Očisti formu ili se vrati na prethodni ekran
                 // getParentFragmentManager().popBackStack();

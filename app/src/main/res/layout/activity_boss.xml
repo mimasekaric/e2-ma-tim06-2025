@@ -23,82 +23,50 @@
             android:layout_marginEnd="16dp"
             android:max="1000"
             android:progressDrawable="@drawable/custom_hp_bar"
-            tools:progress="850"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
+            app:layout_constraintTop_toTopOf="parent"
+            tools:progress="850" />
 
         <TextView
             android:id="@+id/hpTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:elevation="2dp"
             android:textColor="@android:color/white"
             android:textSize="14sp"
             android:textStyle="bold"
-            tools:text="850 / 1000"
             app:layout_constraintBottom_toBottomOf="@id/hpProgressBar"
             app:layout_constraintEnd_toEndOf="@id/hpProgressBar"
             app:layout_constraintStart_toStartOf="@id/hpProgressBar"
-            app:layout_constraintTop_toTopOf="@id/hpProgressBar" />
-
-
-
-        <ProgressBar
-            android:id="@+id/ppProgressBar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="0dp"
-            android:layout_height="25dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:max="1000"
-            android:progressDrawable="@drawable/custom_pp_bar"
-            tools:progress="500"
-            app:layout_constraintTop_toBottomOf="@+id/hpProgressBar"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-
-        <TextView
-            android:id="@+id/ppTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            tools:text="PP: 500 / 1000"
-            app:layout_constraintTop_toTopOf="@id/ppProgressBar"
-            app:layout_constraintBottom_toBottomOf="@id/ppProgressBar"
-            app:layout_constraintStart_toStartOf="@id/ppProgressBar"
-            app:layout_constraintEnd_toEndOf="@id/ppProgressBar" />
-
-
-
-        <ImageView
-            android:id="@+id/myAnimatedImage"
-            android:layout_width="350dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/boss_idle_animation"
-            app:layout_constraintTop_toBottomOf="@id/ppProgressBar"
-            app:layout_constraintBottom_toTopOf="@+id/attackAttemptsImage"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
+            app:layout_constraintTop_toTopOf="@id/hpProgressBar"
+            tools:text="850 / 1000" />
 
 
         <ImageView
             android:id="@+id/attackAttemptsImage"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_marginBottom="8dp"
-            android:src="@drawable/lifes_frame_1"
-            app:layout_constraintBottom_toTopOf="@id/attackButton"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/life_1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/hpProgressBar" />
 
+        <ImageView
+            android:id="@+id/myAnimatedImage"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/boss_idle_animation"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toTopOf="@+id/attackButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/attackAttemptsImage" />
 
 
         <Button
@@ -106,9 +74,9 @@
             style="@style/Widget.App.Button.OutlinedButton.IconOnly"
             android:layout_width="0dp"
             android:layout_height="65dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="80dp"
             android:background="@drawable/button"
             android:text="@string/attack_button"
             android:textSize="18sp"
@@ -117,7 +85,58 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
+        <androidx.cardview.widget.CardView
+            android:id="@+id/avatarImageView"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="32dp"
+            app:cardCornerRadius="30dp"
+            app:cardElevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/attackButton">
 
+            <ImageView
+                android:id="@+id/avatarImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@mipmap/ic_launcher_badgetry" />
+        </androidx.cardview.widget.CardView>
+
+
+        <ProgressBar
+            android:id="@+id/ppProgressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="16dp"
+            android:max="1000"
+            android:progressDrawable="@drawable/custom_pp_bar"
+            app:layout_constraintTop_toTopOf="@+id/avatarImageView"
+            app:layout_constraintBottom_toBottomOf="@+id/avatarImageView"
+            app:layout_constraintEnd_toStartOf="@+id/avatarImageView"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:progress="500" />
+
+        <TextView
+            android:id="@+id/ppTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="2dp"
+            android:shadowColor="#000000"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/ppProgressBar"
+            app:layout_constraintEnd_toEndOf="@id/ppProgressBar"
+            app:layout_constraintStart_toStartOf="@id/ppProgressBar"
+            app:layout_constraintTop_toTopOf="@id/ppProgressBar"
+            tools:text="PP: 500" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -161,7 +180,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal|bottom"
             android:layout_marginBottom="100dp"
-            android:text="Protresi telefon da otvoriš nagrade!"
+            android:text="@string/shake_for_rewards"
             android:textColor="@android:color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
