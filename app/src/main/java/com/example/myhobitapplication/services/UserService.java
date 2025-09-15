@@ -13,12 +13,12 @@ import java.util.Date;
 
 public class UserService {
     private final UserRepository repository;
-    private final ProfileRepository profileRepository;
+    private final ProfileService profileService;
 
     private  String userIdd;
     public UserService(){
         this.repository = new UserRepository();
-        this.profileRepository = new ProfileRepository();
+        this.profileService = new ProfileService();
         this.userIdd="";
     }
     public String getId(){
@@ -67,7 +67,7 @@ public class UserService {
                                     FirebaseUser user = authResult.getUser();
                                     if (user != null) {
                                         String uid = user.getUid();
-                                        profileRepository.insert(new Profile(uid));
+                                        profileService.insert(new Profile(uid));
                                         repository.insert(uid, email, username, avatarName, registrationDate, false)
                                                 .addOnSuccessListener(documentReference -> {
                                                     repository.sendVerificationEmail()

@@ -83,6 +83,7 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_USER_EQUIPMENT_ID = "id";
     public static final String COLUMN_EQUIPMENT_EID = "equipment_id";
     public static final String COLUMN_EQUIPMENT_UID = "user_id";
+    public static final String COLUMN_EFFECT = "effect";
 
 
 
@@ -165,6 +166,7 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
                 + COLUMN_EQUIPMENT_UID + " TEXT,"
                 + COLUMN_COEF + " REAL,"
                 + COLUMN_ACTIVATED + " INTEGER,"
+                + COLUMN_EFFECT + " INTEGER,"
                 + COLUMN_FIGHTS_COUNTER + " INTEGER" + ")";
         db.execSQL(CREATE_USER_EQUIPMENT_TABLE);
 
