@@ -11,6 +11,7 @@ import com.example.myhobitapplication.models.RecurringTask;
 import com.example.myhobitapplication.services.TaskService;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,14 +38,32 @@ public class RecurringTaskListViewModel extends ViewModel {
 
     public void loadRecurringTasks(){
 
-        List<RecurringTask> taskModels =  taskService.getAllRecurringTasks(userId);
+        List<RecurringTask> allTaskModels = taskService.getAllRecurringTasks(userId);
 
-        List<RecurringTaskDTO> taskDtos = taskModels.stream()
+        if (allTaskModels == null) {
+            recurringTasks.setValue(new ArrayList<>());
+            return;
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+
+        List<RecurringTaskDTO> futureTaskDtos = allTaskModels.stream()
+
+                .filter(task -> {
+
+                    if (task.getStartDate() == null || task.getExecutionTime() == null) {
+                        return false;
+                    }
+
+                    LocalDateTime taskDateTime = task.getStartDate().atTime(task.getExecutionTime());
+
+
+                    return !taskDateTime.isBefore(now);
+                })
                 .map(RecurringTaskDTO::new)
+
                 .collect(Collectors.toList());
-
-
-        recurringTasks.setValue(taskDtos);
+        recurringTasks.setValue(futureTaskDtos);
 
     }
 

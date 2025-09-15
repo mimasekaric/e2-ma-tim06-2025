@@ -48,7 +48,7 @@ public class OneTimeTaskFragment extends Fragment {
         CategoryRepository categoryRepository = new CategoryRepository(requireContext());
         ProfileService profileService = new ProfileService();
         TaskService taskService = new TaskService(repository, profileService);
-        CategoryService categoryService = new CategoryService(categoryRepository);
+        CategoryService categoryService = new CategoryService(categoryRepository,repository);
 
 
 

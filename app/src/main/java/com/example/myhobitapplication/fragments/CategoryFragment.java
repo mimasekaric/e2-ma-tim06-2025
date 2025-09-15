@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 
 import com.example.myhobitapplication.databases.CategoryRepository;
+import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.FragmentCategoryBinding;
 import com.example.myhobitapplication.services.CategoryService;
 import com.example.myhobitapplication.viewModels.categoryViewModels.CategoryViewModel;
@@ -30,6 +31,7 @@ public class CategoryFragment extends Fragment {
 
     private FragmentCategoryBinding categoryBinding;
     private CategoryRepository repository;
+    private TaskRepository taskRepository;
 
     private CategoryViewModel categoryViewModel;
 
@@ -37,7 +39,8 @@ public class CategoryFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         repository = new CategoryRepository(requireContext());
-        CategoryService categoryService = new CategoryService(repository);
+        taskRepository = new TaskRepository(requireContext());
+        CategoryService categoryService = new CategoryService(repository,taskRepository);
 
 
 

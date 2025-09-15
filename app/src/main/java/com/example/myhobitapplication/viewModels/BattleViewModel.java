@@ -119,6 +119,7 @@ public class BattleViewModel extends ViewModel {
                 currentBoss.setDefeated(true);
 
                 _isBattleOver.setValue(true);
+
                 battleService.rewardUserWithCoins(currentBoss);
             }
 

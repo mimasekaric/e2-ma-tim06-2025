@@ -119,7 +119,7 @@ public class RecurringTaskViewFragment extends Fragment {
             }
         });
 
-        requireActivity().getSupportFragmentManager().setFragmentResultListener("taskUpdated_ForList", getViewLifecycleOwner(), (requestKey, bundle) -> {
+        requireActivity().getSupportFragmentManager().setFragmentResultListener("for_list_signal", getViewLifecycleOwner(), (requestKey, bundle) -> {
             Toast.makeText(getContext(), "Lista zadataka je primila signal!", Toast.LENGTH_SHORT).show();
             viewModel.loadRecurringTasks();
         });

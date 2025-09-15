@@ -74,4 +74,8 @@ public class BossService {
         Boss boss = bossRepository.getPreviousBossForUser(userId, previousBossLevel);
         return new BossDTO(boss);
     }
+    public BossDTO getCurrentBossForUser(String userId, int currentBossLevel){
+        Boss boss = bossRepository.getPreviousBossForUser(userId, currentBossLevel);
+        return new BossDTO(boss);
+    }
 }

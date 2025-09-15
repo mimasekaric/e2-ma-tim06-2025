@@ -26,6 +26,8 @@ import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.TaskService;
 import com.example.myhobitapplication.viewModels.taskViewModels.OneTimeTaskEditViewModel;
 
+import java.time.LocalTime;
+
 public class OneTimeTaskEditFragment extends Fragment {
 
 
@@ -93,7 +95,16 @@ public class OneTimeTaskEditFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        binding.editTaskButton.setEnabled(false);
+        taskEditViewModel.isFormValid().observe(getViewLifecycleOwner(), isValid -> {
+            if (isValid != null) {
+                binding.editTaskButton.setEnabled(isValid);
+            }
+        });
 
+        taskEditViewModel.getTitleError().observe(getViewLifecycleOwner(), error -> {
+            binding.taskTitleTextView.setError(error);
+        });
 
         DifficultySpinnerAdapter difficultyAdapter = new DifficultySpinnerAdapter(requireContext());
         binding.difficultySpinner.setAdapter(difficultyAdapter);
@@ -121,7 +132,16 @@ public class OneTimeTaskEditFragment extends Fragment {
 
                 binding.taskTitleTextView.setText(task.getName());
                 binding.taskDescriptionTextView.setText(task.getDescription());
-                binding.timeTextView.setText(task.getExecutionTime().toString());
+                LocalTime initialTime = task.getExecutionTime();
+                if (initialTime != null) {
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                        binding.executionTimePicker.setHour(initialTime.getHour());
+                        binding.executionTimePicker.setMinute(initialTime.getMinute());
+                    } else {
+                        binding.executionTimePicker.setCurrentHour(initialTime.getHour());
+                        binding.executionTimePicker.setCurrentMinute(initialTime.getMinute());
+                    }
+                }
 
                 try {
                     int color = Color.parseColor(task.getCategoryColour());
@@ -131,6 +151,7 @@ public class OneTimeTaskEditFragment extends Fragment {
                 } catch (IllegalArgumentException e) {
                     binding.categoryColorView.setBackgroundColor(Color.BLACK);
                 }
+
             }
         });
 
@@ -196,6 +217,9 @@ public class OneTimeTaskEditFragment extends Fragment {
 
             Toast.makeText(requireContext(), "Task edited!", Toast.LENGTH_SHORT).show();
 
+            requireActivity().getSupportFragmentManager().setFragmentResult("taskAddedRequest", new Bundle());
+            requireActivity().getSupportFragmentManager().setFragmentResult("for_list_signal", new Bundle());
+
             Intent resultIntent = new Intent();
 
             getActivity().setResult(Activity.RESULT_OK, resultIntent);
@@ -204,6 +228,10 @@ public class OneTimeTaskEditFragment extends Fragment {
         });
 
 
+        binding.executionTimePicker.setOnTimeChangedListener((timePickerView, hourOfDay, minute) -> {
+            LocalTime selectedTime = LocalTime.of(hourOfDay, minute);
+            taskEditViewModel.setExecutionTime(selectedTime);
+        });
 
 
 

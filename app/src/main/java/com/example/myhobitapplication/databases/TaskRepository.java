@@ -945,4 +945,16 @@ public class TaskRepository {
         return count;
     }
 
+    public void updateTaskCategoryColour(String oldColourHex, String newColourHex, SQLiteDatabase db) {
+        ContentValues values = new ContentValues();
+        values.put(AppDataBaseHelper.COLUMN_CTG_ID, newColourHex);
+
+        String whereClause = AppDataBaseHelper.COLUMN_CTG_ID + " = ?";
+        String[] whereArgs = { oldColourHex };
+
+        db.update(AppDataBaseHelper.TABLE_RECURRING_TASKS, values, whereClause, whereArgs);
+
+        db.update(AppDataBaseHelper.TABLE_ONE_TIME_TASKS, values, whereClause, whereArgs);
+    }
+
 }

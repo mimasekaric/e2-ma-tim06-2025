@@ -22,10 +22,13 @@ import com.example.myhobitapplication.activities.TaskEditActivity;
 import com.example.myhobitapplication.databases.CategoryRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.FragmentTaskDetailsBinding;
+import com.example.myhobitapplication.enums.RecurringTaskStatus;
 import com.example.myhobitapplication.services.CategoryService;
 import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.TaskService;
 import com.example.myhobitapplication.viewModels.taskViewModels.RecurringTaskDetailsViewModel;
+
+import java.time.LocalDate;
 
 public class RecurringTaskDetailsFragment extends Fragment {
 
@@ -127,7 +130,7 @@ public class RecurringTaskDetailsFragment extends Fragment {
             @NonNull
             @Override
             public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-                return (T) new RecurringTaskDetailsViewModel(taskService,categoryRepository);
+                return (T) new RecurringTaskDetailsViewModel(taskService,categoryRepository,taskRepository);
             }
         }).get(RecurringTaskDetailsViewModel.class);
 
@@ -187,6 +190,34 @@ public class RecurringTaskDetailsFragment extends Fragment {
                } catch (IllegalArgumentException e) {
                    binding.categoryColorView.setBackgroundColor(Color.BLACK);
              }
+
+
+                RecurringTaskStatus status = task.getStatus();
+                boolean isTaskInThePast = task.getStartDate().isBefore(LocalDate.now());
+
+                if(isTaskInThePast){
+                    binding.editTaskButton.setVisibility(View.GONE);
+                    binding.deleteTaskButton.setVisibility(View.GONE);
+                }
+
+                if (status == RecurringTaskStatus.COMPLETED ||
+                        status == RecurringTaskStatus.INCOMPLETE ||
+                        status == RecurringTaskStatus.CANCELED) {
+
+                    binding.editTaskButton.setVisibility(View.GONE);
+                    binding.deleteTaskButton.setVisibility(View.GONE);
+                    binding.btnRctaskDone.setVisibility(View.GONE);
+                    binding.btnRctaskCancel.setVisibility(View.GONE);
+                    binding.btnRctaskPause.setVisibility(View.GONE);
+
+                } else if(!isTaskInThePast && status == RecurringTaskStatus.ACTIVE ||
+                        status == RecurringTaskStatus.PAUSED) {
+                    binding.editTaskButton.setVisibility(View.VISIBLE);
+                    binding.deleteTaskButton.setVisibility(View.VISIBLE);
+                    binding.btnRctaskDone.setVisibility(View.VISIBLE);
+                    binding.btnRctaskCancel.setVisibility(View.VISIBLE);
+                    binding.btnRctaskPause.setVisibility(View.VISIBLE);
+                }
            }
         });
 
@@ -203,6 +234,7 @@ public class RecurringTaskDetailsFragment extends Fragment {
 //                }
 //            }
 //        });
+        //binding.editTaskButton.setVisibility();
 
 
         binding.editTaskButton.setOnClickListener(v -> {

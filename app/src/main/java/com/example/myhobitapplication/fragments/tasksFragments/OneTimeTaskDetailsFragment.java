@@ -22,10 +22,14 @@ import com.example.myhobitapplication.activities.TaskEditActivity;
 import com.example.myhobitapplication.databases.CategoryRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.FragmentOneTimeTaskDetailsBinding;
+import com.example.myhobitapplication.enums.OneTimeTaskStatus;
+import com.example.myhobitapplication.enums.RecurringTaskStatus;
 import com.example.myhobitapplication.services.CategoryService;
 import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.TaskService;
 import com.example.myhobitapplication.viewModels.taskViewModels.OneTimeTaskDetailsViewModel;
+
+import java.time.LocalDate;
 
 public class OneTimeTaskDetailsFragment extends Fragment {
 
@@ -75,7 +79,7 @@ public class OneTimeTaskDetailsFragment extends Fragment {
             @NonNull
             @Override
             public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-                return (T) new OneTimeTaskDetailsViewModel(taskService,categoryRepository);
+                return (T) new OneTimeTaskDetailsViewModel(taskService,categoryRepository, taskRepository);
             }
         }).get(OneTimeTaskDetailsViewModel.class);
 
@@ -116,7 +120,6 @@ public class OneTimeTaskDetailsFragment extends Fragment {
         taskDetailsViewModel.getTaskDetails().observe(getViewLifecycleOwner(), task -> {
             if (task != null) {
 
-
                 binding.taskTitleTextView.setText(task.getName());
                 binding.taskDescriptionTextView.setText(task.getDescription());
                 binding.difficultyTextView.setText(String.valueOf(task.getDifficulty()));
@@ -132,6 +135,33 @@ public class OneTimeTaskDetailsFragment extends Fragment {
 
                 } catch (IllegalArgumentException e) {
                     binding.categoryColorView.setBackgroundColor(Color.BLACK);
+                }
+
+                OneTimeTaskStatus status = task.getStatus();
+                boolean isTaskInThePast = task.getStartDate().isBefore(LocalDate.now());
+
+                if(isTaskInThePast){
+                    binding.editTaskButton.setVisibility(View.GONE);
+                    binding.deleteTaskButton.setVisibility(View.GONE);
+                }
+
+                if (status == OneTimeTaskStatus.COMPLETED ||
+                        status == OneTimeTaskStatus.INCOMPLETE ||
+                        status == OneTimeTaskStatus.CANCELED) {
+
+                    binding.editTaskButton.setVisibility(View.GONE);
+                    binding.deleteTaskButton.setVisibility(View.GONE);
+                    binding.btnOtaskDone.setVisibility(View.GONE);
+                    binding.btnOtaskCancel.setVisibility(View.GONE);
+                    binding.btnOtaskPause.setVisibility(View.GONE);
+
+                } else if(!isTaskInThePast && status == OneTimeTaskStatus.ACTIVE ||
+                        status == OneTimeTaskStatus.PAUSED) {
+                    binding.editTaskButton.setVisibility(View.VISIBLE);
+                    binding.deleteTaskButton.setVisibility(View.VISIBLE);
+                    binding.btnOtaskDone.setVisibility(View.VISIBLE);
+                    binding.btnOtaskCancel.setVisibility(View.VISIBLE);
+                    binding.btnOtaskPause.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -165,7 +195,7 @@ public class OneTimeTaskDetailsFragment extends Fragment {
 
             new AlertDialog.Builder(requireContext())
                     .setTitle("Delete?")
-                    .setMessage("Are you shure you want to delete this recurring task?")
+                    .setMessage("Are you sure you want to delete this recurring task?")
                     .setPositiveButton("Delete", (dialog, which) -> {
                         taskDetailsViewModel.deleteRecurringTask();
                     })
@@ -175,7 +205,7 @@ public class OneTimeTaskDetailsFragment extends Fragment {
 
         taskDetailsViewModel.getTaskDeletedEvent().observe(getViewLifecycleOwner(), isDeleted -> {
             if (isDeleted != null && isDeleted) {
-                Toast.makeText(getContext(), "Zadatak uspešno obrisan.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Task successfully deleted.", Toast.LENGTH_SHORT).show();
                 if (getActivity() != null) {
                     getActivity().setResult(Activity.RESULT_OK);
                     getActivity().finish();

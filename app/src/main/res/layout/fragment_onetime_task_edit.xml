@@ -102,13 +102,23 @@
                 android:textColor="#fca103"
                 android:text="Execution Time:" />
 
-            <TextView
-                android:id="@+id/time_text_view"
-                style="@style/DetailValue"
-                android:fontFamily="@font/educursiveregular"
-                android:textColor="@color/white"
-                tools:text="09:30 AM" />
+            <TimePicker
+                android:id="@+id/executionTimePicker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:timePickerMode="spinner" />
 
+            <TextView
+                android:id="@+id/timeErrorTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="2"
+                android:layout_gravity="end"
+                android:textColor="@android:color/holo_red_light"
+                android:visibility="gone"
+                tools:text="Vreme je već prošlo."
+                tools:visibility="visible" />
 
         </GridLayout>
 

@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.databases.CategoryRepository;
+import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.FragmentCategoryBinding;
 import com.example.myhobitapplication.exceptions.ValidationException;
 import com.example.myhobitapplication.fragments.tasksFragments.OneTimeTaskEditFragment;
@@ -43,7 +44,8 @@ public class CategoryCreateActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         CategoryRepository repository = new CategoryRepository(this);
-        CategoryService categoryService = new CategoryService(repository);
+        TaskRepository taskRepository = new TaskRepository(this);
+        CategoryService categoryService = new CategoryService(repository,taskRepository);
 
         categoryViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @NonNull
