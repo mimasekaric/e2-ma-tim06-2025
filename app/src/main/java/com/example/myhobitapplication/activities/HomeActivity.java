@@ -144,6 +144,10 @@ public class HomeActivity extends AppCompatActivity {
                     Intent intent = new Intent(HomeActivity.this, BossActivity.class);
                     startActivity(intent);
                 }
+                else if (id == R.id.nav_category) {
+                    Intent intent = new Intent(HomeActivity.this, CategoryViewActivity.class);
+                    startActivity(intent);
+                }
 
 
                 drawerLayout.closeDrawer(GravityCompat.START);

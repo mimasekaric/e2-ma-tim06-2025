@@ -1,38 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+
+
+    android:background="@drawable/baccpng"
+
     tools:context=".activities.CategoryViewActivity">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/my_categories"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:padding="16dp"
-        android:gravity="center"
-        android:background="?attr/colorPrimary"
-        android:textColor="?attr/colorOnPrimary" />
-
+<TextView
+android:id="@+id/textViewTitle"
+android:layout_width="0dp"
+android:layout_height="wrap_content"
+android:paddingTop="24dp"
+android:paddingBottom="24dp"
+android:fontFamily="@font/educursivebold"
+android:gravity="center"
+android:text="@string/my_categories"
+android:textColor="#EFEBEB"
+android:textSize="24sp"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toTopOf="parent" />
 
     <ListView
         android:id="@+id/category_list_view"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:divider="@android:color/darker_gray"
-        android:dividerHeight="1dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:divider="@null"
+        android:dividerHeight="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_add_new_category"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
         tools:listitem="@layout/spinner_item_category" />
 
-    <Button
-        android:id="@+id/btn_add_new_category"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="@string/create_new_category" />
+<Button
+android:id="@+id/btn_add_new_category"
+android:layout_width="0dp"
+android:layout_height="wrap_content"
+android:layout_marginStart="16dp"
+android:layout_marginEnd="16dp"
+android:layout_marginBottom="16dp"
+android:backgroundTint="#115938"
+android:fontFamily="@font/educursivesemibold"
+android:text="@string/create_new_category"
+android:textColor="@color/white"
 
-</LinearLayout>
+app:layout_constraintBottom_toBottomOf="parent"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>

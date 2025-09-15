@@ -31,18 +31,23 @@ import com.example.myhobitapplication.databases.EquipmentRepository;
 import com.example.myhobitapplication.databases.ProfileRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.ActivityBossBinding;
+import com.example.myhobitapplication.models.Avatar;
 import com.example.myhobitapplication.models.Boss;
 import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.EquipmentService;
 import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.UserEquipmentService;
 import com.example.myhobitapplication.shakeDetector.ShakeDetector;
+import com.example.myhobitapplication.staticData.AvatarList;
 import com.example.myhobitapplication.viewModels.BattleViewModel;
+import com.example.myhobitapplication.viewModels.ProfileViewModel;
+import com.example.myhobitapplication.viewModels.ProfileViewModelFactory;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class BossActivity extends AppCompatActivity {
 
     private ActivityBossBinding binding;
+    private ProfileViewModel profileViewModel;
     private AnimationDrawable currentAnimation;
 
     private BattleViewModel battleViewModel;
@@ -82,6 +87,9 @@ public class BossActivity extends AppCompatActivity {
         }).get(BattleViewModel.class);
 
 
+        ProfileViewModelFactory profileFactory = new ProfileViewModelFactory(getApplicationContext(),bossService,equipmentService);
+
+        profileViewModel = new ViewModelProvider(this, profileFactory).get(ProfileViewModel.class);
 
         EdgeToEdge.enable(this);
 
@@ -104,7 +112,7 @@ public class BossActivity extends AppCompatActivity {
         currentAnimation.start();
 
         setupObservers();
-        //todo: moracu uzeti logovanog usera ubuduce
+
         battleViewModel.loadBattleState(userUid);
 
         binding.attackButton.setOnClickListener(v -> {
@@ -119,7 +127,19 @@ public class BossActivity extends AppCompatActivity {
 
     private void setupObservers() {
 
-        battleViewModel.getBossCurrentHp().observe(this, currentHp -> {
+        profileViewModel.getUserInfo().observe(this, userInfoDto -> {
+                    if (userInfoDto != null && userInfoDto.getavatarName() != null) {
+                        for (Avatar a : AvatarList.getAvatarList()) {
+                            if (a.getName().equals(userInfoDto.getavatarName())) {
+                                binding.avatarImage.setImageResource(a.getImage());
+                                break;
+                            }
+                        }
+                    }
+        });
+
+
+            battleViewModel.getBossCurrentHp().observe(this, currentHp -> {
             if (currentHp != null) {
                 updateHpBar();
             }
@@ -210,12 +230,12 @@ public class BossActivity extends AppCompatActivity {
     private void updateAttackAttemptsImage(int remaining) {
         int drawableResourceId;
         switch (remaining) {
-            case 5: drawableResourceId = R.drawable.lifes_frame_1; break;
-            case 4: drawableResourceId = R.drawable.lifes_frame_2; break;
-            case 3: drawableResourceId = R.drawable.lifes_frame_3; break;
-            case 2: drawableResourceId = R.drawable.lifes_frame_4; break;
-            case 1: drawableResourceId = R.drawable.lifes_frame_5; break;
-            default: drawableResourceId = R.drawable.lifes_frame_6; break;
+            case 5: drawableResourceId = R.drawable.life_1; break;
+            case 4: drawableResourceId = R.drawable.life_2; break;
+            case 3: drawableResourceId = R.drawable.life_3; break;
+            case 2: drawableResourceId = R.drawable.life_4; break;
+            case 1: drawableResourceId = R.drawable.life_5; break;
+            default: drawableResourceId = R.drawable.life_6; break;
         }
         binding.attackAttemptsImage.setImageResource(drawableResourceId);
     }

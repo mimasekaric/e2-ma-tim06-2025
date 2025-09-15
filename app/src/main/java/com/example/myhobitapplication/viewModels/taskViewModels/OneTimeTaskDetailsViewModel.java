@@ -4,9 +4,11 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.example.myhobitapplication.databases.CategoryRepository;
+import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.dto.OneTimeTaskDTO;
 import com.example.myhobitapplication.enums.OneTimeTaskStatus;
 import com.example.myhobitapplication.enums.RecurringTaskStatus;
+import com.example.myhobitapplication.exceptions.ValidationException;
 import com.example.myhobitapplication.models.Category;
 import com.example.myhobitapplication.services.CategoryService;
 import com.example.myhobitapplication.services.TaskService;
@@ -26,9 +28,9 @@ public class OneTimeTaskDetailsViewModel extends ViewModel {
     public LiveData<Boolean> getTaskDeletedEvent() {
         return _taskDeletedEvent;
     }
-    public OneTimeTaskDetailsViewModel(TaskService taskService, CategoryRepository categoryRepository) {
+    public OneTimeTaskDetailsViewModel(TaskService taskService, CategoryRepository categoryRepository, TaskRepository taskRepository) {
         this.taskService = taskService;
-        this.categoryService = new CategoryService(categoryRepository);
+        this.categoryService = new CategoryService(categoryRepository,taskRepository);
 
     }
 
@@ -77,7 +79,12 @@ public class OneTimeTaskDetailsViewModel extends ViewModel {
         if(!currentTaskDto.getStatus().equals(OneTimeTaskStatus.CANCELED) && !currentTaskDto.getStatus().equals(OneTimeTaskStatus.INCOMPLETE) && !currentTaskDto.getStatus().equals(OneTimeTaskStatus.COMPLETED)) {
             currentTaskDto.setStatus(OneTimeTaskStatus.CANCELED.CANCELED);
 
-            taskService.editOneTimeTask(currentTaskDto);
+            try {
+                taskService.editOneTimeTask(currentTaskDto);
+            } catch (ValidationException e) {
+                throw new RuntimeException(e);
+            }
+
 
             loadTaskDetails(currentTaskDto.getId());
         }
@@ -91,7 +98,11 @@ public class OneTimeTaskDetailsViewModel extends ViewModel {
         if(!currentTaskDto.getStatus().equals(OneTimeTaskStatus.CANCELED) && !currentTaskDto.getStatus().equals(OneTimeTaskStatus.INCOMPLETE) && !currentTaskDto.getStatus().equals(OneTimeTaskStatus.PAUSED)) {
             currentTaskDto.setStatus(OneTimeTaskStatus.PAUSED);
 
-            taskService.editOneTimeTask(currentTaskDto);
+            try{
+                taskService.editOneTimeTask(currentTaskDto);
+            } catch (ValidationException e) {
+                throw new RuntimeException(e);
+            }
 
             loadTaskDetails(currentTaskDto.getId());
         }

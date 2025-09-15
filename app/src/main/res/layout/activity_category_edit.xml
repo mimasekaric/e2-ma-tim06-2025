@@ -1,53 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:background="@drawable/baccpng"
+    tools:context=".activities.CategoryCreateActivity">
     <TextView
-        android:id="@+id/categoryNameTextView"
+        android:id="@+id/textViewTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Daj naziv kategorije"/>
-
-
-    <EditText
-        android:id="@+id/ctg_name"
-        android:layout_width="wrap_content"
+        android:layout_marginTop="32dp"
+        android:fontFamily="@font/educursivebold"
+        android:text="Edit your category"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="35sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    <LinearLayout
+        android:id="@+id/category_form_container"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="name.."/>
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/logincard"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle">
 
+        <TextView
+            style="@style/FormLabel"
+            android:layout_width="match_parent"
+            android:text="Category name" />
 
+        <EditText
+            android:id="@+id/ctg_name"
+            style="@style/FormEditText"
+            android:hint="example: school, hobby, friends ..."
+            android:inputType="textCapSentences" />
 
-    <TextView
-        android:layout_width="wrap_content"
+        <TextView
+            style="@style/FormLabel"
+            android:layout_width="match_parent"
+            android:text="Category colour" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <View
+                android:id="@+id/selectedColorPreview"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="16dp"
+                android:background="#000000" />
+
+            <Button
+                android:id="@+id/pickColorButton"
+                android:backgroundTint="#115938"
+                android:layout_width="0dp"
+                android:fontFamily="@font/educursivebold"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Open palete" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/button_layout"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:text="Odaberi boju kategorije"/>
+        android:layout_marginTop="32dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/category_form_container">
 
+        <ImageView
+            android:id="@+id/buttonBackground"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/button"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="2.5:1"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <View
-        android:id="@+id/selectedColorPreview"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:background="#B16262"
-        android:layout_marginBottom="16dp"/>
+        <Button
+            android:id="@+id/btn_addCategory"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:fontFamily="@font/educursivebold"
+            android:text="EDIT"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/pickColorButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Odaberi boju"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <Button
-        android:id="@+id/setColorButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Primeni boju"/>
-
-    <Button
-        android:id="@+id/btn_addCategory"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add Category"/>
-
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

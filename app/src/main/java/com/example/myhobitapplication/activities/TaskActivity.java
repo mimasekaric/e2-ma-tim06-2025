@@ -45,13 +45,13 @@ public class TaskActivity extends AppCompatActivity {
                     } else if(position ==1) {
                         tab.setText("RecurringTask");
                     }
-                    else if(position == 2){
+                    else {
                         tab.setText("Calendar");
                     }
-                    else
-                    {
-                        tab.setText("Category");
-                    }
+//                    else
+//                    {
+//                        tab.setText("Category");
+//                    }
                 }).attach();
 
 

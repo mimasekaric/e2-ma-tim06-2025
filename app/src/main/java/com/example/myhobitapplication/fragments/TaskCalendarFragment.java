@@ -26,6 +26,8 @@ import com.example.myhobitapplication.viewModels.TaskCalendarViewModel;
 import com.example.myhobitapplication.viewModels.TaskCalendarViewModelFactory;
 import com.kizitonwose.calendar.core.CalendarDay;
 import com.kizitonwose.calendar.core.CalendarMonth;
+import com.kizitonwose.calendar.core.DayPosition;
+import com.kizitonwose.calendar.core.OutDateStyle;
 import com.kizitonwose.calendar.view.CalendarView;
 import com.kizitonwose.calendar.view.MonthDayBinder;
 import com.kizitonwose.calendar.view.MonthHeaderFooterBinder;
@@ -49,7 +51,6 @@ public class TaskCalendarFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
     }
 
 
@@ -58,8 +59,6 @@ public class TaskCalendarFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         calendarBinding = FragmentTaskCalendarBinding.inflate(inflater, container, false);
         return calendarBinding.getRoot();
-
-
 
     }
 
@@ -81,17 +80,25 @@ public class TaskCalendarFragment extends Fragment {
 
         calendarViewModel = new ViewModelProvider(requireActivity(), factory).get(TaskCalendarViewModel.class);
 
-        getParentFragmentManager().setFragmentResultListener("taskAddedRequest", getViewLifecycleOwner(), (requestKey, bundle) -> {
+//        getParentFragmentManager().setFragmentResultListener("taskAddedRequest", getViewLifecycleOwner(), (requestKey, bundle) -> {
+//
+//            // Signal je primljen!
+//            Toast.makeText(getContext(), "Kalendar se osvežava...", Toast.LENGTH_SHORT).show();
+//
+//            // 1. Naredi ViewModel-u da osveži svoje interne podatke iz baze.
+//            //    Ovo je važno da oba fragmenta rade sa istim, svežim podacima.
+//            calendarViewModel.refreshScheduledTasks();
+//
+//            // 2. Naredi UI-ju (samom kalendaru) da se ponovo iscrta.
+//            //    Ovo će naterati biblioteku da ponovo pozove `bind` metodu za sve vidljive dane.
+//            if (calendarView != null) {
+//                calendarView.notifyCalendarChanged();
+//            }
+//        });
 
-            // Signal je primljen!
-            Toast.makeText(getContext(), "Kalendar se osvežava...", Toast.LENGTH_SHORT).show();
-
-            // 1. Naredi ViewModel-u da osveži svoje interne podatke iz baze.
-            //    Ovo je važno da oba fragmenta rade sa istim, svežim podacima.
+        requireActivity().getSupportFragmentManager().setFragmentResultListener("taskAddedRequest", getViewLifecycleOwner(), (requestKey, bundle) -> {
+            Toast.makeText(getContext(), "Kalendar je primio signal!", Toast.LENGTH_SHORT).show();
             calendarViewModel.refreshScheduledTasks();
-
-            // 2. Naredi UI-ju (samom kalendaru) da se ponovo iscrta.
-            //    Ovo će naterati biblioteku da ponovo pozove `bind` metodu za sve vidljive dane.
             if (calendarView != null) {
                 calendarView.notifyCalendarChanged();
             }
@@ -115,6 +122,8 @@ public class TaskCalendarFragment extends Fragment {
         final YearMonth currentMonth = YearMonth.now();
         calendarView.setup(currentMonth.minusMonths(12), currentMonth.plusMonths(12), DayOfWeek.MONDAY);
         calendarView.scrollToMonth(currentMonth);
+
+
         calendarView.setDayBinder(new MonthDayBinder<DayViewContainer>() {
             @NonNull
             @Override
@@ -127,6 +136,27 @@ public class TaskCalendarFragment extends Fragment {
 
                 container.getCalendarDayText().setText(String.valueOf(day.getDate().getDayOfMonth()));
                 container.getCalendarDayText().setTextColor(Color.argb(255, 253, 221, 230));
+
+                if (day.getPosition() == DayPosition.MonthDate) {
+                    container.getView().setVisibility(View.VISIBLE);
+
+                    container.getCalendarDayText().setTextColor(Color.parseColor("#fca103"));
+
+                    if (day.equals(selectedDate)) {
+                        container.getCalendarDayText().setBackgroundColor(Color.WHITE);
+                    } else {
+                        container.getCalendarDayText().setBackgroundColor(Color.TRANSPARENT);
+                    }
+
+                    // 4. (Opciono) Tvoja logika za bojenje dana ako ima zadataka
+                    // List<Task> tasksForDay = calendarViewModel.getTasksForDate(day.getDate());
+                    // if (!tasksForDay.isEmpty()) {
+                    //     // Oboj pozadinu ili dodaj tačkicu ispod broja
+                    // }
+
+                } else {
+                    container.getView().setVisibility(View.INVISIBLE);
+                }
                 container.getView().setOnClickListener(v -> {
                     CalendarDay oldDate = selectedDate;
                     selectedDate = day;
@@ -192,12 +222,16 @@ public class TaskCalendarFragment extends Fragment {
 
         calendarView.setMonthScrollListener(calendarMonth -> {
 
-            String title = calendarMonth.getYearMonth().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault())
-                    + " " + calendarMonth.getYearMonth().getYear();
-            monthTextView.setText(title);
+                String monthName = calendarMonth.getYearMonth().getMonth()
+                        .getDisplayName(TextStyle.FULL, Locale.ENGLISH);
 
+                              String title = monthName.toUpperCase()
+                        + " " + calendarMonth.getYearMonth().getYear();
 
-            return kotlin.Unit.INSTANCE;
+                monthTextView.setText(title);
+                monthTextView.setTextColor(Color.parseColor("#fca103"));
+
+                return kotlin.Unit.INSTANCE;
         });
 
 

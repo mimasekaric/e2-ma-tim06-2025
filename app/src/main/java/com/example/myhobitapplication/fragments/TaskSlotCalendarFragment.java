@@ -88,7 +88,7 @@ public class TaskSlotCalendarFragment extends Fragment {
 
         TaskService taskService = new TaskService(repository, profileService);
         categoryRepository = new CategoryRepository(getContext());
-        categoryService = new CategoryService(categoryRepository);
+        categoryService = new CategoryService(categoryRepository,repository);
 
 
 

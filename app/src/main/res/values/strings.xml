@@ -14,4 +14,6 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="boss">Boss</string>
+    <string name="shake_for_rewards">Shake for rewards!</string>
+    <string name="category">Category</string>
 </resources>

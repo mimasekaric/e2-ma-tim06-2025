@@ -97,10 +97,10 @@ public class OneTimeTaskViewModel extends ViewModel {
                 category.getValue().getColour(),
                 importanceXp.getValue(),
                 executionTime.getValue(),
-                LocalDate.now(),
+                startDate.getValue(),
                 OneTimeTaskStatus.ACTIVE,
                 LocalDate.now(),
-                startDate.getValue(),
+                LocalDate.now(),
                 userUid
         );
         try {

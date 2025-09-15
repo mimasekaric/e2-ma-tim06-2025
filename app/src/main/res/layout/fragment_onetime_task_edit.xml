@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
+    android:background="@drawable/baccpng"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.tasksFragments.RecurringTaskDetailsFragment">
 
     <LinearLayout
@@ -17,9 +18,10 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:gravity="center"
-            android:textColor="@android:color/black"
             android:textSize="28sp"
             android:textStyle="bold"
+            android:fontFamily="@font/educursivebold"
+            android:textColor="#fca103"
             tools:text="Task Title" />
 
         <LinearLayout
@@ -41,6 +43,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
+                android:fontFamily="@font/educursivebold"
+                android:textColor="#fca103"
                 tools:text="Category Name" />
         </LinearLayout>
 
@@ -49,9 +53,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:background="@drawable/card_background"
+            android:background="@drawable/logincard"
             android:padding="16dp"
             android:textSize="16sp"
+            android:fontFamily="@font/educursiveregular"
+            android:textColor="@color/white"
             tools:text="This is a detailed description of the recurring task." />
 
         <GridLayout
@@ -62,6 +68,8 @@
 
             <TextView
                 style="@style/DetailHeader"
+                android:fontFamily="@font/educursivebold"
+                android:textColor="#fca103"
                 android:text="Difficulty:" />
 
             <Spinner
@@ -74,6 +82,8 @@
 
             <TextView
                 style="@style/DetailHeader"
+                android:fontFamily="@font/educursivebold"
+                android:textColor="#fca103"
                 android:text="Importance:" />
 
             <Spinner
@@ -88,13 +98,27 @@
 
             <TextView
                 style="@style/DetailHeader"
+                android:fontFamily="@font/educursivebold"
+                android:textColor="#fca103"
                 android:text="Execution Time:" />
 
-            <TextView
-                android:id="@+id/time_text_view"
-                style="@style/DetailValue"
-                tools:text="09:30 AM" />
+            <TimePicker
+                android:id="@+id/executionTimePicker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:timePickerMode="spinner" />
 
+            <TextView
+                android:id="@+id/timeErrorTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="2"
+                android:layout_gravity="end"
+                android:textColor="@android:color/holo_red_light"
+                android:visibility="gone"
+                tools:text="Vreme je već prošlo."
+                tools:visibility="visible" />
 
         </GridLayout>
 
@@ -111,7 +135,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginEnd="8dp"
-                android:text="Edit" />
+                android:background="@drawable/button"
+                app:backgroundTint="@null"
+                android:text="EDIT" />
 
 
         </LinearLayout>

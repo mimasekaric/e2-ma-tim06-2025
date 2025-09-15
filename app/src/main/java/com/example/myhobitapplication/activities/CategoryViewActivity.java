@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myhobitapplication.adapters.CategoryListAdapter;
 import com.example.myhobitapplication.databases.CategoryRepository;
+import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.ActivityCategoryViewBinding;
 import com.example.myhobitapplication.dto.CategoryDTO;
 import com.example.myhobitapplication.services.CategoryService;
@@ -50,7 +51,8 @@ public class CategoryViewActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         CategoryRepository repository = new CategoryRepository(this);
-        CategoryService service = new CategoryService(repository);
+        TaskRepository taskRepository = new TaskRepository(this);
+        CategoryService service = new CategoryService(repository,taskRepository);
 
         categoryViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @NonNull
