@@ -25,10 +25,12 @@ import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.TaskService;
 import com.example.myhobitapplication.services.UserEquipmentService;
+import com.example.myhobitapplication.staticData.ClothingList;
 import com.example.myhobitapplication.staticData.WeaponList;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -51,13 +53,29 @@ public class BattleViewModel extends ViewModel {
     private final MutableLiveData<Integer> _userPP = new MutableLiveData<>();
     private final MutableLiveData<Integer> _remainingAttacks = new MutableLiveData<>();
     private final MutableLiveData<Boolean> _hitAnimationEvent = new MutableLiveData<>();
+    private final MutableLiveData<Integer> _coins = new MutableLiveData<>(0);
 
     private final MutableLiveData<Boolean> _attackMissedEvent = new MutableLiveData<>();
     private final MutableLiveData<Profile> _userProfile = new MutableLiveData<>();
+    private final MutableLiveData<Equipment> _equipment = new MutableLiveData<>();
+    private final MutableLiveData<Integer> _rewardEquipmentImage = new MutableLiveData<>(0);
+    public MutableLiveData<Integer> getImageResource() { return _rewardEquipmentImage;}
+    public void setImageResource(Integer src) { _rewardEquipmentImage.setValue(src);}
 
+
+    private final MutableLiveData<String> _equipmentName = new MutableLiveData<>();
+    public MutableLiveData<String> getEquipmentName() { return _equipmentName;}
+    public void setEquipmentName(String name) { _equipmentName.setValue(name);}
+
+
+
+    public MutableLiveData<Equipment> getEquipment() { return _equipment;}
+    public void setEquipment(Equipment equipment) { _equipment.setValue(equipment);}
     public double getHitChance() {
         return hitChance;
     }
+    public MutableLiveData<Integer> getCoins() { return _coins;}
+    public void setCoins(Integer coins) { _coins.setValue(coins);}
 
     public LiveData<Boolean> getAttackMissedEvent() {
         return _attackMissedEvent;
@@ -167,10 +185,12 @@ public class BattleViewModel extends ViewModel {
 
             if (isBossDefeated) {
                 currentBoss.setDefeated(true);
+                setCoins(currentBoss.getCoinsReward());
                 _isBattleOver.setValue(true);
                 userEquipmentService.incrementFightsCounter(userUid, _userProfile.getValue());
                 battleService.rewardUserWithCoins(currentBoss);
-                rewardUserWithEquipment();
+                Equipment equipment = rewardUserWithEquipment();
+                setEquipmentDetails(equipment);
             }
 
 
@@ -188,6 +208,42 @@ public class BattleViewModel extends ViewModel {
         }
 
 
+    }
+    public void setEquipmentDetails(Equipment equipment){
+
+        if(equipment instanceof Weapon){
+            Weapon weapon = (Weapon) equipment;
+            WeaponTypes weaponTypes = weapon.getType();
+            List<Weapon> weaponList = WeaponList.getWeaponList();
+
+            for(Weapon w:weaponList){
+
+                if (w.getType() == weaponTypes) {
+
+                    setImageResource(w.getImage());
+                    setEquipmentName(String.valueOf(w.getType()));
+                    break;
+                }
+
+            }
+        }
+
+        if(equipment instanceof Clothing){
+            Clothing clothing = (Clothing) equipment;
+            ClothingTypes clothingTypes = clothing.getType();
+            List<Clothing> clothingList = ClothingList.getClothingList();
+
+            for(Clothing c:clothingList){
+
+                if (c.getType() == clothingTypes) {
+
+                    setImageResource(c.getImage());
+                    setEquipmentName(String.valueOf(c.getType()));
+                    break;
+                }
+
+            }
+        }
     }
 
     public Equipment rewardUserWithEquipment() {
