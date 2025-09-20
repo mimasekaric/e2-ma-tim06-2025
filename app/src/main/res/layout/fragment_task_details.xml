@@ -228,6 +228,13 @@
                     android:layout_weight="1"
                     android:backgroundTint="#FF4"
                     android:text="Pause" />
+                <Button
+                    android:id="@+id/btn_rctask_unpause"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:backgroundTint="#FF4"
+                    android:text="UnPause" />
 
             </LinearLayout>
 

@@ -177,7 +177,9 @@ public class TaskService {
                 recurringTaskDTO.getFirstRecurringTaskId(),
                 recurringTaskDTO.getFinishedDate(),
                 recurringTaskDTO.getCreationDate(),
-                recurringTaskDTO.getUserUid()
+                recurringTaskDTO.getUserUid(),
+                recurringTaskDTO.getFinishDate(),
+                recurringTaskDTO.getRemainingTime()
         );
         validateRecurringTask(recurringTask);
 

@@ -4,7 +4,9 @@ import com.example.myhobitapplication.enums.RecurrenceUnit;
 import com.example.myhobitapplication.enums.RecurringTaskStatus;
 import com.example.myhobitapplication.models.RecurringTask;
 
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public class RecurringTaskDTO {
@@ -35,6 +37,10 @@ public class RecurringTaskDTO {
     private LocalDate FinishedDate;
     private LocalDate CreationDate;
     private String userUid;
+
+    private Duration remainingTime;
+
+    private LocalDateTime finishDate;
 
     public RecurringTaskDTO(Integer id, String name, String description, Integer difficulty, Integer importance, String categoryColour, LocalTime executionTime, int recurrenceInterval, RecurrenceUnit recurrenceUnit, LocalDate startDate, LocalDate endDate, RecurringTaskStatus status, Integer firstRecurringTaskId, LocalDate finishedDate, LocalDate creationDate, String userUid) {
         Id = id;
@@ -73,9 +79,8 @@ public class RecurringTaskDTO {
             FinishedDate = taskModel.getFinishedDate();
             CreationDate = taskModel.getCreationDate();
             this.userUid = taskModel.getUserUid();
-
-
-
+            this.finishDate = taskModel.getFinishDate();
+            this.remainingTime = taskModel.getRemainingTime();
     }
 
     public Integer getId() {
@@ -204,5 +209,22 @@ public class RecurringTaskDTO {
 
     public void setUserUid(String userUid) {
         this.userUid = userUid;
+    }
+
+
+    public Duration getRemainingTime() {
+        return remainingTime;
+    }
+
+    public void setRemainingTime(Duration remainingTime) {
+        this.remainingTime = remainingTime;
+    }
+
+    public LocalDateTime getFinishDate() {
+        return finishDate;
+    }
+
+    public void setFinishDate(LocalDateTime finishDate) {
+        this.finishDate = finishDate;
     }
 }

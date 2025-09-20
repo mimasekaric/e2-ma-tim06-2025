@@ -2,7 +2,9 @@ package com.example.myhobitapplication.models;
 
 import com.example.myhobitapplication.enums.TaskQuote;
 
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public abstract class Task {
@@ -23,6 +25,10 @@ public abstract class Task {
     private LocalDate finishedDate;
     private LocalDate creationDate;
 
+    private Duration remainingTime;
+
+    private LocalDateTime finishDate;
+
     private LocalDate startDate;
     private String userUid;
 
@@ -42,6 +48,8 @@ public abstract class Task {
         this.creationDate = creationDate;
         this.startDate = startDate;
         this.userUid = userUid;
+        this.finishDate = LocalDateTime.of(startDate,executionTime).plusDays(3);
+        this.remainingTime = Duration.between(LocalDateTime.of(startDate,executionTime), this.finishDate);
     }
     public Task(String name, String description, Integer difficulty, Integer importance, String categoryColour, LocalTime executionTime, LocalDate finishedDate, LocalDate creationDate, LocalDate startDate, String userUid) {
         Name = name;
@@ -54,8 +62,25 @@ public abstract class Task {
         this.creationDate = creationDate;
         this.startDate = startDate;
         this.userUid = userUid;
+        this.finishDate = LocalDateTime.of(startDate,executionTime).plusDays(3);
+        this.remainingTime = Duration.between(LocalDateTime.of(startDate,executionTime), this.finishDate);
     }
 
+    public Task(Integer id, String name, String description, Integer difficulty, Integer importance, String categoryColour, LocalTime executionTime, LocalDate finishedDate, LocalDate creationDate, LocalDate startDate, String userUid, LocalDateTime finishDate, Duration remainingTime) {
+        Id = id;
+        Name = name;
+        Description = description;
+        Difficulty = difficulty;
+        Importance = importance;
+        CategoryColour = categoryColour;
+        this.executionTime = executionTime;
+        this.finishedDate = finishedDate;
+        this.creationDate = creationDate;
+        this.startDate = startDate;
+        this.userUid = userUid;
+        this.finishDate = finishDate;
+        this.remainingTime = remainingTime;
+    }
 
 
 
@@ -154,6 +179,22 @@ public abstract class Task {
 
     public void setAwarded(boolean awarded) {
         isAwarded = awarded;
+    }
+
+    public Duration getRemainingTime() {
+        return remainingTime;
+    }
+
+    public void setRemainingTime(Duration remainingTime) {
+        this.remainingTime = remainingTime;
+    }
+
+    public LocalDateTime getFinishDate() {
+        return finishDate;
+    }
+
+    public void setFinishDate(LocalDateTime finishDate) {
+        this.finishDate = finishDate;
     }
 
     public TaskQuote getQuotaCategory() {

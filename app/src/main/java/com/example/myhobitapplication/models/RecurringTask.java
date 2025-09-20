@@ -3,6 +3,7 @@ package com.example.myhobitapplication.models;
 import com.example.myhobitapplication.enums.RecurrenceUnit;
 import com.example.myhobitapplication.enums.RecurringTaskStatus;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -24,6 +25,16 @@ public class RecurringTask extends Task {
         this.recurrenceInterval = recurrenceInterval;
         this.recurrenceUnit = recurrenceUnit;
 
+        this.endDate = endDate;
+        this.status = status;
+        FirstRecurringTaskId = firstRecurringTaskId;
+    }
+
+
+    public RecurringTask(Integer id, String name, String description, Integer difficulty, Integer importance, String categoryId, LocalTime executionTime, int recurrenceInterval, RecurrenceUnit recurrenceUnit, LocalDate startDate, LocalDate endDate, RecurringTaskStatus status, Integer firstRecurringTaskId, LocalDate finishedDate, LocalDate creationDate, String userUid, LocalDateTime finishDate, Duration remainingTime) {
+        super(id, name, description, difficulty, importance, categoryId, executionTime, finishedDate, creationDate, startDate, userUid, finishDate, remainingTime);
+        this.recurrenceInterval = recurrenceInterval;
+        this.recurrenceUnit = recurrenceUnit;
         this.endDate = endDate;
         this.status = status;
         FirstRecurringTaskId = firstRecurringTaskId;

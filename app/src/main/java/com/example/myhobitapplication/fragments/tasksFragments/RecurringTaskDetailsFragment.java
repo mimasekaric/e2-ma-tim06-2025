@@ -210,13 +210,22 @@ public class RecurringTaskDetailsFragment extends Fragment {
                     binding.btnRctaskCancel.setVisibility(View.GONE);
                     binding.btnRctaskPause.setVisibility(View.GONE);
 
-                } else if(!isTaskInThePast && status == RecurringTaskStatus.ACTIVE ||
-                        status == RecurringTaskStatus.PAUSED) {
+                }
+                else if(!isTaskInThePast && status == RecurringTaskStatus.ACTIVE ||
+                        status == RecurringTaskStatus.UNPAUSED) {
                     binding.editTaskButton.setVisibility(View.VISIBLE);
                     binding.deleteTaskButton.setVisibility(View.VISIBLE);
                     binding.btnRctaskDone.setVisibility(View.VISIBLE);
                     binding.btnRctaskCancel.setVisibility(View.VISIBLE);
                     binding.btnRctaskPause.setVisibility(View.VISIBLE);
+                }
+                    else if(!isTaskInThePast && status == RecurringTaskStatus.PAUSED) {
+                    binding.editTaskButton.setVisibility(View.GONE);
+                    binding.deleteTaskButton.setVisibility(View.GONE);
+                    binding.btnRctaskDone.setVisibility(View.GONE);
+                    binding.btnRctaskCancel.setVisibility(View.GONE);
+                    binding.btnRctaskPause.setVisibility(View.GONE);
+                    binding.btnRctaskUnpause.setVisibility(View.VISIBLE);
                 }
            }
         });

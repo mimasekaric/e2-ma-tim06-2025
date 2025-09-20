@@ -62,7 +62,7 @@ public class TaskActivity extends AppCompatActivity {
     private void scheduleDailyTaskStatusUpdate() {
         // Kreiraj zahtev koji će se ponavljati
         PeriodicWorkRequest updateRequest =
-                new PeriodicWorkRequest.Builder(TaskWorker.class, 24, TimeUnit.HOURS)
+                new PeriodicWorkRequest.Builder(TaskWorker.class, 1, TimeUnit.MINUTES)
                         // Možeš dodati i uslove, npr. da radi samo kad je mreža dostupna
                         // .setConstraints(new Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
                         .build();

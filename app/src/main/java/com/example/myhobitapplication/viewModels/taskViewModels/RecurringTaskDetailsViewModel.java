@@ -13,7 +13,9 @@ import com.example.myhobitapplication.models.Category;
 import com.example.myhobitapplication.services.CategoryService;
 import com.example.myhobitapplication.services.TaskService;
 
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class RecurringTaskDetailsViewModel extends ViewModel {
 
@@ -95,6 +97,16 @@ public class RecurringTaskDetailsViewModel extends ViewModel {
             loadTaskDetails(currentTaskDto.getId());
 
         }
+        else if(!currentTaskDto.getStatus().equals(RecurringTaskStatus.CANCELED) && !currentTaskDto.getStatus().equals(RecurringTaskStatus.INCOMPLETE) && !currentTaskDto.getStatus().equals(RecurringTaskStatus.COMPLETED) && currentTaskDto.getStatus().equals(RecurringTaskStatus.PAUSED) ){
+
+            currentTaskDto.setStatus(RecurringTaskStatus.PAUSED_COMPLETED);
+            currentTaskDto.setFinishedDate(LocalDate.now());
+
+            taskService.markRecurringTaskAsDone(taskDetails.getValue().getId(), taskDetails.getValue().getUserUid());
+
+            loadTaskDetails(currentTaskDto.getId());
+
+        }
     }
 
     public void markTaskAsCanceled() {
@@ -122,14 +134,37 @@ public class RecurringTaskDetailsViewModel extends ViewModel {
 
         if(!currentTaskDto.getStatus().equals(RecurringTaskStatus.CANCELED) && !currentTaskDto.getStatus().equals(RecurringTaskStatus.INCOMPLETE) && !currentTaskDto.getStatus().equals(RecurringTaskStatus.PAUSED)) {
             currentTaskDto.setStatus(RecurringTaskStatus.PAUSED);
+            currentTaskDto.setRemainingTime(Duration.between(LocalDateTime.now(),currentTaskDto.getFinishDate()));
+
+
+
+            //currentTaskDto.setRemainingTime();
 
             try{
                 taskService.editRecurringTask(currentTaskDto);
             } catch (ValidationException e) {
                 throw new RuntimeException(e);
             }
+            loadTaskDetails(currentTaskDto.getId());
+        }
+    }
+
+    public void markTaskAsUnPaused() {
 
 
+        RecurringTaskDTO currentTaskDto = taskDetails.getValue();
+
+        if(!currentTaskDto.getStatus().equals(RecurringTaskStatus.CANCELED) && !currentTaskDto.getStatus().equals(RecurringTaskStatus.INCOMPLETE)) {
+            currentTaskDto.setStatus(RecurringTaskStatus.UNPAUSED);
+            currentTaskDto.setFinishDate(LocalDateTime.now().plus(currentTaskDto.getRemainingTime()));
+            currentTaskDto.setRemainingTime(Duration.between(LocalDateTime.now(),currentTaskDto.getFinishDate()));
+
+
+            try{
+                taskService.editRecurringTask(currentTaskDto);
+            } catch (ValidationException e) {
+                throw new RuntimeException(e);
+            }
             loadTaskDetails(currentTaskDto.getId());
         }
     }

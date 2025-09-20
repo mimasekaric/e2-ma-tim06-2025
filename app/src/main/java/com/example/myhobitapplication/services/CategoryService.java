@@ -131,4 +131,13 @@ public class CategoryService {
                 taskRepository
         );
     }
+
+    public long deleteCategory(CategoryDTO categoryDto){
+        Category category = new Category();
+        category.setColour(categoryDto.getColour());
+        category.setName(categoryDto.getName());
+        category.setId(categoryDto.getId());
+
+        return repository.deleteCategory(category);
+    }
 }
