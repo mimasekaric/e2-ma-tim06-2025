@@ -17,6 +17,7 @@ import com.example.myhobitapplication.fragments.ActivateEquipmentFragment;
 import com.example.myhobitapplication.models.Clothing;
 import com.example.myhobitapplication.models.Equipment;
 import com.example.myhobitapplication.models.Potion;
+import com.example.myhobitapplication.models.Weapon;
 
 import java.util.List;
 
@@ -104,6 +105,14 @@ public class ActivateEquipmentAdapter extends RecyclerView.Adapter<ActivateEquip
                 image.setImageResource(clothing.getImage());
                 effect.setText("+" + clothing.getpowerPercentage() + "% PP");
                 description.setText("Boosts you pp by " + clothing.getpowerPercentage() + " % ");
+            }
+
+            else if (e instanceof Weapon) {
+                Weapon weapon = (Weapon) e;
+                name.setText(weapon.getType().name());
+                image.setImageResource(weapon.getImage());
+                effect.setText("+" + weapon.getpowerPercentage() + "% PP");
+                description.setText("Boosts you pp by " + weapon.getpowerPercentage() + " % ");
             }
 
             ImageView buyButton = itemView.findViewById(R.id.buttonnConfi);

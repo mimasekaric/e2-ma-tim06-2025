@@ -1,20 +1,18 @@
 package com.example.myhobitapplication.activities;
 
 import android.animation.Animator;
-import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.drawable.AnimationDrawable;
 import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,10 +23,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.databases.BossRepository;
 import com.example.myhobitapplication.databases.EquipmentRepository;
-import com.example.myhobitapplication.databases.ProfileRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.ActivityBossBinding;
 import com.example.myhobitapplication.models.Avatar;
@@ -55,7 +53,10 @@ public class BossActivity extends AppCompatActivity {
     private SensorManager sensorManager;
     private Sensor accelerometer;
 
-    private FrameLayout chestOverlayContainer;
+    private FrameLayout chestContainer;
+    private FrameLayout yellowStarsContainer;
+    private FrameLayout greenStarsContainer;
+
 
     private String userUid;
 
@@ -95,7 +96,8 @@ public class BossActivity extends AppCompatActivity {
 
         binding = ActivityBossBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        chestOverlayContainer = binding.chestOverlayContainer;
+        chestContainer = binding.chestOverlayContainer;
+
 
         setupShakeDetector();
 //        Integer userPP = battleViewModel.getUserPP().getValue();
@@ -208,6 +210,7 @@ public class BossActivity extends AppCompatActivity {
                 battleViewModel.onAttackMissedEventHandled();
             }
         });
+
     }
 
 
@@ -305,7 +308,7 @@ public class BossActivity extends AppCompatActivity {
 
     private void showChestOverlay() {
         isChestPhase = true;
-        chestOverlayContainer.setVisibility(View.VISIBLE);
+        chestContainer.setVisibility(View.VISIBLE);
         registerShakeDetector();
     }
 
@@ -368,12 +371,54 @@ public class BossActivity extends AppCompatActivity {
     }
 
     private void displayRewards() {
-        new AlertDialog.Builder(this)
-                .setTitle("Nagrade!")
-                .setMessage("Osvojio/la si: 200 novčića i Mač Fokusa!")
-                .setPositiveButton("Sjajno!", (dialog, which) -> finish())
-                .setCancelable(false)
-                .show();
-    }
+        Integer coins = battleViewModel.getCoins().getValue();
+        Integer imageResource = battleViewModel.getImageResource().getValue();
+        String name = battleViewModel.getEquipmentName().getValue();
 
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.battle_rewards, null);
+
+        TextView coinsTextView = dialogView.findViewById(R.id.coins);
+        TextView equipmentNameTextView = dialogView.findViewById(R.id.equipment);
+        ImageView equipmentImageView = dialogView.findViewById(R.id.equipmentImage);
+
+        if (coins != null) {
+            coinsTextView.setText(String.valueOf(coins));
+        }
+
+        if (imageResource != null && imageResource != 0) {
+            equipmentImageView.setImageResource(imageResource);
+            equipmentNameTextView.setText(name);
+        } else {
+            equipmentNameTextView.setText("No Equipment");
+            equipmentImageView.setVisibility(View.INVISIBLE);
+        }
+
+        LottieAnimationView yellowStarsAnimation = dialogView.findViewById(R.id.sparksYellowContainer);
+        LottieAnimationView greenStarsAnimation = dialogView.findViewById(R.id.spraksGreenContainer);
+        yellowStarsAnimation.setVisibility(View.VISIBLE);
+        greenStarsAnimation.setVisibility(View.VISIBLE);
+        yellowStarsAnimation.playAnimation();
+        greenStarsAnimation.playAnimation();
+
+
+
+
+        final Dialog dialog = new Dialog(this);
+        dialog.setCancelable(false);
+
+        dialog.setContentView(dialogView);
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+
+        dialog.show();
+        final int DIALOG_DISPLAY_TIME_MS = 5000;
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            if (dialog.isShowing() && !isFinishing()) {
+                dialog.dismiss();
+                finish();
+            }
+        }, DIALOG_DISPLAY_TIME_MS);
+    }
 }

@@ -236,6 +236,12 @@ public class UserEquipmentService {
         return false;
     }
 
+    public void gainEquipment(String userId, Equipment equipment){
+        if(equipment!=null){
+            save(userId, equipment);
+        }
+    }
+
     public List<Equipment> getByType(EquipmentTypes type) {
         return equipmentService.getEquipmentByType(type);
     }
