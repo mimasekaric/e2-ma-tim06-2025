@@ -111,9 +111,13 @@ public class BossActivity extends AppCompatActivity {
         currentAnimation = (AnimationDrawable) bossImage.getBackground();
         currentAnimation.start();
 
-        setupObservers();
+
 
         battleViewModel.loadBattleState(userUid);
+
+        setupObservers();
+
+        profileViewModel.loadProfile(userUid);
 
         binding.attackButton.setOnClickListener(v -> {
             battleViewModel.performAttack();
@@ -148,7 +152,8 @@ public class BossActivity extends AppCompatActivity {
 
         battleViewModel.getRemainingAttacks().observe(this, remaining -> {
             if (remaining != null) {
-                updateAttackAttemptsImage(remaining);
+                int startNumber = battleViewModel.getStartAttackNumber();
+                updateAttackAttemptsImage(remaining, startNumber);
 
                 binding.attackButton.setEnabled(remaining > 0);
             }
@@ -171,11 +176,10 @@ public class BossActivity extends AppCompatActivity {
 
                     Integer finalHp = battleViewModel.getBossCurrentHp().getValue();
                     if (finalHp != null && finalHp <= 0) {
-
                         Toast.makeText(this, "U WIN!", Toast.LENGTH_SHORT).show();
                         showChestOverlay();
                     } else {
-
+                        profileViewModel.loadProfile(userUid);//dodala ovdje da bi mi se azurirao profil nakon zavrsene borbe
                         Toast.makeText(this, "U LOST!", Toast.LENGTH_LONG).show();
 
                     }
@@ -227,17 +231,30 @@ public class BossActivity extends AppCompatActivity {
         binding.hpTextView.setText("HP: " + currentHp + " / " + maxHp);
     }
 
-    private void updateAttackAttemptsImage(int remaining) {
-        int drawableResourceId;
-        switch (remaining) {
-            case 5: drawableResourceId = R.drawable.life_1; break;
-            case 4: drawableResourceId = R.drawable.life_2; break;
-            case 3: drawableResourceId = R.drawable.life_3; break;
-            case 2: drawableResourceId = R.drawable.life_4; break;
-            case 1: drawableResourceId = R.drawable.life_5; break;
-            default: drawableResourceId = R.drawable.life_6; break;
+    private void updateAttackAttemptsImage(int remaining, int startNumber) {
+
+        if (remaining == startNumber) {
+            binding.attackAttemptsImage.setImageResource(R.drawable.life_1);
+        }else if(remaining==startNumber-1){
+            binding.attackAttemptsImage.setImageResource(R.drawable.life_2);
         }
-        binding.attackAttemptsImage.setImageResource(drawableResourceId);
+        else if(remaining==startNumber-2){
+            binding.attackAttemptsImage.setImageResource(R.drawable.life_3);
+        }
+        else if(remaining==startNumber-3){
+            binding.attackAttemptsImage.setImageResource(R.drawable.life_4);
+        }
+        else if(remaining==startNumber-4){
+            binding.attackAttemptsImage.setImageResource(R.drawable.life_5);
+        }else if(remaining ==0){
+            binding.attackAttemptsImage.setImageResource(R.drawable.life_6);
+            binding.textShowRemaining.setVisibility(View.INVISIBLE);
+        }else{
+            binding.attackAttemptsImage.setVisibility(View.INVISIBLE);
+            binding.textShowRemaining.setVisibility(View.VISIBLE);
+            binding.textShowRemaining.setText("You have " + remaining + " additional attacks!");
+        }
+
     }
 
     private void playMissAndReturnToIdle() {
@@ -330,7 +347,7 @@ public class BossActivity extends AppCompatActivity {
     }
 
     private void handleChestShake() {
-
+        profileViewModel.loadProfile(userUid);//dodala ovdje da bi mi se azurirao profil nakon zavrsene borbe
         if (hasChestBeenOpened) return;
         hasChestBeenOpened = true;
 

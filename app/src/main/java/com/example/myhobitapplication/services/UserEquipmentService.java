@@ -28,20 +28,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-/// /AKo je vec jednom aktiviran clothes, napravi da se ne primjenjuje efekat tokom druge borbe i koristi servise ovde a ne repo
-///
-/// ///dodala sam efektat da glea ucinak koji treba oduzeti, ali to treba i u battleviewmodelu gdjeracunak ucinak za boots i shield
-///
-/// //uzima mi duplo kad inkrementira countere...nesto do azuriranja sigurno AHA MORAM LOADPROFILE PRIJE POZIVA INCREMENT U BATTLEVIEMODELU
+/// /vidi mozda ako vec ima aktiviran clothes istog tipa al da nije counterfight 0 i effect 0 ... p=mozda i tu treba sabirati ucinak?
+/// PROVJERI RADI LI ZA CIZME I STIT
+///kad gainuje isto oruyje povecava s evjerovatnocaa
+/// ///NAMJESTI KAD POBIJEDI DA SE LOADUJE PROFIL OPET i vidi dal na dobrom ide u won
+
 public class UserEquipmentService {
 
-   // private final BossService BossService;
     private final BossService bossService;
     private final UserEquipmentRepository repository;
 
-    //private final EquipmentService EquipmentService;
     private final EquipmentService equipmentService;
-    //private final ProfileService ProfileService;
     private final ProfileService profileService;
     public UserEquipmentService(UserEquipmentRepository repository, ProfileService profileService, BossService bossService, EquipmentService equipmentService){
         this.repository = repository;
@@ -59,7 +56,9 @@ public class UserEquipmentService {
         this.repository.open();
     }
 
-
+    public void delete(UserEquipment ue){
+        repository.delete(ue);
+    }
     public List<Equipment> getUserEquipment(String userId){
         List<UserEquipment> all = getAllbyUserId(userId);
         List<Equipment> equipment = new ArrayList<>();
@@ -74,15 +73,16 @@ public class UserEquipmentService {
                 UserEquipment userEquipment = getById(ueDTO.getUserEquipmentId());
                 userEquipment.setFightsCounter(userEquipment.getFightsCounter() + 1);
                 if(ueDTO.getEquipment().getequipmentType().equals(EquipmentTypes.POTION)){
+                    repository.delete(userEquipment);
                     if(!((Potion)ueDTO.getEquipment()).isPermanent()){
-                        int newpp = profile.getPp() - userEquipment.getEffect();
-                        profileService.updatePp(profile.getuserUid(), newpp);
+                        double newpp = profile.getPp() - userEquipment.getEffect();
+                        profileService.updatePp(profile.getuserUid(), (int)newpp);
                         repository.delete(userEquipment);
                     }
                 }else if(ueDTO.getEquipment().getequipmentType().equals(EquipmentTypes.CLOTHING) && userEquipment.getFightsCounter() > 1){
                     Clothing c = (Clothing) ueDTO.getEquipment();
-                    int newpp = profile.getPp() - userEquipment.getEffect();
-                    profileService.updatePp(profile.getuserUid(), newpp);
+                    double newpp = profile.getPp() - userEquipment.getEffect();
+                    profileService.updatePp(profile.getuserUid(), (int)newpp);
                     repository.delete(userEquipment);
                 }else{
                     repository.updateUserEquipment(userEquipment);
@@ -120,7 +120,7 @@ public class UserEquipmentService {
         ue.setFightsCounter(0);
         ue.setActivated(false);
         ue.setCoef(e.getCoef());
-        ue.setEffect(0);
+        ue.setEffect(e.getpowerPercentage());
         return repository.insertUserEquipment(ue);
     }
     public List<UserEquipment> getAllbyUserId(String id){ return repository.getAllByUserId(id);}
@@ -132,11 +132,14 @@ public class UserEquipmentService {
     //efekat cizama i stita je hendlovan u battleviewmodel
    public boolean activateEquipment(UserEquipmentDTO userEquipDTO,Profile profile )
    {
-       Equipment equipment  = userEquipDTO.getEquipment();
        UserEquipment userEquipment =  repository.getById(userEquipDTO.getUserEquipmentId());
        userEquipment.setActivated(true);
        repository.updateUserEquipment(userEquipment);
         return true;
+   }
+
+   public void updateUserEquipment(UserEquipment userEquipment){
+        repository.updateUserEquipment(userEquipment);
    }
 
     public void activatedEquipmentEffect(Profile profile){
@@ -146,29 +149,14 @@ public class UserEquipmentService {
             UserEquipment userEquipment =  repository.getById(userEquipmentDTO.getUserEquipmentId());
             Equipment e = equipmentService.getEquipmentById(userEquipment.getEquipmentId());
             if(e.getequipmentType().equals(EquipmentTypes.POTION) ) {
-                double powerdelta = profile.getPp() * (e.getpowerPercentage() / 100.0);
-                int delta = (int) Math.round(powerdelta);
-                int newpp = profile.getPp() + delta ;
-                profileService.updatePp(profile.getuserUid(), newpp);
-                userEquipment.setEffect(delta);
-                repository.updateUserEquipment(userEquipment);
-            }else if (e.getequipmentType().equals(EquipmentTypes.CLOTHING) ) {
+               activatePotionEffect(profile, userEquipment);
+            }else if (e.getequipmentType().equals(EquipmentTypes.CLOTHING) && userEquipment.getEffect()==0  ) {
                 Clothing c = (Clothing) e;
                 if(c.getType().equals(ClothingTypes.GLOVES)) {
                     clothingEffects.merge(c.getType(), e.getpowerPercentage(), Double::sum);
                 }
             }else if(e.getequipmentType().equals(EquipmentTypes.WEAPON)){
-                Weapon w = (Weapon) e;
-                if(w.getType().equals(WeaponTypes.ANDURIL_OF_ARAGORN)){
-                    double powerdelta = profile.getPp() * (e.getpowerPercentage() / 100.0);
-                    int newpp = profile.getPp() + (int) Math.round(powerdelta);
-                    profileService.updatePp(profile.getuserUid(), newpp);
-                }else{
-                    BossDTO currentBossForUser = bossService.getCurrentBossForUser(userId, profile.getlevel());
-                    double delta= currentBossForUser.getCoinRewardPercent()* (e.getpowerPercentage() / 100.0);
-                    currentBossForUser.setCoinRewardPercent(currentBossForUser.getCoinRewardPercent()+ delta);
-                    bossService.updateBoss(currentBossForUser);
-                }
+               activateWeaponEffect(profile,userEquipment);
             }
         });
         clothingEffects.entrySet().forEach(clothingTypesDoubleEntry -> {
@@ -182,7 +170,31 @@ public class UserEquipmentService {
             }
         });
    }
+    public void activatePotionEffect(Profile profile,  UserEquipment userEquipment){
+        Equipment e = equipmentService.getEquipmentById(userEquipment.getEquipmentId());
+        double powerdelta = profile.getPp() * (e.getpowerPercentage() / 100.0);
+        int delta = (int) Math.round(powerdelta);
+        int newpp = profile.getPp() + delta ;
+        profileService.updatePp(profile.getuserUid(), newpp);
+        userEquipment.setEffect(delta);
+        repository.updateUserEquipment(userEquipment);
+    }
 
+    public void activateWeaponEffect(Profile profile,  UserEquipment userEquipment){
+        Equipment e = equipmentService.getEquipmentById(userEquipment.getEquipmentId());
+        String userId = profile.getuserUid();
+        Weapon w = (Weapon) e;
+        if(w.getType().equals(WeaponTypes.ANDURIL_OF_ARAGORN)){
+            double powerdelta = profile.getPp() * (e.getpowerPercentage() / 100.0);
+            int newpp = profile.getPp() + (int) Math.round(powerdelta);
+            profileService.updatePp(profile.getuserUid(), newpp);
+        }else{
+            BossDTO currentBossForUser = bossService.getCurrentBossForUser(userId, profile.getlevel());
+            double delta = currentBossForUser.getCoinRewardPercent() * (userEquipment.getEffect() / 100.0);
+            currentBossForUser.setCoinRewardPercent(currentBossForUser.getCoinRewardPercent()+ delta);
+            bossService.updateBoss(currentBossForUser);
+        }
+    }
    public void calculateGlovesEffect (Profile profile, int effect){
        String userId = profile.getuserUid();
        for (var userEquipmentDTO : getUserActivatedEquipment(userId)) {
@@ -194,7 +206,6 @@ public class UserEquipmentService {
                if (c.getType().equals(ClothingTypes.GLOVES)) {
                    userEquipment.setEffect(effect);
                    repository.updateUserEquipment(userEquipment);
-                   return;
                }
            }
        }

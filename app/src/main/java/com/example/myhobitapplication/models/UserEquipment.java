@@ -7,7 +7,7 @@ public class UserEquipment{
     private String userId;
     private Boolean activated;
     private int fightsCounter;
-    private int effect;
+    private double effect;
     private double coef;
 
 
@@ -22,11 +22,11 @@ public class UserEquipment{
 
     }
 
-    public int getEffect() {
+    public double getEffect() {
         return effect;
     }
 
-    public void setEffect(int effect) {
+    public void setEffect(double effect) {
         this.effect = effect;
     }
 

@@ -39,6 +39,8 @@ public class BattleViewModel extends ViewModel {
 
     private String userUid;
 
+    private Integer startAttackNumber;
+
     private final MutableLiveData<Integer> _bossCurrentHp = new MutableLiveData<>();
     private final MutableLiveData<Integer> _bossMaxHp = new MutableLiveData<>();
     private final MutableLiveData<Integer> _userPP = new MutableLiveData<>();
@@ -49,6 +51,8 @@ public class BattleViewModel extends ViewModel {
     private final MutableLiveData<Profile> _userProfile = new MutableLiveData<>();
 
     public double getHitChance() {return hitChance;}
+    public int getStartAttackNumber() {return startAttackNumber;}
+    public void setStartAttackNumber(int number) {startAttackNumber = number;}
     public LiveData<Boolean> getAttackMissedEvent() { return _attackMissedEvent; }
 
     public LiveData<Integer> getBossCurrentHp() { return _bossCurrentHp; }
@@ -61,6 +65,7 @@ public class BattleViewModel extends ViewModel {
     public LiveData<Boolean> isBattleOver() { return _isBattleOver; }
 
 
+    private Profile loadedProfile;
     private BossDTO currentBoss;
 
     public BattleViewModel(TaskRepository taskRepository, BossRepository bossRepository, ProfileService profileService, UserEquipmentService userEquipmentService){
@@ -71,34 +76,57 @@ public class BattleViewModel extends ViewModel {
         this.userEquipmentService = userEquipmentService;
         userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
-
     public void loadBattleState(String userId){
 
         currentBoss = bossService.getLowestLevelBossForUser(userId);
 
-
         //int userPower = battleService.calculateUserAttackPower(userId);
 
-        int userPower = 80;
+        //int userPower = 80;
 
         _bossCurrentHp.setValue(currentBoss.getCurrentHP());
         _bossMaxHp.setValue(currentBoss.getHP());
-        _userPP.setValue(userPower);
+
         this.hitChance = 1.0;
         //todo: moracu u bosu pamtiti koliko je ostalo pokusaja ubuduce?
-        _remainingAttacks.setValue(5);
+        int remainingAttacks=5;
+        _remainingAttacks.setValue(remainingAttacks);
+        setStartAttackNumber(remainingAttacks);
         //todo: moracu koristiti od usera datume levela prethodnog i sadanjeg i moracu povezati taskove sa userom - URADILA
         profileService.getProfileById(userUid).addOnSuccessListener(profile -> {
+            _userPP.setValue(profile.getPp());
             userEquipmentService.activatedEquipmentEffect(profile);
             _userProfile.setValue(profile);
             List<UserEquipmentDTO> ueList= userEquipmentService.getUserActivatedEquipment(profile.getuserUid());
             for(UserEquipmentDTO u :  ueList){
+                UserEquipment userEquipment = userEquipmentService.getById(u.getUserEquipmentId());
                 if (u.getEquipment().getequipmentType().equals(EquipmentTypes.CLOTHING)){
                     if(((Clothing)u.getEquipment()).getType().equals(ClothingTypes.SHIELD)){
-                        hitChance = hitChance + (hitChance * ((Clothing)u.getEquipment()).getpowerPercentage()/100);
+                        if(userEquipment.getEffect()==0) {
+                            double effect =hitChance * ((Clothing) u.getEquipment()).getpowerPercentage() / 100;
+                            hitChance =hitChance + effect;
+                            userEquipment.setEffect(effect);
+                            userEquipmentService.updateUserEquipment(userEquipment);
+                        }else if(userEquipment.getFightsCounter() >1){
+                            hitChance = hitChance - userEquipment.getEffect();
+                            userEquipmentService.delete(userEquipment);
+                        }
                     }
                     if(((Clothing)u.getEquipment()).getType().equals(ClothingTypes.BOOTS)){
-                        _remainingAttacks.setValue(_remainingAttacks.getValue() + 1);
+                        if(userEquipmentService.getById(u.getUserEquipmentId()).getEffect()==0 || userEquipment.getFightsCounter() <2){
+                            setStartAttackNumber(_remainingAttacks.getValue()+1);
+                            _remainingAttacks.setValue(_remainingAttacks.getValue() + 1);
+                            userEquipment.setEffect(1);
+                            userEquipmentService.updateUserEquipment(userEquipment);
+                        }else if(userEquipment.getFightsCounter() >1){
+                            hitChance = hitChance - userEquipment.getEffect();
+                            userEquipmentService.delete(userEquipment);
+                        }else if(userEquipment.getFightsCounter() <2){
+                            setStartAttackNumber(_remainingAttacks.getValue()+1);
+                            _remainingAttacks.setValue(_remainingAttacks.getValue() + 1);
+                            userEquipment.setEffect(userEquipment.getEffect()+1);
+                            userEquipmentService.updateUserEquipment(userEquipment);
+                        }
                     }
                 }
             }
@@ -109,6 +137,22 @@ public class BattleViewModel extends ViewModel {
         });
     }
 
+    public void deleteEquipmentEffect(){
+        List<UserEquipmentDTO> ueList= userEquipmentService.getUserActivatedEquipment(userUid);
+        for(UserEquipmentDTO u :  ueList){
+            UserEquipment userEquipment = userEquipmentService.getById(u.getUserEquipmentId());
+            if (u.getEquipment().getequipmentType().equals(EquipmentTypes.CLOTHING)){
+                if(((Clothing)u.getEquipment()).getType().equals(ClothingTypes.SHIELD) && userEquipmentService.getById(u.getUserEquipmentId()).getFightsCounter()>0){
+                    hitChance = hitChance - userEquipment.getEffect();
+                    userEquipmentService.delete(userEquipment);
+                }
+                if(((Clothing)u.getEquipment()).getType().equals(ClothingTypes.BOOTS)  && userEquipmentService.getById(u.getUserEquipmentId()).getEffect()==0){
+                    hitChance = hitChance - userEquipment.getEffect();
+                    userEquipmentService.delete(userEquipment);
+                }
+            }
+        }
+    }
     public void performAttack() {
 
 
@@ -139,7 +183,10 @@ public class BattleViewModel extends ViewModel {
             if (isBossDefeated) {
                 currentBoss.setDefeated(true);
                 _isBattleOver.setValue(true);
-                userEquipmentService.incrementFightsCounter(userUid,_userProfile.getValue());
+                profileService.getProfileById(userUid).addOnSuccessListener(profile -> {
+                    userEquipmentService.incrementFightsCounter(userUid,profile);
+                });
+                deleteEquipmentEffect();
                 battleService.rewardUserWithCoins(currentBoss);
             }
 
@@ -155,7 +202,11 @@ public class BattleViewModel extends ViewModel {
 
         if (_remainingAttacks.getValue() <= 0 && currentBoss.getCurrentHP() > 0) {
             _isBattleOver.setValue(true);
-            //userEquipmentService.incrementFightsCounter();
+            profileService.getProfileById(userUid).addOnSuccessListener(profile -> {
+                userEquipmentService.incrementFightsCounter(userUid,profile);
+                });
+            deleteEquipmentEffect();
+
         }
 
 
