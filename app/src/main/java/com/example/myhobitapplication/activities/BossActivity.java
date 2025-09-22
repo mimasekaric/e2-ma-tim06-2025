@@ -99,7 +99,7 @@ public class BossActivity extends AppCompatActivity {
         chestContainer = binding.chestOverlayContainer;
 
 
-        setupShakeDetector();
+
 //        Integer userPP = battleViewModel.getUserPP().getValue();
 //
 //        if (userPP == null) return;
@@ -116,11 +116,11 @@ public class BossActivity extends AppCompatActivity {
 
 
         battleViewModel.loadBattleState(userUid);
-
-        setupObservers();
-
         profileViewModel.loadProfile(userUid);
 
+        setupObservers();
+        setupShakeDetector();
+        
         binding.attackButton.setOnClickListener(v -> {
             battleViewModel.performAttack();
         });
