@@ -66,7 +66,6 @@ public class ShopFragment extends Fragment {
 
         type = EquipmentTypes.CLOTHING;
         profileViewModel = new ViewModelProvider(requireActivity()).get(ProfileViewModel.class);
-        String userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         BossRepository bossRepository = new BossRepository(requireContext());
         EquipmentRepository equipmentRepository = new EquipmentRepository(requireContext());
         ProfileService profileService = new ProfileService();

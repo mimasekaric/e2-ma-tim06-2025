@@ -138,7 +138,7 @@ public class BattleService {
         bossDTO.setCoinsReward(coinsReward);
         bossDTO.setHP(HP);
         bossDTO.setCurrentHP(HP);
-        bossDTO.setCoinRewardPercent(0.2);
+        bossDTO.setCoinRewardPercent(calculateCoinsRewardForBoss(newLevel-1,userId));
         return bossService.createBoss(bossDTO);
     }
 }

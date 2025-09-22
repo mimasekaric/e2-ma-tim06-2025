@@ -53,6 +53,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/hpProgressBar" />
 
+        <TextView
+            android:id="@+id/textShowRemaining"
+            android:layout_width="232dp"
+            android:layout_height="106dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/educursivesemibold"
+            android:text="You have 10 additional attacks"
+            android:textColor="#DA9100"
+            android:gravity="center"
+            android:visibility="invisible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/hpProgressBar" />
+
         <ImageView
             android:id="@+id/myAnimatedImage"
             android:layout_width="0dp"
