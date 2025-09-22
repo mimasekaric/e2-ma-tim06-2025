@@ -38,4 +38,8 @@ public class ProfileService {
     public Task<Void> updateCoins( String uid,int newValue){
         return  profileRepository.updateCoins(uid, newValue);
     }
+
+    public Task<DocumentReference> insert(Profile profile){
+        return profileRepository.insert(profile);
+    }
 }
