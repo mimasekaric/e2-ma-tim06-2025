@@ -87,7 +87,7 @@ public class RecurringTaskDetailsViewModel extends ViewModel {
 
         RecurringTaskDTO currentTaskDto = taskDetails.getValue();
 
-        if(!currentTaskDto.getStatus().equals(RecurringTaskStatus.CANCELED) && !currentTaskDto.getStatus().equals(RecurringTaskStatus.INCOMPLETE) && !currentTaskDto.getStatus().equals(RecurringTaskStatus.COMPLETED) ){
+        if(currentTaskDto.getStatus().equals(RecurringTaskStatus.ACTIVE) ){
 
             currentTaskDto.setStatus(RecurringTaskStatus.COMPLETED);
             currentTaskDto.setFinishedDate(LocalDate.now());
@@ -97,13 +97,17 @@ public class RecurringTaskDetailsViewModel extends ViewModel {
             loadTaskDetails(currentTaskDto.getId());
 
         }
-        else if(!currentTaskDto.getStatus().equals(RecurringTaskStatus.CANCELED) && !currentTaskDto.getStatus().equals(RecurringTaskStatus.INCOMPLETE) && !currentTaskDto.getStatus().equals(RecurringTaskStatus.COMPLETED) && currentTaskDto.getStatus().equals(RecurringTaskStatus.PAUSED) ){
+        else if(currentTaskDto.getStatus().equals(RecurringTaskStatus.UNPAUSED) ){
 
             currentTaskDto.setStatus(RecurringTaskStatus.PAUSED_COMPLETED);
             currentTaskDto.setFinishedDate(LocalDate.now());
 
-            taskService.markRecurringTaskAsDone(taskDetails.getValue().getId(), taskDetails.getValue().getUserUid());
-
+            try {
+                taskService.editRecurringTask(currentTaskDto);
+            }
+            catch (ValidationException e) {
+                throw new RuntimeException(e);
+            }
             loadTaskDetails(currentTaskDto.getId());
 
         }
@@ -132,7 +136,7 @@ public class RecurringTaskDetailsViewModel extends ViewModel {
 
         RecurringTaskDTO currentTaskDto = taskDetails.getValue();
 
-        if(!currentTaskDto.getStatus().equals(RecurringTaskStatus.CANCELED) && !currentTaskDto.getStatus().equals(RecurringTaskStatus.INCOMPLETE) && !currentTaskDto.getStatus().equals(RecurringTaskStatus.PAUSED)) {
+        if(currentTaskDto.getStatus().equals(RecurringTaskStatus.UNPAUSED) || currentTaskDto.getStatus().equals(RecurringTaskStatus.ACTIVE)) {
             currentTaskDto.setStatus(RecurringTaskStatus.PAUSED);
             currentTaskDto.setRemainingTime(Duration.between(LocalDateTime.now(),currentTaskDto.getFinishDate()));
 
@@ -154,7 +158,7 @@ public class RecurringTaskDetailsViewModel extends ViewModel {
 
         RecurringTaskDTO currentTaskDto = taskDetails.getValue();
 
-        if(!currentTaskDto.getStatus().equals(RecurringTaskStatus.CANCELED) && !currentTaskDto.getStatus().equals(RecurringTaskStatus.INCOMPLETE)) {
+        if(currentTaskDto.getStatus().equals(RecurringTaskStatus.PAUSED)) {
             currentTaskDto.setStatus(RecurringTaskStatus.UNPAUSED);
             currentTaskDto.setFinishDate(LocalDateTime.now().plus(currentTaskDto.getRemainingTime()));
             currentTaskDto.setRemainingTime(Duration.between(LocalDateTime.now(),currentTaskDto.getFinishDate()));

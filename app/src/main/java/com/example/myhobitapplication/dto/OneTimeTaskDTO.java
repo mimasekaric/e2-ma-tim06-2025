@@ -6,7 +6,9 @@ import com.example.myhobitapplication.enums.RecurringTaskStatus;
 import com.example.myhobitapplication.models.OneTimeTask;
 import com.example.myhobitapplication.models.RecurringTask;
 
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public class OneTimeTaskDTO {
@@ -35,6 +37,10 @@ public class OneTimeTaskDTO {
     private String userUid;
 
     private boolean isAwarded = false;
+
+    private Duration remainingTime;
+
+    private LocalDateTime finishDate;
 
 
 
@@ -82,6 +88,8 @@ public class OneTimeTaskDTO {
         FinishedDate = taskModel.getFinishedDate();
         CreationDate = taskModel.getCreationDate();
         this.userUid = taskModel.getUserUid();
+        this.finishDate = taskModel.getFinishDate();
+        this.remainingTime = taskModel.getRemainingTime();
     }
 
 
@@ -187,5 +195,21 @@ public class OneTimeTaskDTO {
 
     public void setAwarded(boolean awarded) {
         isAwarded = awarded;
+    }
+
+    public Duration getRemainingTime() {
+        return remainingTime;
+    }
+
+    public void setRemainingTime(Duration remainingTime) {
+        this.remainingTime = remainingTime;
+    }
+
+    public LocalDateTime getFinishDate() {
+        return finishDate;
+    }
+
+    public void setFinishDate(LocalDateTime finishDate) {
+        this.finishDate = finishDate;
     }
 }

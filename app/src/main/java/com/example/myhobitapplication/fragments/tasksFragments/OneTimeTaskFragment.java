@@ -1,6 +1,8 @@
 package com.example.myhobitapplication.fragments.tasksFragments;
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -11,6 +13,8 @@ import android.widget.AdapterView;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -39,6 +43,8 @@ public class OneTimeTaskFragment extends Fragment {
     private CategoryViewModel categoryViewModel;
     private FragmentOnetimeTaskBinding binding;
 
+    private ActivityResultLauncher<Intent> taskDetailsLauncher;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,8 +55,6 @@ public class OneTimeTaskFragment extends Fragment {
         ProfileService profileService = new ProfileService();
         TaskService taskService = new TaskService(repository, profileService);
         CategoryService categoryService = new CategoryService(categoryRepository,repository);
-
-
 
         taskViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @NonNull

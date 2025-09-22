@@ -2,6 +2,7 @@ package com.example.myhobitapplication.fragments.tasksFragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -14,10 +15,12 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.activities.TaskEditActivity;
 import com.example.myhobitapplication.databases.CategoryRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
@@ -92,9 +95,7 @@ public class OneTimeTaskDetailsFragment extends Fragment {
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
-                        // Podaci su izmenjeni, osveži ovaj ekran
                         taskDetailsViewModel.loadTaskDetails(taskId);
-                        // Javi prethodnoj aktivnosti da postavi svoj rezultat na OK
                         if (getActivity() != null) {
                             getActivity().setResult(Activity.RESULT_OK);
                         }
@@ -146,7 +147,7 @@ public class OneTimeTaskDetailsFragment extends Fragment {
                 }
 
                 if (status == OneTimeTaskStatus.COMPLETED ||
-                        status == OneTimeTaskStatus.INCOMPLETE ||
+                        status == OneTimeTaskStatus.INCOMPLETE || status == OneTimeTaskStatus.PAUSED_COMPLETED ||
                         status == OneTimeTaskStatus.CANCELED) {
 
                     binding.editTaskButton.setVisibility(View.GONE);
@@ -154,14 +155,24 @@ public class OneTimeTaskDetailsFragment extends Fragment {
                     binding.btnOtaskDone.setVisibility(View.GONE);
                     binding.btnOtaskCancel.setVisibility(View.GONE);
                     binding.btnOtaskPause.setVisibility(View.GONE);
+                    binding.btnOtaskUnpause.setVisibility(View.GONE);
+
 
                 } else if(!isTaskInThePast && status == OneTimeTaskStatus.ACTIVE ||
-                        status == OneTimeTaskStatus.PAUSED) {
+                        status == OneTimeTaskStatus.UNPAUSED) {
                     binding.editTaskButton.setVisibility(View.VISIBLE);
                     binding.deleteTaskButton.setVisibility(View.VISIBLE);
                     binding.btnOtaskDone.setVisibility(View.VISIBLE);
                     binding.btnOtaskCancel.setVisibility(View.VISIBLE);
                     binding.btnOtaskPause.setVisibility(View.VISIBLE);
+                }
+                else if(!isTaskInThePast && status == OneTimeTaskStatus.PAUSED) {
+                    binding.editTaskButton.setVisibility(View.GONE);
+                    binding.deleteTaskButton.setVisibility(View.GONE);
+                    binding.btnOtaskDone.setVisibility(View.GONE);
+                    binding.btnOtaskCancel.setVisibility(View.GONE);
+                    binding.btnOtaskPause.setVisibility(View.GONE);
+                    binding.btnOtaskUnpause.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -191,16 +202,38 @@ public class OneTimeTaskDetailsFragment extends Fragment {
             taskDetailsViewModel.markTaskAsPaused();
         });
 
-        binding.deleteTaskButton.setOnClickListener(v -> {
+        binding.btnOtaskUnpause.setOnClickListener(v -> {
 
-            new AlertDialog.Builder(requireContext())
-                    .setTitle("Delete?")
+            taskDetailsViewModel.markTaskAsUnPaused();
+        });
+
+        binding.btnOtaskPause.setOnClickListener(v -> {
+
+            taskDetailsViewModel.markTaskAsPaused();
+        });
+
+        binding.deleteTaskButton.setOnClickListener(v -> {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(requireContext(), R.style.AlertDialogWhiteText);
+            dialog.setTitle("Delete?")
                     .setMessage("Are you sure you want to delete this recurring task?")
-                    .setPositiveButton("Delete", (dialog, which) -> {
-                        taskDetailsViewModel.deleteRecurringTask();
+                    .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int which) {
+                            taskDetailsViewModel.deleteRecurringTask();
+                        }
                     })
-                    .setNegativeButton("Cancel", null)
-                    .show();
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int which) {
+                            dialogInterface.dismiss();
+                        }
+                    });
+
+            AlertDialog alert = dialog.create();
+            if (alert.getWindow() != null) {
+                alert.getWindow().setBackgroundDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.logincard));
+            }
+            alert.show();
         });
 
         taskDetailsViewModel.getTaskDeletedEvent().observe(getViewLifecycleOwner(), isDeleted -> {
@@ -211,6 +244,17 @@ public class OneTimeTaskDetailsFragment extends Fragment {
                     getActivity().finish();
                 }
                 taskDetailsViewModel.onTaskDeletedEventHandled();
+            }
+        });
+
+        taskDetailsViewModel.getTaskStatusUpdatedEvent().observe(getViewLifecycleOwner(), isUpdated -> {
+            if (isUpdated != null && isUpdated) {
+                Toast.makeText(getContext(), "Status updated!", Toast.LENGTH_SHORT).show();
+                if (getActivity() != null) {
+                    getActivity().setResult(Activity.RESULT_OK);
+                    getActivity().finish();
+                }
+                taskDetailsViewModel.onTaskStatusUpdatedEventHandled();
             }
         });
     }
