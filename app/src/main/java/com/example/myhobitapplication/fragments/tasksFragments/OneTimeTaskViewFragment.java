@@ -1,5 +1,6 @@
 package com.example.myhobitapplication.fragments.tasksFragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -40,10 +43,22 @@ public class OneTimeTaskViewFragment extends Fragment {
 
     private OneTimeTaskListAdapter taskItemsAdapter;
 
+    private ActivityResultLauncher<Intent> taskDetailsLauncher;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        taskDetailsLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Toast.makeText(getContext(), "Refreshing One-Time tasks...", Toast.LENGTH_SHORT).show();
+                        viewModel.loadRecurringTasks();
+                    }
+                }
+        );
     }
 
     @Override
@@ -101,13 +116,13 @@ public class OneTimeTaskViewFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), TaskDetailActivity.class);
                 intent.putExtra("TASK_ID_EXTRA", task.getId());
                 intent.putExtra("TASK_TYPE_EXTRA", "ONETIME");
-                startActivity(intent);
+                taskDetailsLauncher.launch(intent);
                 viewModel.onTaskDetailsNavigated();
             }
         });
 
         getParentFragmentManager().setFragmentResultListener("for_list_signal", getViewLifecycleOwner(), (requestKey, bundle) -> {
-            Toast.makeText(getContext(), "Lista se osvežava...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Lista se osvježava...", Toast.LENGTH_SHORT).show();
             viewModel.loadRecurringTasks();
         });
 

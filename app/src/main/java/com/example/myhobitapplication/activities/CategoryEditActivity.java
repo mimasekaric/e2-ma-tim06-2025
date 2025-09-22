@@ -103,6 +103,17 @@ public class CategoryEditActivity extends AppCompatActivity {
             categoryEditViewModel.updateCategory();
         });
 
+        binding.btnDeleteCategory.setOnClickListener(v -> {
+            new AlertDialog.Builder(this)
+                    .setTitle("Delete?")
+                    .setMessage("Are you shure you want to delete this category?")
+                    .setPositiveButton("Delete", (dialog, which) -> {
+                        categoryEditViewModel.deleteCategory();
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
+        });
+
         categoryEditViewModel.getSubmissionError().observe(this, error -> {
             if (error != null && !error.isEmpty()) {
                 new AlertDialog.Builder(this)
@@ -127,13 +138,23 @@ public class CategoryEditActivity extends AppCompatActivity {
         });categoryEditViewModel.getSaveSuccessEvent().observe(this, isSuccess -> {
             if (isSuccess != null && isSuccess) {
 
-                Toast.makeText(this, "Kategorija je uspešno ažurirana!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Category successfully updated!", Toast.LENGTH_SHORT).show();
 
                 setResult(Activity.RESULT_OK);
 
                 finish();
 
                 categoryEditViewModel.onSaveSuccessEventHandled();
+            }
+        });
+
+        categoryEditViewModel.getCategoryDeletedEvent().observe(this, isDeleted -> {
+            if (isDeleted != null && isDeleted) {
+                Toast.makeText(this, "Category successfully deleted.", Toast.LENGTH_SHORT).show();
+                setResult(Activity.RESULT_OK);
+                finish();
+
+                categoryEditViewModel.onTaskDeletedEventHandled();
             }
         });
     }

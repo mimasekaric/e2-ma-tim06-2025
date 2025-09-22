@@ -13,6 +13,7 @@ import com.example.myhobitapplication.enums.TaskQuote;
 import com.example.myhobitapplication.models.OneTimeTask;
 import com.example.myhobitapplication.models.RecurringTask;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -56,6 +57,8 @@ public class TaskRepository {
         values.put(AppDataBaseHelper.COLUMN_END_DATE, recurringTask.getEndDate().toString());
         values.put(AppDataBaseHelper.COLUMN_CREATION_DATE, recurringTask.getCreationDate().toString());
         values.put(AppDataBaseHelper.COLUMN_FINISHED_DATE, recurringTask.getFinishedDate().toString());
+        values.put(AppDataBaseHelper.COLUMN_FINISH_DATE, recurringTask.getFinishDate().toString());
+        values.put(AppDataBaseHelper.COLUMN_REMAINING_TIME, recurringTask.getRemainingTime().toString());
         values.put(AppDataBaseHelper.COLUMN_FIRST_REC_TASK_ID, recurringTask.getFirstRecurringTaskId().toString());
         values.put(AppDataBaseHelper.COLUMN_USER_ID, recurringTask.getUserUid());
         values.put(AppDataBaseHelper.COLUMN_IS_AWARDED, recurringTask.isAwarded());
@@ -83,6 +86,8 @@ public class TaskRepository {
         values.put(AppDataBaseHelper.COLUMN_END_DATE, recurringTask.getEndDate().toString());
         values.put(AppDataBaseHelper.COLUMN_CREATION_DATE, recurringTask.getCreationDate().toString());
         values.put(AppDataBaseHelper.COLUMN_FINISHED_DATE, recurringTask.getFinishedDate().toString());
+        values.put(AppDataBaseHelper.COLUMN_FINISH_DATE, recurringTask.getFinishDate().toString());
+        values.put(AppDataBaseHelper.COLUMN_REMAINING_TIME, recurringTask.getRemainingTime().toString());
         values.put(AppDataBaseHelper.COLUMN_FIRST_REC_TASK_ID, recurringTask.getFirstRecurringTaskId().toString());
         values.put(AppDataBaseHelper.COLUMN_USER_ID, recurringTask.getUserUid());
         values.put(AppDataBaseHelper.COLUMN_IS_AWARDED, recurringTask.isAwarded());
@@ -207,6 +212,12 @@ public class TaskRepository {
                     String finishedDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_FINISHED_DATE));
                     task.setFinishedDate(LocalDate.parse(finishedDate));
 
+                    String finishDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_FINISH_DATE));
+                    task.setFinishDate(LocalDateTime.parse(finishDate));
+
+                    String remainingTime = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_REMAINING_TIME));
+                    task.setRemainingTime(Duration.parse(remainingTime));
+
                     task.setUserUid(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_USER_ID)));
 
                     String isAwarded = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IS_AWARDED));
@@ -271,6 +282,13 @@ public class TaskRepository {
             task.setFinishedDate(LocalDate.parse(finishedDate));
 
 
+            String finishDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_FINISH_DATE));
+            task.setFinishDate(LocalDateTime.parse(finishDate));
+
+            String remainingTime = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_REMAINING_TIME));
+            task.setRemainingTime(Duration.parse(remainingTime));
+
+
             String status = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_STATUS));
             task.setStatus(RecurringTaskStatus.valueOf(status));
 
@@ -304,6 +322,9 @@ public class TaskRepository {
         values.put(AppDataBaseHelper.COLUMN_END_DATE, task.getEndDate().toString());
         values.put(AppDataBaseHelper.COLUMN_CREATION_DATE, task.getCreationDate().toString());
         values.put(AppDataBaseHelper.COLUMN_FINISHED_DATE, task.getFinishedDate().toString());
+        values.put(AppDataBaseHelper.COLUMN_FINISH_DATE, task.getFinishDate().toString());
+        values.put(AppDataBaseHelper.COLUMN_REMAINING_TIME, task.getRemainingTime().toString());
+
         values.put(AppDataBaseHelper.COLUMN_FIRST_REC_TASK_ID, task.getFirstRecurringTaskId().toString());
         values.put(AppDataBaseHelper.COLUMN_USER_ID, task.getUserUid());
         values.put(AppDataBaseHelper.COLUMN_IS_AWARDED, task.isAwarded());
@@ -342,6 +363,8 @@ public class TaskRepository {
                 values.put(AppDataBaseHelper.COLUMN_END_DATE, recurringTask.getEndDate().toString());
                 values.put(AppDataBaseHelper.COLUMN_CREATION_DATE, recurringTask.getCreationDate().toString());
                 values.put(AppDataBaseHelper.COLUMN_FINISHED_DATE, recurringTask.getFinishedDate().toString());
+                values.put(AppDataBaseHelper.COLUMN_FINISH_DATE, recurringTask.getFinishDate().toString());
+                values.put(AppDataBaseHelper.COLUMN_REMAINING_TIME, recurringTask.getRemainingTime().toString());
                 values.put(AppDataBaseHelper.COLUMN_FIRST_REC_TASK_ID, recurringTask.getFirstRecurringTaskId().toString());
                 values.put(AppDataBaseHelper.COLUMN_USER_ID, recurringTask.getUserUid());
                 values.put(AppDataBaseHelper.COLUMN_IS_AWARDED, recurringTask.isAwarded());
@@ -390,20 +413,18 @@ public class TaskRepository {
     public int updateOutdatedTasksToNotDone() {
         database = dbHelper.getWritableDatabase();
 
-        LocalDateTime preTriDana = LocalDateTime.now().minusDays(3);
-        String granicaDatumString = preTriDana.toLocalDate().toString();
-        String granicaVremeString = preTriDana.toLocalTime().toString();
+        LocalDateTime today = LocalDateTime.now();
 
         ContentValues values = new ContentValues();
         values.put(AppDataBaseHelper.COLUMN_STATUS, RecurringTaskStatus.INCOMPLETE.name());
 
         String selection = AppDataBaseHelper.COLUMN_STATUS + " = ? AND " +
-                "datetime(" + AppDataBaseHelper.COLUMN_START_DATE + ", " + AppDataBaseHelper.COLUMN_EXECUTION_TIME + ")" +
+                "datetime(" + AppDataBaseHelper.COLUMN_FINISH_DATE  + ")" +
                 " < datetime(?)";
 
         String[] selectionArgs = {
                 RecurringTaskStatus.ACTIVE.name(),
-                preTriDana.toString()
+                today.toString()
         };
 
         int count = database.update(
@@ -529,6 +550,8 @@ public class TaskRepository {
         values.put(AppDataBaseHelper.COLUMN_STATUS, oneTimeTask.getStatus().toString());
         values.put(AppDataBaseHelper.COLUMN_CREATION_DATE, oneTimeTask.getCreationDate().toString());
         values.put(AppDataBaseHelper.COLUMN_FINISHED_DATE, oneTimeTask.getFinishedDate().toString());
+        values.put(AppDataBaseHelper.COLUMN_FINISH_DATE, oneTimeTask.getFinishDate().toString());
+        values.put(AppDataBaseHelper.COLUMN_REMAINING_TIME, oneTimeTask.getRemainingTime().toString());
         values.put(AppDataBaseHelper.COLUMN_START_DATE, oneTimeTask.getStartDate().toString());
         values.put(AppDataBaseHelper.COLUMN_USER_ID, oneTimeTask.getUserUid());
         values.put(AppDataBaseHelper.COLUMN_IS_AWARDED, oneTimeTask.isAwarded());
@@ -553,6 +576,8 @@ public class TaskRepository {
         values.put(AppDataBaseHelper.COLUMN_STATUS, task.getStatus().toString());
         values.put(AppDataBaseHelper.COLUMN_CREATION_DATE, task.getCreationDate().toString());
         values.put(AppDataBaseHelper.COLUMN_FINISHED_DATE, task.getFinishedDate().toString());
+        values.put(AppDataBaseHelper.COLUMN_FINISH_DATE, task.getFinishDate().toString());
+        values.put(AppDataBaseHelper.COLUMN_REMAINING_TIME, task.getRemainingTime().toString());
         values.put(AppDataBaseHelper.COLUMN_START_DATE, task.getStartDate().toString());
         values.put(AppDataBaseHelper.COLUMN_USER_ID, task.getUserUid());
         values.put(AppDataBaseHelper.COLUMN_IS_AWARDED, task.isAwarded());
@@ -623,6 +648,14 @@ public class TaskRepository {
 
                     String finishedDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_FINISHED_DATE));
                     task.setFinishedDate(LocalDate.parse(finishedDate));
+
+
+                    String finishDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_FINISH_DATE));
+                    task.setFinishDate(LocalDateTime.parse(finishDate));
+
+                    String remainingTime = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_REMAINING_TIME));
+                    task.setRemainingTime(Duration.parse(remainingTime));
+
 
                     task.setUserUid(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_USER_ID)));
 
@@ -726,6 +759,13 @@ public class TaskRepository {
             String finishedDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_FINISHED_DATE));
             task.setFinishedDate(LocalDate.parse(finishedDate));
 
+
+            String finishDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_FINISH_DATE));
+            task.setFinishDate(LocalDateTime.parse(finishDate));
+
+            String remainingTime = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_REMAINING_TIME));
+            task.setRemainingTime(Duration.parse(remainingTime));
+
             task.setUserUid(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_USER_ID)));
 
             String isAwarded = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IS_AWARDED));
@@ -740,23 +780,13 @@ public class TaskRepository {
 
     public int deleteOneTimeTask(long taskId) {
 
-
-
         database = dbHelper.getWritableDatabase();
-        int deletedRows = 0;
 
+        String selection = AppDataBaseHelper.COLUMN_ONE_TIME_TASK_ID + " = ?";
+        String[] selectionArgs  = {String.valueOf(taskId)};
 
-            String whereClause = AppDataBaseHelper.COLUMN_ONE_TIME_TASK_ID + " = ? AND ";
-
-
-            String[] whereArgs = {
-                    String.valueOf(taskId),
-            };
-
-            deletedRows = database.delete(AppDataBaseHelper.TABLE_ONE_TIME_TASKS, whereClause, whereArgs);
-
+        int deletedRows = database.delete(AppDataBaseHelper.TABLE_ONE_TIME_TASKS, selection, selectionArgs);
         database.close();
-
         return deletedRows;
     }
 
@@ -826,6 +856,12 @@ public class TaskRepository {
                     String finishedDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_FINISHED_DATE));
                     task.setFinishedDate(LocalDate.parse(finishedDate));
 
+
+                    String finishDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_FINISH_DATE));
+                    task.setFinishDate(LocalDateTime.parse(finishDate));
+
+                    String remainingTime = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_REMAINING_TIME));
+                    task.setRemainingTime(Duration.parse(remainingTime));
 
                     String status = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_STATUS));
                     task.setStatus(RecurringTaskStatus.valueOf(status));
@@ -941,7 +977,6 @@ public class TaskRepository {
                 db.close();
             }
         }
-
         return count;
     }
 

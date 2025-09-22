@@ -30,6 +30,11 @@ public class CategoryEditViewModel extends ViewModel {
     private final MutableLiveData<Boolean> _saveSuccessEvent = new MutableLiveData<>();
     public LiveData<Boolean> getSaveSuccessEvent() { return _saveSuccessEvent; }
 
+    private final MutableLiveData<Boolean> _categoryDeletedEvent = new MutableLiveData<>();
+
+    public LiveData<Boolean> getCategoryDeletedEvent() {
+        return _categoryDeletedEvent;
+    }
     public CategoryEditViewModel(CategoryService categoryService) {
         this.categoryService = categoryService;
         validateForm();
@@ -72,6 +77,13 @@ public class CategoryEditViewModel extends ViewModel {
 
     }
 
+    public void deleteCategory() {
+        CategoryDTO categoryDTO = _categoryDetails.getValue();
+        if(categoryDTO!=null){
+            categoryService.deleteCategory(categoryDTO);
+        }
+    }
+
     private void validateForm() {
         String currentName = _name.getValue();
 
@@ -89,6 +101,8 @@ public class CategoryEditViewModel extends ViewModel {
         _saveSuccessEvent.setValue(false);
     }
 
-
+    public void onTaskDeletedEventHandled() {
+        _categoryDeletedEvent.setValue(false);
+    }
 
 }

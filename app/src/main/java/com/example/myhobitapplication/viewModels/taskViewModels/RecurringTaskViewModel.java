@@ -28,7 +28,7 @@ public class RecurringTaskViewModel extends ViewModel {
     private final MutableLiveData<LocalDate> startDate = new MutableLiveData<LocalDate>(LocalDate.now());
     private final MutableLiveData<LocalDate> endDate = new MutableLiveData<LocalDate>(LocalDate.now());
 
-    private final MutableLiveData<Integer> recurrenceInterval = new MutableLiveData<>(0);
+    private final MutableLiveData<Integer> recurrenceInterval = new MutableLiveData<>(1);
     private final MutableLiveData<RecurrenceUnit> recurrenceUnit = new MutableLiveData<>(RecurrenceUnit.DAY);
 
     private final MutableLiveData<Category> category = new MutableLiveData<>(null);
@@ -83,6 +83,7 @@ public class RecurringTaskViewModel extends ViewModel {
     public RecurringTaskViewModel(TaskService taskService){
         this.taskService = taskService;
         userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        setRecurrenceInterval(1);
         validateForm();
     }
 

@@ -46,6 +46,8 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
 
     public static final String COLUMN_FIRST_REC_TASK_ID = "first_rec_task_id";
     public static final String COLUMN_FINISHED_DATE = "finished_date";
+    public static final String COLUMN_FINISH_DATE = "finish_date";
+    public static final String COLUMN_REMAINING_TIME = "remaining_time";
     public static final String COLUMN_CREATION_DATE = "creation_date";
 
     public static final String TABLE_BOSSES = "bosses";
@@ -119,6 +121,8 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
                 + COLUMN_FINISHED_DATE + " TEXT,"
                 + COLUMN_USER_ID + " TEXT,"
                 + COLUMN_END_DATE + " TEXT,"
+                + COLUMN_FINISH_DATE + " TEXT,"
+                + COLUMN_REMAINING_TIME + " TEXT,"
                 + COLUMN_IS_AWARDED + " TEXT" + ")";
         db.execSQL(CREATE_RECURRING_TASKS_TABLE);
 
@@ -135,6 +139,8 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
                 + COLUMN_START_DATE + " TEXT,"
                 + COLUMN_USER_ID + " TEXT,"
                 + COLUMN_FINISHED_DATE + " TEXT,"
+                + COLUMN_FINISH_DATE + " TEXT,"
+                + COLUMN_REMAINING_TIME + " TEXT,"
                 + COLUMN_IS_AWARDED + " TEXT" + ")";
         db.execSQL(CREATE_ONE_TIME_TASK_TABLE);
 

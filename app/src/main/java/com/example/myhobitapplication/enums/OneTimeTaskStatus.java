@@ -5,5 +5,7 @@ public enum OneTimeTaskStatus {
     COMPLETED,
     INCOMPLETE,
     PAUSED,
+    PAUSED_COMPLETED,
+    UNPAUSED,
     CANCELED
 }

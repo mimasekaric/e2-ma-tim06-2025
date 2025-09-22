@@ -5,6 +5,8 @@ public enum RecurringTaskStatus {
     COMPLETED,
     INCOMPLETE,
     PAUSED,
+    PAUSED_COMPLETED,
+    UNPAUSED,
     CANCELED
 
 }

@@ -56,6 +56,7 @@ public class RecurringTaskFragment extends Fragment {
 
 
 
+
         taskViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @NonNull
             @Override

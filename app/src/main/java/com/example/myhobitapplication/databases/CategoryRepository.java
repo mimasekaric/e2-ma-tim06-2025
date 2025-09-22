@@ -45,6 +45,17 @@ public class CategoryRepository {
         return newRowId;
     }
 
+    public long deleteCategory(Category category) {
+        database = dbHelper.getWritableDatabase();
+
+        String selection = AppDataBaseHelper.COLUMN_CATEGORY_ID + " = ?";
+        String[] selectionArgs  = {String.valueOf(category.getId())};
+
+        long deletedRows = database.delete(AppDataBaseHelper.TABLE_CATEGORIES, selection, selectionArgs);
+        database.close();
+        return deletedRows;
+    }
+
     public List<Category> getAllCategories() {
         List<Category> categories = new ArrayList<>();
 

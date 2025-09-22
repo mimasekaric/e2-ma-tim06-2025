@@ -2,6 +2,7 @@ package com.example.myhobitapplication.fragments.tasksFragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -14,10 +15,12 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.activities.TaskEditActivity;
 import com.example.myhobitapplication.databases.CategoryRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
@@ -52,58 +55,6 @@ public class RecurringTaskDetailsFragment extends Fragment {
     private static final String ARG_TASK_ID = "taskId";
 
     private int taskId;
-
-//    private final ActivityResultLauncher<Intent> editTaskLauncher = registerForActivityResult(
-//            new ActivityResultContracts.StartActivityForResult(),
-//            result -> {
-//                // OVAJ KOD SE IZVRŠAVA KADA SE VRATIMO IZ EditTaskActivity
-//
-//                // Proveravamo da li je rezultat "USPEŠAN"
-//                if (result.getResultCode() == Activity.RESULT_OK) {
-//                    // To je naš signal da su podaci promenjeni!
-//                    Toast.makeText(getContext(), "Ažuriranje detalja...", Toast.LENGTH_SHORT).show();
-//
-//                    // Ponovo učitaj podatke da bi se prikaz osvežio
-//                    taskDetailsViewModel.loadTaskDetails(taskId);
-//
-//                    requireActivity().getSupportFragmentManager().setFragmentResult("taskAddedRequest", new Bundle());
-//                }
-//                // Ako je resultCode bio RESULT_CANCELED (korisnik pritisnuo back), ne radimo ništa.
-//            }
-//    );
-
-
-//    private final ActivityResultLauncher<Intent> editTaskLauncher = registerForActivityResult(
-//            new ActivityResultContracts.StartActivityForResult(),
-//            result -> {
-//                if (result.getResultCode() == Activity.RESULT_OK) {
-//                    // Podaci su izmenjeni, osveži ovaj ekran
-//                    taskDetailsViewModel.loadTaskDetails(taskId);
-//
-//                    // --- KLJUČNI DEO: PROSLEDI REZULTAT NAZAD ---
-//                    // Javi TaskDetailActivity-ji da postavi svoj rezultat na OK
-//                    if (getActivity() != null) {
-//                        getActivity().setResult(Activity.RESULT_OK);
-//                    }
-//                }
-//            }
-//    );
-
-    // Isto uradi i za brisanje!
-//    taskDetailsViewModel.getTaskDeletedEvent().observe(getViewLifecycleOwner(), isDeleted -> {
-//        if (isDeleted != null && isDeleted) {
-//            Toast.makeText(getContext(), "Zadatak uspješno obrisan.", Toast.LENGTH_SHORT).show();
-//
-//            // --- KLJUČNI DEO: PROSLEDI REZULTAT NAZAD ---
-//            if (getActivity() != null) {
-//                // Postavi rezultat pre nego što se aktivnost zatvori
-//                getActivity().setResult(Activity.RESULT_OK);
-//                getActivity().finish();
-//            }
-//        }
-//    });
-
-
 
     public static RecurringTaskDetailsFragment newInstance(int taskId) {
         RecurringTaskDetailsFragment fragment = new RecurringTaskDetailsFragment();
@@ -143,9 +94,7 @@ public class RecurringTaskDetailsFragment extends Fragment {
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
-                        // Podaci su izmenjeni, osveži ovaj ekran
                         taskDetailsViewModel.loadTaskDetails(taskId);
-                        // Javi prethodnoj aktivnosti da postavi svoj rezultat na OK
                         if (getActivity() != null) {
                             getActivity().setResult(Activity.RESULT_OK);
                         }
@@ -200,7 +149,7 @@ public class RecurringTaskDetailsFragment extends Fragment {
                     binding.deleteTaskButton.setVisibility(View.GONE);
                 }
 
-                if (status == RecurringTaskStatus.COMPLETED ||
+                if (status == RecurringTaskStatus.COMPLETED || status == RecurringTaskStatus.PAUSED_COMPLETED ||
                         status == RecurringTaskStatus.INCOMPLETE ||
                         status == RecurringTaskStatus.CANCELED) {
 
@@ -209,14 +158,25 @@ public class RecurringTaskDetailsFragment extends Fragment {
                     binding.btnRctaskDone.setVisibility(View.GONE);
                     binding.btnRctaskCancel.setVisibility(View.GONE);
                     binding.btnRctaskPause.setVisibility(View.GONE);
+                    binding.btnRctaskUnpause.setVisibility(View.GONE);
 
-                } else if(!isTaskInThePast && status == RecurringTaskStatus.ACTIVE ||
-                        status == RecurringTaskStatus.PAUSED) {
+                }
+                else if(!isTaskInThePast && status == RecurringTaskStatus.ACTIVE ||
+                        status == RecurringTaskStatus.UNPAUSED) {
                     binding.editTaskButton.setVisibility(View.VISIBLE);
                     binding.deleteTaskButton.setVisibility(View.VISIBLE);
                     binding.btnRctaskDone.setVisibility(View.VISIBLE);
                     binding.btnRctaskCancel.setVisibility(View.VISIBLE);
                     binding.btnRctaskPause.setVisibility(View.VISIBLE);
+                    binding.btnRctaskUnpause.setVisibility(View.GONE);
+                }
+                    else if(!isTaskInThePast && status == RecurringTaskStatus.PAUSED) {
+                    binding.editTaskButton.setVisibility(View.GONE);
+                    binding.deleteTaskButton.setVisibility(View.GONE);
+                    binding.btnRctaskDone.setVisibility(View.GONE);
+                    binding.btnRctaskCancel.setVisibility(View.GONE);
+                    binding.btnRctaskPause.setVisibility(View.GONE);
+                    binding.btnRctaskUnpause.setVisibility(View.VISIBLE);
                 }
            }
         });
@@ -256,31 +216,48 @@ public class RecurringTaskDetailsFragment extends Fragment {
             taskDetailsViewModel.markTaskAsCanceled();
         });
 
+        binding.btnRctaskUnpause.setOnClickListener(v -> {
+
+            taskDetailsViewModel.markTaskAsUnPaused();
+        });
+
         binding.btnRctaskPause.setOnClickListener(v -> {
 
             taskDetailsViewModel.markTaskAsPaused();
         });
 
         binding.deleteTaskButton.setOnClickListener(v -> {
-
-            new AlertDialog.Builder(requireContext())
-                    .setTitle("Delete?")
-                    .setMessage("Are you shure you want to delete this recurring task?")
-                    .setPositiveButton("Delete", (dialog, which) -> {
-                        taskDetailsViewModel.deleteRecurringTask();
+            AlertDialog.Builder dialog = new AlertDialog.Builder(requireContext(), R.style.AlertDialogWhiteText);
+            dialog.setTitle("Delete?")
+                    .setMessage("Are you sure you want to delete this recurring task?")
+                    .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int which) {
+                            taskDetailsViewModel.deleteRecurringTask();
+                        }
                     })
-                    .setNegativeButton("Cancel", null)
-                    .show();
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int which) {
+                            dialogInterface.dismiss();
+                        }
+                    });
+
+            AlertDialog alert = dialog.create();
+            if (alert.getWindow() != null) {
+                alert.getWindow().setBackgroundDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.logincard));
+            }
+            alert.show();
         });
 
         taskDetailsViewModel.getTaskDeletedEvent().observe(getViewLifecycleOwner(), isDeleted -> {
             if (isDeleted != null && isDeleted) {
-                Toast.makeText(getContext(), "Zadatak uspešno obrisan.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Task successfully deleted.", Toast.LENGTH_SHORT).show();
                 if (getActivity() != null) {
                     getActivity().setResult(Activity.RESULT_OK);
                     getActivity().finish();
                 }
-                taskDetailsViewModel.onTaskDeletedEventHandled(); // Resetuj event
+                taskDetailsViewModel.onTaskDeletedEventHandled();
             }
         });
     }
