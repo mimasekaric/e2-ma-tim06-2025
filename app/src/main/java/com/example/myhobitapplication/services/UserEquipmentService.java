@@ -29,9 +29,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 /// /vidi mozda ako vec ima aktiviran clothes istog tipa al da nije counterfight 0 i effect 0 ... p=mozda i tu treba sabirati ucinak?
-/// PROVJERI RADI LI ZA CIZME I STIT
+/// PROVJERI RADI LI ZA STIT
 ///kad gainuje isto oruyje povecava s evjerovatnocaa
 /// ///NAMJESTI KAD POBIJEDI DA SE LOADUJE PROFIL OPET i vidi dal na dobrom ide u won
+/// namjestiiiii da radi luk i strijelaa
 
 public class UserEquipmentService {
 
@@ -73,16 +74,18 @@ public class UserEquipmentService {
                 UserEquipment userEquipment = getById(ueDTO.getUserEquipmentId());
                 userEquipment.setFightsCounter(userEquipment.getFightsCounter() + 1);
                 if(ueDTO.getEquipment().getequipmentType().equals(EquipmentTypes.POTION)){
-                    repository.delete(userEquipment);
                     if(!((Potion)ueDTO.getEquipment()).isPermanent()){
                         double newpp = profile.getPp() - userEquipment.getEffect();
                         profileService.updatePp(profile.getuserUid(), (int)newpp);
                         repository.delete(userEquipment);
                     }
+                    repository.delete(userEquipment);
                 }else if(ueDTO.getEquipment().getequipmentType().equals(EquipmentTypes.CLOTHING) && userEquipment.getFightsCounter() > 1){
                     Clothing c = (Clothing) ueDTO.getEquipment();
                     double newpp = profile.getPp() - userEquipment.getEffect();
                     profileService.updatePp(profile.getuserUid(), (int)newpp);
+                    repository.delete(userEquipment);
+                }else if(ueDTO.getEquipment().getequipmentType().equals(EquipmentTypes.WEAPON) ){
                     repository.delete(userEquipment);
                 }else{
                     repository.updateUserEquipment(userEquipment);
@@ -189,8 +192,8 @@ public class UserEquipmentService {
             int newpp = profile.getPp() + (int) Math.round(powerdelta);
             profileService.updatePp(profile.getuserUid(), newpp);
         }else{
-            BossDTO currentBossForUser = bossService.getCurrentBossForUser(userId, profile.getlevel());
-            double delta = currentBossForUser.getCoinRewardPercent() * (userEquipment.getEffect() / 100.0);
+            BossDTO currentBossForUser = bossService.getCurrentBossForUser(userId, profile.getlevel()-1);
+            double delta = currentBossForUser.getCoinsReward() * (userEquipment.getEffect() / 100.0);
             currentBossForUser.setCoinRewardPercent(currentBossForUser.getCoinRewardPercent()+ delta);
             bossService.updateBoss(currentBossForUser);
         }
