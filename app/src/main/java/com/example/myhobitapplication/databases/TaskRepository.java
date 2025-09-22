@@ -470,7 +470,7 @@ public class TaskRepository {
         return deletedRows;
     }
 
-    public int countTasksByStatusInDateRange(RecurringTaskStatus status, LocalDate startDate, LocalDate endDate, String userUid) {
+    public int countRecurringTasksByStatusInDateRange(RecurringTaskStatus status, LocalDate startDate, LocalDate endDate, String userUid) {
 
         int count = 0;
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -505,18 +505,102 @@ public class TaskRepository {
         return count;
     }
 
-    public int countTasksByDateRange(LocalDate startDate, LocalDate endDate, String userUid) {
+    public int countRecurringTasksByDateRange(LocalDate startDate, LocalDate endDate, String userUid) {
 
         int count = 0;
         SQLiteDatabase db = dbHelper.getReadableDatabase();
+        RecurringTaskStatus statusOne = RecurringTaskStatus.CANCELED;
+        RecurringTaskStatus statusTwo = RecurringTaskStatus.PAUSED;
 
         String selection = AppDataBaseHelper.COLUMN_USER_ID + " = ? AND " +
+                AppDataBaseHelper.COLUMN_STATUS + " != ? AND " +
+                AppDataBaseHelper.COLUMN_STATUS + " != ? AND " +
+                AppDataBaseHelper.COLUMN_IS_AWARDED + " = ? AND " +
                 AppDataBaseHelper.COLUMN_CREATION_DATE + " BETWEEN ? AND ?";
 
 
 
         String[] selectionArgs = {
                 userUid,
+                statusOne.name(),
+                statusTwo.name(),
+                "1",
+                startDate.toString(),
+                endDate.toString()
+        };
+
+        String countQuery = "SELECT COUNT(*) FROM " + AppDataBaseHelper.TABLE_RECURRING_TASKS +
+                " WHERE " + selection;
+
+        Cursor cursor = db.rawQuery(countQuery, selectionArgs);
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(0);
+            }
+            cursor.close();
+        }
+        db.close();
+
+        return count;
+    }
+
+
+    public int countOneTimeTasksByStatusInDateRange(RecurringTaskStatus status, LocalDate startDate, LocalDate endDate, String userUid) {
+
+        int count = 0;
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String selection = AppDataBaseHelper.COLUMN_USER_ID + " = ? AND " +
+                AppDataBaseHelper.COLUMN_STATUS + " = ? AND " +
+                AppDataBaseHelper.COLUMN_IS_AWARDED + " = ? AND " +
+                AppDataBaseHelper.COLUMN_START_DATE + " BETWEEN ? AND ?";
+
+
+        String[] selectionArgs = {
+                userUid,
+                status.name(),
+                "1",
+                startDate.toString(),
+                endDate.toString()
+        };
+
+        String countQuery = "SELECT COUNT(*) FROM " + AppDataBaseHelper.TABLE_RECURRING_TASKS +
+                " WHERE " + selection;
+
+        Cursor cursor = db.rawQuery(countQuery, selectionArgs);
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(0);
+            }
+            cursor.close();
+        }
+        db.close();
+
+        return count;
+    }
+
+    public int countOneTimeTasksByDateRange(LocalDate startDate, LocalDate endDate, String userUid) {
+
+        int count = 0;
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        RecurringTaskStatus statusOne = RecurringTaskStatus.CANCELED;
+        RecurringTaskStatus statusTwo = RecurringTaskStatus.PAUSED;
+
+        String selection = AppDataBaseHelper.COLUMN_USER_ID + " = ? AND " +
+                AppDataBaseHelper.COLUMN_STATUS + " != ? AND " +
+                AppDataBaseHelper.COLUMN_STATUS + " != ? AND " +
+                AppDataBaseHelper.COLUMN_IS_AWARDED + " = ? AND " +
+                AppDataBaseHelper.COLUMN_CREATION_DATE + " BETWEEN ? AND ?";
+
+
+
+        String[] selectionArgs = {
+                userUid,
+                statusOne.name(),
+                statusTwo.name(),
+                "1",
                 startDate.toString(),
                 endDate.toString()
         };

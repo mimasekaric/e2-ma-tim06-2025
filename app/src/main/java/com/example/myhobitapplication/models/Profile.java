@@ -22,19 +22,19 @@ public class Profile {
     private Integer numberOgBadges;
     private List<String> badges;
 
-    private List<String> equipment;//equipment ids
+    private int xpRequired;
 
     private Date previousLevelDate;
     private Date currentLevelDate;
 
-    public Profile(String userUid, Integer coins, Integer xp, Integer level, Integer numberOfbadges, List<String> badges, List<String> equipment, Title title, Integer pp, Date lastLevelDate, Date currentLevelDate) {
+    public Profile(String userUid, Integer coins, Integer xp, Integer level, Integer numberOfbadges, List<String> badges, int xpRequired, Title title, Integer pp, Date lastLevelDate, Date currentLevelDate) {
         this.userUid = userUid;
         this.coins = coins;
         this.xp = xp;
         this.level = level;
         this.numberOgBadges = numberOfbadges;
         this.badges = badges;
-        this.equipment = equipment;
+        this.xpRequired = xpRequired;
         this.title=title;
         this.pp=pp;
         this.currentLevelDate= currentLevelDate;
@@ -50,17 +50,24 @@ public class Profile {
         this.numberOgBadges = 0;
         this.badges = new ArrayList<>();
         this.pp=0;
-        this.equipment = new ArrayList<>();
+        this.xpRequired = 200;
         this.previousLevelDate = new Date();
         this.currentLevelDate = new Date();
     }
 
     public Profile(){
         badges = new ArrayList<>();
-        equipment = new ArrayList<>();
     }
     public String getuserUid() {
         return userUid;
+    }
+
+    public int getXpRequired() {
+        return xpRequired;
+    }
+
+    public void setXpRequired(int xpRequired) {
+        this.xpRequired = xpRequired;
     }
 
     public void setuserUid(String userUid) {
@@ -122,14 +129,6 @@ public class Profile {
 
     public void setPp(Integer pp) {
         this.pp = pp;
-    }
-
-    public List<String> getequipment() {
-        return equipment;
-    }
-
-    public void setequipment(List<String> equipment) {
-        this.equipment = equipment;
     }
 
     public Date getPreviousLevelDate() {

@@ -73,6 +73,24 @@ public class BattleService {
 
     }
 
+    public boolean rewardUserWithHalfCoins(String userId, int halfCoins, int bossLevel){
+
+        if(userId!=null) {
+
+            if(bossLevel==0){
+                profileService.incrementProfileFieldValue(userId,"coins",100);
+                return true;
+            }
+            else{
+                profileService.incrementProfileFieldValue(userId,"coins", halfCoins);
+                return true;
+            }
+
+        }
+        return false;
+
+    }
+
     public int calculateCoinsRewardForBoss(int bossLevel, String userId){
 
             if(bossLevel == 0){

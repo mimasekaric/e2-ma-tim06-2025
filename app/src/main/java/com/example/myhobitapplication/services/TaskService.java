@@ -232,12 +232,16 @@ public class TaskService {
 
     public int countCreatedTasksForDateRange(LocalDate previousLevelDate, LocalDate currentLevelDate, String userUid){
 
-        return repository.countTasksByDateRange(previousLevelDate,currentLevelDate, userUid);
+        int rCount =  repository.countRecurringTasksByDateRange(previousLevelDate,currentLevelDate, userUid);
+        int oCount =  repository.countOneTimeTasksByDateRange(previousLevelDate,currentLevelDate, userUid);
+        return rCount + oCount;
     }
 
     public int countFinishedTasksForDateRange(LocalDate previousLevelDate, LocalDate currentLevelDate, String userUid){
 
-        return repository.countTasksByStatusInDateRange(RecurringTaskStatus.COMPLETED,previousLevelDate,currentLevelDate, userUid);
+        int rCount =  repository.countRecurringTasksByStatusInDateRange(RecurringTaskStatus.COMPLETED,previousLevelDate,currentLevelDate, userUid);
+        int oCount =  repository.countOneTimeTasksByStatusInDateRange(RecurringTaskStatus.COMPLETED,previousLevelDate,currentLevelDate, userUid);
+        return rCount + oCount;
     }
 
     public void createOneTimeTask(OneTimeTaskDTO taskDTO) throws ValidationException {

@@ -231,7 +231,7 @@ public class BattleViewModel extends ViewModel {
                 });
                 deleteEquipmentEffect();
                 battleService.rewardUserWithCoins(currentBoss);
-                Equipment equipment = rewardUserWithEquipment();
+                Equipment equipment = rewardUserWithEquipment(1.0);
                 setEquipmentDetails(equipment);
             }
 
@@ -246,12 +246,29 @@ public class BattleViewModel extends ViewModel {
 
         if (_remainingAttacks.getValue() <= 0 && currentBoss.getCurrentHP() > 0) {
             _isBattleOver.setValue(true);
+
+
+            double halfMaxHp = currentBoss.getHP() / 2.0;
+
+            if (currentBoss.getCurrentHP() <= halfMaxHp) {
+
+                int halfCoinsReward = currentBoss.getCoinsReward() / 2;
+                setCoins(halfCoinsReward);
+                battleService.rewardUserWithHalfCoins(currentBoss.getUserId(), halfCoinsReward, currentBoss.getBossLevel());
+
+                Equipment equipment = rewardUserWithEquipment(0.5);
+                setEquipmentDetails(equipment);
+
+            } else {
+                setCoins(0);
+            }
             profileService.getProfileById(userUid).addOnSuccessListener(profile -> {
                 userEquipmentService.incrementFightsCounter(userUid,profile);
-                });
+            });
             deleteEquipmentEffect();
-
         }
+
+
 
 
     }
@@ -292,7 +309,7 @@ public class BattleViewModel extends ViewModel {
         }
     }
 
-    public Equipment rewardUserWithEquipment() {
+    public Equipment rewardUserWithEquipment(double modificator) {
 
         double randomChanceToGainEquipment = Math.random();
         double randomChanceEquipment = Math.random();
@@ -303,14 +320,39 @@ public class BattleViewModel extends ViewModel {
         WeaponTypes weaponTypes;
         //randomChanceToGainEquipment <= chanceToGainEquipment
 
-        if (true) {
-            if (randomChanceEquipment <= weaponChance) {
-                if (randomChanceEquipmentType < 0.333) {
-                    clothingTypes = ClothingTypes.GLOVES;
-                } else if (randomChanceEquipmentType < 0.666) {
-                    clothingTypes = ClothingTypes.SHIELD;
+        if (randomChanceToGainEquipment <= chanceToGainEquipment*modificator) {
+            if(randomChanceEquipment <= weaponChance) {
+                if (randomChanceEquipmentType < 0.5) {
+                    weaponTypes = WeaponTypes.BOW_AND_ARROW_OF_LEGOLAS;
                 } else {
+                    weaponTypes = WeaponTypes.ANDURIL_OF_ARAGORN;
+                }
+                List<Equipment> weapons = userEquipmentService.getByType(EquipmentTypes.WEAPON);
+
+                Optional<Weapon> foundWeapon = weapons.stream()
+                        .filter(item -> item instanceof Weapon)
+                        .map(item -> (Weapon) item)
+                        .filter(clothing -> clothing.getType() == weaponTypes)
+                        .findFirst();
+
+                if (foundWeapon.isPresent()) {
+
+                    Weapon weapon = foundWeapon.get();
+                    userEquipmentService.gainEquipment(userUid,weapon);
+                    return weapon;
+
+                } else {
+                    return null;
+                }
+            }
+
+            else {
+                if (randomChanceEquipmentType < 0.333) {
                     clothingTypes = ClothingTypes.BOOTS;
+                } else if (randomChanceEquipmentType < 0.666) {
+                    clothingTypes = ClothingTypes.GLOVES;
+                } else {
+                    clothingTypes = ClothingTypes.SHIELD;
                 }
 
                 List<Equipment> clothes = userEquipmentService.getByType(EquipmentTypes.CLOTHING);
@@ -326,31 +368,6 @@ public class BattleViewModel extends ViewModel {
                     Clothing clothing = foundBoots.get();
                     userEquipmentService.gainEquipment(userUid,clothing);
                     return clothing;
-
-                } else {
-                   return null;
-                }
-
-            }
-            else {
-                if (randomChanceEquipmentType < 0.5) {
-                    weaponTypes = WeaponTypes.ANDURIL_OF_ARAGORN;
-                } else {
-                    weaponTypes = WeaponTypes.BOW_AND_ARROW_OF_LEGOLAS;
-                }
-                List<Equipment> weapons = userEquipmentService.getByType(EquipmentTypes.WEAPON);
-
-                Optional<Weapon> foundWeapon = weapons.stream()
-                        .filter(item -> item instanceof Weapon)
-                        .map(item -> (Weapon) item)
-                        .filter(clothing -> clothing.getType() == weaponTypes)
-                        .findFirst();
-
-                if (foundWeapon.isPresent()) {
-
-                    Weapon weapon = foundWeapon.get();
-                    userEquipmentService.gainEquipment(userUid,weapon);
-                    return weapon;
 
                 } else {
                     return null;
