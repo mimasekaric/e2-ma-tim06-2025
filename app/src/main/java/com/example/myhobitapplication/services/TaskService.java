@@ -389,7 +389,7 @@ public class TaskService {
             task.setStatus(RecurringTaskStatus.COMPLETED);
             repository.updateRecurringTask(task);
             profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
-                        Log.d("Firestore", "XP uspešno ažuriran!");
+                        Log.d("Firestore", "XP uspješno ažuriran!");
                     })
                     .addOnFailureListener(e -> {
                         Log.e("Firestore", "Greška pri ažuriranju XP-a", e);

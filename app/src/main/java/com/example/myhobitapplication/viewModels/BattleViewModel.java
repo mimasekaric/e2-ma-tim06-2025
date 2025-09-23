@@ -55,6 +55,7 @@ public class BattleViewModel extends ViewModel {
     private final MutableLiveData<Integer> _userPP = new MutableLiveData<>();
     private final MutableLiveData<Integer> _remainingAttacks = new MutableLiveData<>();
     private final MutableLiveData<Boolean> _hitAnimationEvent = new MutableLiveData<>();
+    MutableLiveData<List<UserEquipmentDTO>> activatedEquipmentList= new MutableLiveData<List<UserEquipmentDTO>>();
     private final MutableLiveData<Integer> _coins = new MutableLiveData<>(0);
 
     private final MutableLiveData<Boolean> _attackMissedEvent = new MutableLiveData<>();
@@ -63,7 +64,8 @@ public class BattleViewModel extends ViewModel {
     private final MutableLiveData<Integer> _rewardEquipmentImage = new MutableLiveData<>(0);
     public MutableLiveData<Integer> getImageResource() { return _rewardEquipmentImage;}
     public void setImageResource(Integer src) { _rewardEquipmentImage.setValue(src);}
-
+    public MutableLiveData<List<UserEquipmentDTO>> getActivatedEquipment() { return activatedEquipmentList;}
+    public void setActivatedEquipment(List<UserEquipmentDTO> activatedEquipmentsdata) { activatedEquipmentList.setValue(activatedEquipmentsdata);}
     public double getHitChance() {return hitChance;}
     public int getStartAttackNumber() {return startAttackNumber;}
     public void setStartAttackNumber(int number) {startAttackNumber = number;}
@@ -141,6 +143,7 @@ public class BattleViewModel extends ViewModel {
             userEquipmentService.activatedEquipmentEffect(profile);
             _userProfile.setValue(profile);
             List<UserEquipmentDTO> ueList= userEquipmentService.getUserActivatedEquipment(profile.getuserUid());
+            setActivatedEquipment(ueList);
             for(UserEquipmentDTO u :  ueList){
                 UserEquipment userEquipment = userEquipmentService.getById(u.getUserEquipmentId());
                 if (u.getEquipment().getequipmentType().equals(EquipmentTypes.CLOTHING)){
