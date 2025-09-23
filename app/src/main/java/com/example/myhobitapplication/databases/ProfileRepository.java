@@ -32,10 +32,10 @@ import java.util.UUID;
                 profile1.put("coins", profile.getcoins());
                 profile1.put("pp", profile.getPp());
                 profile1.put("xp", profile.getxp());
+                profile1.put("xpRequired", profile.getXpRequired());
                 profile1.put("level", profile.getlevel());
                 profile1.put("numberOgBadges", profile.getnumberOgbadges());
                 profile1.put("badges", profile.getbadges());
-                profile1.put("equipment", profile.getequipment());
                 profile1.put("previousLevelDate", profile.getPreviousLevelDate());
                 profile1.put("currentLevelDate", profile.getCurrentLevelDate());
                 return profileCollection
@@ -155,6 +155,29 @@ import java.util.UUID;
                 return tcs.getTask();
             }
 
+            public Task<Void> updateLevel(String uid, int newLevel, int newXpRequired) {
+                TaskCompletionSource<Void> tcs = new TaskCompletionSource<>();
 
+                profileCollection.whereEqualTo("userUid", uid).limit(1).get()
+                        .addOnSuccessListener(queryDocumentSnapshots -> {
+                            if (queryDocumentSnapshots.isEmpty()) {
+                                tcs.setException(new Exception("Profile not found for UID: " + uid));
+                            } else {
+                                DocumentSnapshot document = queryDocumentSnapshots.getDocuments().get(0);
+
+                                Map<String, Object> updates = new HashMap<>();
+                                updates.put("level", newLevel);
+                                updates.put("xpRequired", newXpRequired);
+
+                                document.getReference()
+                                        .update(updates)
+                                        .addOnSuccessListener(aVoid -> tcs.setResult(null))
+                                        .addOnFailureListener(tcs::setException);
+                            }
+                        })
+                        .addOnFailureListener(tcs::setException);
+
+                return tcs.getTask();
+            }
         }
 
