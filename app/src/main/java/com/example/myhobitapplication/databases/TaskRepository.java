@@ -891,7 +891,7 @@ public class TaskRepository {
             String selection = AppDataBaseHelper.COLUMN_USER_ID + " = ? AND " +
                     AppDataBaseHelper.COLUMN_STATUS + " = ? AND " +
                     AppDataBaseHelper.COLUMN_IS_AWARDED + " = 1 AND " +
-                    AppDataBaseHelper.COLUMN_START_DATE + " BETWEEN ? AND ?";
+                    AppDataBaseHelper.COLUMN_FINISHED_DATE + " BETWEEN ? AND ?";
 
             String[] selectionArgs = {
                     userUid,
@@ -991,7 +991,7 @@ public class TaskRepository {
             String selection = AppDataBaseHelper.COLUMN_USER_ID + " = ? AND " +
                     AppDataBaseHelper.COLUMN_STATUS + " = ? AND " +
                     AppDataBaseHelper.COLUMN_IS_AWARDED + " = 1 AND " +
-                    AppDataBaseHelper.COLUMN_START_DATE + " BETWEEN ? AND ?";
+                    AppDataBaseHelper.COLUMN_FINISHED_DATE + " BETWEEN ? AND ?";
 
             String[] selectionArgs = {
                     userUid,

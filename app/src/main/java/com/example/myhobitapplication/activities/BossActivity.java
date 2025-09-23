@@ -83,8 +83,8 @@ public class BossActivity extends AppCompatActivity {
         BossRepository bossRepository = new BossRepository(getApplicationContext());
         EquipmentRepository equipmentRepository = new EquipmentRepository(getApplicationContext());
         ProfileService profileService = new ProfileService();
-        Boss boss = new Boss(2,400,userUid,400,false,2,200, 0.2);
-        bossRepository.insertBoss(boss);
+        //Boss boss = new Boss(2,400,userUid,400,false,2,200, 0.2);
+        //bossRepository.insertBoss(boss);
         BossService bossService = new BossService(bossRepository);
         EquipmentService equipmentService = new EquipmentService(equipmentRepository);
         battleViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {

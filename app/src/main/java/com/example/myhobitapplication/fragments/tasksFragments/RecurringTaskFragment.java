@@ -21,11 +21,14 @@ import androidx.lifecycle.ViewModelProvider;
 
 
 import com.example.myhobitapplication.adapters.CategorySpinnerAdapter;
+import com.example.myhobitapplication.databases.BossRepository;
 import com.example.myhobitapplication.databases.CategoryRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.FragmentRecurringTaskBinding;
 import com.example.myhobitapplication.enums.RecurrenceUnit;
 import com.example.myhobitapplication.models.Category;
+import com.example.myhobitapplication.services.BattleService;
+import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.CategoryService;
 import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.TaskService;
@@ -50,7 +53,10 @@ public class RecurringTaskFragment extends Fragment {
         TaskRepository repository = new TaskRepository(requireContext());
         CategoryRepository categoryRepository = new CategoryRepository(requireContext());
         ProfileService profileService = new ProfileService();
-        TaskService taskService = new TaskService(repository, profileService);
+        BossRepository bossRepository = new BossRepository(getContext());
+        BossService bossService = new BossService(bossRepository);
+        BattleService battleService = new BattleService(bossService, profileService);
+        TaskService taskService = new TaskService(repository, profileService,battleService);
         CategoryService categoryService = new CategoryService(categoryRepository,repository);
 
 

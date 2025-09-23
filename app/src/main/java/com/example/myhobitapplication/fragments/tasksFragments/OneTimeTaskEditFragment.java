@@ -20,8 +20,11 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myhobitapplication.adapters.DifficultySpinnerAdapter;
 import com.example.myhobitapplication.adapters.ImportanceSpinnerAdapter;
+import com.example.myhobitapplication.databases.BossRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.FragmentOnetimeTaskEditBinding;
+import com.example.myhobitapplication.services.BattleService;
+import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.TaskService;
 import com.example.myhobitapplication.viewModels.taskViewModels.OneTimeTaskEditViewModel;
@@ -66,7 +69,10 @@ public class OneTimeTaskEditFragment extends Fragment {
 
         taskRepository = new TaskRepository(getContext());
         ProfileService profileService = new ProfileService();
-        taskService = new TaskService(taskRepository, profileService);
+        BossRepository bossRepository = new BossRepository(getContext());
+        BossService bossService = new BossService(bossRepository);
+        BattleService battleService = new BattleService(bossService, profileService);
+        taskService = new TaskService(taskRepository, profileService,battleService);
 
         taskEditViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @NonNull

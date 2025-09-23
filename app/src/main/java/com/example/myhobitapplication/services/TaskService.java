@@ -11,12 +11,15 @@ import com.example.myhobitapplication.enums.RecurringTaskStatus;
 import com.example.myhobitapplication.enums.TaskQuote;
 import com.example.myhobitapplication.exceptions.ValidationException;
 import com.example.myhobitapplication.models.OneTimeTask;
+import com.example.myhobitapplication.models.Profile;
 import com.example.myhobitapplication.models.RecurringTask;
 import com.example.myhobitapplication.models.Task;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,13 +28,38 @@ public class TaskService {
 
     private final TaskRepository repository;
     private final ProfileService profileService;
+
+    private final BattleService battleService;
     private RecurringTask task;
     private final Map<LocalDate, List<RecurringTask>> scheduledTasks;
-    public TaskService(TaskRepository repository, ProfileService profileService){
+    public TaskService(TaskRepository repository, ProfileService profileService, BattleService battleService){
         this.repository = repository;
         this.profileService = profileService;
+        this.battleService = battleService;
         scheduledTasks = new HashMap<>();
 
+    }
+
+    public Double calculateChanceForAttack(Profile profile){
+
+        if (profile == null || profile.getCurrentLevelDate() == null) {
+            return 0.0;
+        }
+
+        Date startDate = profile.getPreviousLevelDate();
+        Date endDate = profile.getCurrentLevelDate();
+
+        LocalDate localStartDate = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate localEndaDate = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+        Integer completedTasks = countFinishedTasksForDateRange(localStartDate,localEndaDate, profile.getuserUid());
+        Integer createdTasks = countCreatedTasksForDateRange(localStartDate,localEndaDate, profile.getuserUid());
+
+        if (createdTasks == null || createdTasks == 0) {
+            return 0.0;
+        }
+
+        return (double)completedTasks /createdTasks;
     }
 
 
@@ -389,8 +417,12 @@ public class TaskService {
             task.setStatus(RecurringTaskStatus.COMPLETED);
             repository.updateRecurringTask(task);
             profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
-                        profileService.checkForLevelUpdates(userId).addOnSuccessListener(v->{
+                        profileService.checkForLevelUpdatesAndGenerateBoss(userId).addOnSuccessListener(newLevel->{
                             Log.d("Firestore", "XP uspešno ažuriran!");
+                            if(newLevel!=null){
+                                battleService.generateBossForUser(userId,newLevel);
+                            }
+
                         });
 
                     })
@@ -400,7 +432,7 @@ public class TaskService {
             return;
         }
 
-        LocalDate today = task.getStartDate();
+        LocalDate today = task.getFinishedDate();
         LocalDate startDate = getStartDateForQuota(quote, today);
         LocalDate endDate = getEndDateForQuota(quote, today);
         int limit = getLimitForCategory(quote);
@@ -416,8 +448,12 @@ public class TaskService {
             task.setAwarded(true);
             xpGained = task.getDifficulty() + task.getImportance();
             profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
-                        profileService.checkForLevelUpdates(userId).addOnSuccessListener(v->{
+                        profileService.checkForLevelUpdatesAndGenerateBoss(userId).addOnSuccessListener(newLevel->{
                             Log.d("Firestore", "XP uspešno ažuriran!");
+                            if(newLevel!=null){
+                                battleService.generateBossForUser(userId,newLevel);
+                            }
+
                         });
 
                     })
@@ -446,7 +482,10 @@ public class TaskService {
             oneTimeTask.setStatus(OneTimeTaskStatus.COMPLETED);
             repository.updateOneTimeTask(oneTimeTask);
             profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
-                        profileService.checkForLevelUpdates(userId).addOnSuccessListener(v->{
+                        profileService.checkForLevelUpdatesAndGenerateBoss(userId).addOnSuccessListener(newLevel->{
+                            if(newLevel!=null){
+                                generateBossForUser(userId,newLevel);
+                            }
                             Log.d("Firestore", "XP uspešno ažuriran!");
                         });
 
@@ -457,7 +496,7 @@ public class TaskService {
             return;
         }
 
-        LocalDate today = oneTimeTask.getStartDate();
+        LocalDate today = oneTimeTask.getFinishedDate();
         LocalDate startDate = getStartDateForQuota(quote, today);
         LocalDate endDate = getEndDateForQuota(quote, today);
         int limit = getLimitForCategory(quote);
@@ -469,12 +508,16 @@ public class TaskService {
         boolean shouldAwardXp = completedCount < limit;
         int xpGained = 0;
 
-        if (shouldAwardXp) {
+        if (true) {
             oneTimeTask.setAwarded(true);
             xpGained = oneTimeTask.getDifficulty() + oneTimeTask.getImportance();
             profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
-                        profileService.checkForLevelUpdates(userId).addOnSuccessListener(v->{
-                            Log.d("Firestore", "XP uspešno ažuriran!");
+                        profileService.checkForLevelUpdatesAndGenerateBoss(userId).addOnSuccessListener(newLevel->{
+                            Log.d("Firestore", "XP uspješno ažuriran!");
+                            if(newLevel!=null){
+                                generateBossForUser(userId,newLevel);
+                            }
+
                         });
 
                     })
@@ -550,6 +593,10 @@ public class TaskService {
             default:
                 return taskDate;
         }
+    }
+
+    public void generateBossForUser(String userId, int newLevel){
+        battleService.generateBossForUser(userId,newLevel);
     }
 
 

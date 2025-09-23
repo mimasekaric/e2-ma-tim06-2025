@@ -115,8 +115,8 @@ public class BattleViewModel extends ViewModel {
     public BattleViewModel(TaskRepository taskRepository, BossRepository bossRepository, ProfileService profileService, UserEquipmentService userEquipmentService) {
         this.bossService = new BossService(bossRepository);
         this.profileService = profileService;
-        this.taskService = new TaskService(taskRepository, profileService);
-        this.battleService = new BattleService(taskService, bossService, profileService);
+        this.battleService = new BattleService(bossService, profileService);
+        this.taskService = new TaskService(taskRepository, profileService, battleService);
         this.userEquipmentService = userEquipmentService;
         userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
@@ -128,7 +128,7 @@ public class BattleViewModel extends ViewModel {
 
         //int userPower = 80;
 
-        _bossCurrentHp.setValue(currentBoss.getCurrentHP());
+        _bossCurrentHp.setValue(currentBoss.getHP());
         _bossMaxHp.setValue(currentBoss.getHP());
 
         this.hitChance = 1.0;

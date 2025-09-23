@@ -24,11 +24,14 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.activities.TaskDetailActivity;
 import com.example.myhobitapplication.adapters.TaskAdapter;
+import com.example.myhobitapplication.databases.BossRepository;
 import com.example.myhobitapplication.databases.CategoryRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.models.OneTimeTask;
 import com.example.myhobitapplication.models.RecurringTask;
 import com.example.myhobitapplication.models.Task;
+import com.example.myhobitapplication.services.BattleService;
+import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.CategoryService;
 import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.TaskService;
@@ -85,8 +88,12 @@ public class TaskSlotCalendarFragment extends Fragment {
         super.onCreate(savedInstanceState);
         repository = new TaskRepository(getContext());
         ProfileService profileService = new ProfileService();
+        BossRepository bossRepository = new BossRepository(getContext());
+        BossService bossService = new BossService(bossRepository);
+        BattleService battleService = new BattleService(bossService, profileService);
 
-        TaskService taskService = new TaskService(repository, profileService);
+        TaskService taskService = new TaskService(repository, profileService,battleService);
+
         categoryRepository = new CategoryRepository(getContext());
         categoryService = new CategoryService(categoryRepository,repository);
 

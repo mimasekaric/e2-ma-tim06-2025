@@ -68,4 +68,24 @@ public class ProfileService {
 
     }
 
+    public Task<Integer> checkForLevelUpdatesAndGenerateBoss(String uid) {
+        TaskCompletionSource<Integer> tcs = new TaskCompletionSource<>();
+        getProfileById(uid).addOnSuccessListener(p->{
+                    Profile profile = p;
+                    if (profile.getxp() >= profile.getXpRequired()) {
+                        int newXpRequired = (profile.getXpRequired() * 2) + (profile.getXpRequired() / 2);
+                        int newLevel = profile.getlevel() + 1;
+
+                        updateLevel(profile.getuserUid(), newLevel, newXpRequired)
+                                .addOnSuccessListener(v -> tcs.setResult(newLevel))
+                                .addOnFailureListener(tcs::setException);
+                    } else {
+                        tcs.setResult(null);
+                    }
+                }
+        ) .addOnFailureListener(tcs::setException);
+        return tcs.getTask();
+
+    }
+
 }

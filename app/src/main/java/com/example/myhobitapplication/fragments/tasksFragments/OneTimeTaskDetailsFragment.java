@@ -22,11 +22,14 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.activities.TaskEditActivity;
+import com.example.myhobitapplication.databases.BossRepository;
 import com.example.myhobitapplication.databases.CategoryRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.FragmentOneTimeTaskDetailsBinding;
 import com.example.myhobitapplication.enums.OneTimeTaskStatus;
 import com.example.myhobitapplication.enums.RecurringTaskStatus;
+import com.example.myhobitapplication.services.BattleService;
+import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.CategoryService;
 import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.TaskService;
@@ -73,10 +76,15 @@ public class OneTimeTaskDetailsFragment extends Fragment {
 
         }
 
+
+
         taskRepository = new TaskRepository(getContext());
         categoryRepository = new CategoryRepository(getContext());
         ProfileService profileService = new ProfileService();
-        taskService = new TaskService(taskRepository, profileService);
+        BossRepository bossRepository = new BossRepository(getContext());
+        BossService bossService = new BossService(bossRepository);
+        BattleService battleService = new BattleService(bossService, profileService);
+        taskService = new TaskService(taskRepository, profileService, battleService);
 
         taskDetailsViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @NonNull

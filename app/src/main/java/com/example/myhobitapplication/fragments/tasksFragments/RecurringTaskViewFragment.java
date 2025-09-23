@@ -25,10 +25,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.activities.TaskDetailActivity;
 import com.example.myhobitapplication.adapters.RecurringTaskListAdapter;
+import com.example.myhobitapplication.databases.BossRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.FragmentRecurringTaskListBinding;
 
 import com.example.myhobitapplication.dto.RecurringTaskDTO;
+import com.example.myhobitapplication.services.BattleService;
+import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.TaskService;
 import com.example.myhobitapplication.viewModels.taskViewModels.RecurringTaskListViewModel;
@@ -68,7 +71,10 @@ public class RecurringTaskViewFragment extends Fragment {
 
         TaskRepository taskRepository = new TaskRepository(getContext());
         ProfileService profileService = new ProfileService();
-        TaskService taskService = new TaskService(taskRepository, profileService);
+        BossRepository bossRepository = new BossRepository(getContext());
+        BossService bossService = new BossService(bossRepository);
+        BattleService battleService = new BattleService(bossService, profileService);
+        TaskService taskService = new TaskService(taskRepository, profileService,battleService);
 
         String userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
