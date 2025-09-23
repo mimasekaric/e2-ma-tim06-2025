@@ -1020,7 +1020,7 @@ public class TaskRepository {
                     task.setImportance(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IMPORTANCE_XP)));
                     task.setCategoryColour(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CTG_ID)));
 
-                    String recurrenceUnitString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_RECURRENCE_UNIT));
+                   // String recurrenceUnitString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_RECURRENCE_UNIT));
 
 
                     String executionTimeString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_EXECUTION_TIME));
@@ -1029,7 +1029,7 @@ public class TaskRepository {
                     String startDateString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_START_DATE));
                     task.setStartDate(LocalDate.parse(startDateString));
 
-                    String endDateString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_END_DATE));
+                   // String endDateString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_END_DATE));
 
                     String creationDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CREATION_DATE));
                     task.setCreationDate(LocalDate.parse(creationDate));

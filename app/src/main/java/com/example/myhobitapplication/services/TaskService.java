@@ -389,7 +389,10 @@ public class TaskService {
             task.setStatus(RecurringTaskStatus.COMPLETED);
             repository.updateRecurringTask(task);
             profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
-                        Log.d("Firestore", "XP uspješno ažuriran!");
+                        profileService.checkForLevelUpdates(userId).addOnSuccessListener(v->{
+                            Log.d("Firestore", "XP uspešno ažuriran!");
+                        });
+
                     })
                     .addOnFailureListener(e -> {
                         Log.e("Firestore", "Greška pri ažuriranju XP-a", e);
@@ -413,7 +416,10 @@ public class TaskService {
             task.setAwarded(true);
             xpGained = task.getDifficulty() + task.getImportance();
             profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
-                        Log.d("Firestore", "XP uspješno ažuriran!");
+                        profileService.checkForLevelUpdates(userId).addOnSuccessListener(v->{
+                            Log.d("Firestore", "XP uspešno ažuriran!");
+                        });
+
                     })
                     .addOnFailureListener(e -> {
                         Log.e("Firestore", "Greška pri ažuriranju XP-a", e);
@@ -440,7 +446,10 @@ public class TaskService {
             oneTimeTask.setStatus(OneTimeTaskStatus.COMPLETED);
             repository.updateOneTimeTask(oneTimeTask);
             profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
-                        Log.d("Firestore", "XP uspješno ažuriran!");
+                        profileService.checkForLevelUpdates(userId).addOnSuccessListener(v->{
+                            Log.d("Firestore", "XP uspešno ažuriran!");
+                        });
+
                     })
                     .addOnFailureListener(e -> {
                         Log.e("Firestore", "Greška pri ažuriranju XP-a", e);
@@ -464,7 +473,10 @@ public class TaskService {
             oneTimeTask.setAwarded(true);
             xpGained = oneTimeTask.getDifficulty() + oneTimeTask.getImportance();
             profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
-                        Log.d("Firestore", "XP uspešno ažuriran!");
+                        profileService.checkForLevelUpdates(userId).addOnSuccessListener(v->{
+                            Log.d("Firestore", "XP uspešno ažuriran!");
+                        });
+
                     })
                     .addOnFailureListener(e -> {
                         Log.e("Firestore", "Greška pri ažuriranju XP-a", e);

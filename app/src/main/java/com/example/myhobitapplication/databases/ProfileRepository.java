@@ -25,22 +25,22 @@ public class ProfileRepository {
         profileCollection = db.collection("profiles");
     }
 
-    public Task<DocumentReference> insert(Profile profile) {
-        Map<String, Object> profile1 = new HashMap<>();
-        profile1.put("userUid", profile.getuserUid());
-        profile1.put("title", profile.getTitle());
-        profile1.put("coins", profile.getcoins());
-        profile1.put("pp", profile.getPp());
-        profile1.put("xp", profile.getxp());
-        profile1.put("xpRequired", profile.getXpRequired());
-        profile1.put("level", profile.getlevel());
-        profile1.put("numberOgBadges", profile.getnumberOgbadges());
-        profile1.put("badges", profile.getbadges());
-        profile1.put("previousLevelDate", profile.getPreviousLevelDate());
-        profile1.put("currentLevelDate", profile.getCurrentLevelDate());
-        return profileCollection
-                .add(profile1);
-    }
+            public Task<DocumentReference> insert(Profile profile) {
+                Map<String, Object> profile1 = new HashMap<>();
+                profile1.put("userUid", profile.getuserUid());
+                profile1.put("title", profile.getTitle());
+                profile1.put("coins", profile.getcoins());
+                profile1.put("pp", profile.getPp());
+                profile1.put("xp", profile.getxp());
+                profile1.put("xpRequired", profile.getXpRequired());
+                profile1.put("level", profile.getlevel());
+                profile1.put("numberOgBadges", profile.getnumberOgbadges());
+                profile1.put("badges", profile.getbadges());
+                profile1.put("previousLevelDate", profile.getPreviousLevelDate());
+                profile1.put("currentLevelDate", profile.getCurrentLevelDate());
+                return profileCollection
+                        .add(profile1);
+            }
 
     public Task<DocumentReference> getByUid(String uid){
         final TaskCompletionSource<DocumentReference> taskCompletionSource = new TaskCompletionSource<>();
@@ -155,15 +155,31 @@ public class ProfileRepository {
         return tcs.getTask();
     }
 
-    public Task<Void> updateLevel(String uid, int newLevel, int newXpRequired) {
-        TaskCompletionSource<Void> tcs = new TaskCompletionSource<>();
+            public Task<Void> updateLevel(String uid, int newLevel, int newXpRequired) {
+                TaskCompletionSource<Void> tcs = new TaskCompletionSource<>();
 
-        profileCollection.whereEqualTo("userUid", uid).limit(1).get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    if (queryDocumentSnapshots.isEmpty()) {
-                        tcs.setException(new Exception("Profile not found for UID: " + uid));
-                    } else {
-                        DocumentSnapshot document = queryDocumentSnapshots.getDocuments().get(0);
+                profileCollection.whereEqualTo("userUid", uid).limit(1).get()
+                        .addOnSuccessListener(queryDocumentSnapshots -> {
+                            if (queryDocumentSnapshots.isEmpty()) {
+                                tcs.setException(new Exception("Profile not found for UID: " + uid));
+                            } else {
+                                DocumentSnapshot document = queryDocumentSnapshots.getDocuments().get(0);
+
+                                Map<String, Object> updates = new HashMap<>();
+                                updates.put("level", newLevel);
+                                updates.put("xpRequired", newXpRequired);
+
+                                document.getReference()
+                                        .update(updates)
+                                        .addOnSuccessListener(aVoid -> tcs.setResult(null))
+                                        .addOnFailureListener(tcs::setException);
+                            }
+                        })
+                        .addOnFailureListener(tcs::setException);
+
+                return tcs.getTask();
+            }
+        }
 
                         Map<String, Object> updates = new HashMap<>();
                         updates.put("level", newLevel);
