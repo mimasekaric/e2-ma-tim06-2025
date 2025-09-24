@@ -49,7 +49,8 @@ public class BossService {
                 bossDTO.getDefeated(),
                 bossDTO.getBossLevel(),
                 bossDTO.getCoinsReward(),
-                bossDTO.getCoinRewardPercent()
+                bossDTO.getCoinRewardPercent(),
+                bossDTO.isAttemptedThisLevel()
         );
 
 
@@ -66,7 +67,8 @@ public class BossService {
                 bossDTO.getDefeated(),
                 bossDTO.getBossLevel(),
                 bossDTO.getCoinsReward(),
-                bossDTO.getCoinRewardPercent()
+                bossDTO.getCoinRewardPercent(),
+                bossDTO.isAttemptedThisLevel()
         );
         return bossRepository.insertBoss(boss);
     }
@@ -82,5 +84,8 @@ public class BossService {
         return new BossDTO(boss);
     }
 
+    public int resetAttemptForUndefeatedBosses(String userId){
+       return bossRepository.resetAttemptForUndefeatedBosses(userId);
+    }
 
 }

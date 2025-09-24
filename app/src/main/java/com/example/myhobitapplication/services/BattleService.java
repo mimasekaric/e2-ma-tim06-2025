@@ -80,7 +80,7 @@ public class BattleService {
                 BossDTO previousBossDTO = bossService.getPrevioussBossForUser(userId,previousBossLevel);
                 if (previousBossDTO != null) {
                     Integer previousCoinsReward = previousBossDTO.getCoinsReward();
-                    double newCoinsReward = previousCoinsReward * calculatePercentage(bossLevel, userId);
+                    double newCoinsReward = previousCoinsReward + previousCoinsReward * calculatePercentage(bossLevel, userId);
                     return (int) newCoinsReward;
                 } else {
                     return 0;
@@ -133,14 +133,19 @@ public class BattleService {
         double percentage = calculatePercentage(newLevel-1, userId);
 
         int coinsReward = calculateCoinsRewardForBoss(newLevel-1, userId);
+        //todo: potencijalno promijeni na dobule coins i hp bossa :(
         int HP = calculateHPForBoss(newLevel-1,userId);
 
         bossDTO.setCoinRewardPercent(percentage);
         bossDTO.setCoinsReward(coinsReward);
         bossDTO.setHP(HP);
         bossDTO.setCurrentHP(HP);
-        bossDTO.setCoinRewardPercent(calculateCoinsRewardForBoss(newLevel-1,userId));
+       // bossDTO.setCoinRewardPercent(calculateCoinsRewardForBoss(newLevel-1,userId));
         return bossService.createBoss(bossDTO);
+    }
+
+    public int resetAttemptForUndefeatedBosses(String userId){
+        return bossService.resetAttemptForUndefeatedBosses(userId);
     }
 
 }

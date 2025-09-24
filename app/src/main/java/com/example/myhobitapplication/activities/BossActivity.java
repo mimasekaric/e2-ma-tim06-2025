@@ -12,6 +12,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -228,6 +230,34 @@ public class BossActivity extends AppCompatActivity {
             }
         });
 
+        battleViewModel.getScreenState().observe(this, state -> {
+            if (state == null) return;
+
+            switch (state) {
+                case BOSS_FOUND:
+                    binding.bossBattleGroup.setVisibility(View.VISIBLE);
+                    binding.noBoss.setVisibility(View.GONE);
+                    binding.sleepingBoss.clearAnimation();
+                    break;
+                case NO_BOSS_FOUND:
+                    binding.bossBattleGroup.setVisibility(View.GONE);
+                    binding.noBoss.setVisibility(View.VISIBLE);
+                    startFloatingAnimation();
+                    break;
+                case LOADING:
+                    binding.bossBattleGroup.setVisibility(View.GONE);
+                    binding.noBoss.setVisibility(View.GONE);
+                    break;
+            }
+        });
+
+    }
+
+    private void startFloatingAnimation() {
+
+        Animation floatingAnimation = AnimationUtils.loadAnimation(this, R.anim.dragon_up_down);
+        ImageView sleepingBossImage = binding.sleepingBoss;
+        sleepingBossImage.startAnimation(floatingAnimation);
     }
 
 

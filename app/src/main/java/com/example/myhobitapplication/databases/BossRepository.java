@@ -43,6 +43,7 @@ public class BossRepository {
         values.put(AppDataBaseHelper.COLUMN_BOSS_LEVEL, boss.getBossLevel());
         values.put(AppDataBaseHelper.COLUMN_COINS_REWARD, boss.getCoinsReward());
         values.put(AppDataBaseHelper.COLUMN_COINS_REWARD_PERCENT, boss.getCoinsRewardPercent());
+        values.put(AppDataBaseHelper.COLUMN_ATTEMPTED_THIS_LEVEL, boss.isAttemptedThisLevel());
 
         long newRowId = database.insert(AppDataBaseHelper.TABLE_BOSSES, null, values);
         database.close();
@@ -78,10 +79,11 @@ public class BossRepository {
                 boss.setHP(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_HP)));
                 boss.setBossLevel(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_BOSS_LEVEL)));
                 boss.setCurrentHP(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CURRENT_HP)));
-                boss.setCoinsReward(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_COINS_REWARD)));
-                boss.setCoinsRewardPercent(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_COINS_REWARD_PERCENT)));
+                boss.setCoinsRewardPercent(cursor.getDouble(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_COINS_REWARD_PERCENT)));
                 String isDefeated = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IS_DEFEATED));
                 boss.setDefeated(Boolean.parseBoolean(isDefeated));
+                String isAttempted = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_ATTEMPTED_THIS_LEVEL));
+                boss.setAttemptedThisLevel(Boolean.parseBoolean(isAttempted));
 
 
                 bosses.add(boss);
@@ -130,10 +132,14 @@ public class BossRepository {
                 boss.setBossLevel(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_BOSS_LEVEL)));
                 boss.setCurrentHP(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CURRENT_HP)));
                 boss.setCoinsReward(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_COINS_REWARD)));
-                boss.setCoinsRewardPercent(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_COINS_REWARD_PERCENT)));
+                boss.setCoinsRewardPercent(cursor.getDouble(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_COINS_REWARD_PERCENT)));
 
                 String isDefeated = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IS_DEFEATED));
                 boss.setDefeated(Boolean.parseBoolean(isDefeated));
+
+                int isAttemptedInt = cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_ATTEMPTED_THIS_LEVEL));
+                boss.setAttemptedThisLevel(isAttemptedInt == 1);
+
 
 
                 bosses.add(boss);
@@ -144,6 +150,34 @@ public class BossRepository {
         db.close();
 
         return bosses;
+    }
+
+
+    public int resetAttemptForUndefeatedBosses(String userId) {
+
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(AppDataBaseHelper.COLUMN_ATTEMPTED_THIS_LEVEL, 0);
+
+        String selection = AppDataBaseHelper.COLUMN_USER_ID + " = ? AND " +
+                AppDataBaseHelper.COLUMN_IS_DEFEATED + " = ?";
+
+        String[] selectionArgs = {
+                String.valueOf(userId),
+                "0"
+        };
+
+        int rowsUpdated = db.update(
+                AppDataBaseHelper.TABLE_BOSSES,
+                values,
+                selection,
+                selectionArgs);
+
+
+        db.close();
+
+        return rowsUpdated;
     }
 
 
@@ -185,10 +219,13 @@ public class BossRepository {
             boss.setBossLevel(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_BOSS_LEVEL)));
             boss.setCurrentHP(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CURRENT_HP)));
             boss.setCoinsReward(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_COINS_REWARD)));
-            boss.setCoinsRewardPercent(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_COINS_REWARD_PERCENT)));
+            boss.setCoinsRewardPercent(cursor.getDouble(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_COINS_REWARD_PERCENT)));
 
             int isDefeatedInt = cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IS_DEFEATED));
             boss.setDefeated(isDefeatedInt == 1);
+
+            int isAttempted = cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_ATTEMPTED_THIS_LEVEL));
+            boss.setAttemptedThisLevel(isAttempted == 1);
         }
 
 
@@ -209,6 +246,7 @@ public class BossRepository {
         values.put(AppDataBaseHelper.COLUMN_HP, boss.getHP());
         values.put(AppDataBaseHelper.COLUMN_CURRENT_HP, boss.getCurrentHP());
         values.put(AppDataBaseHelper.COLUMN_IS_DEFEATED, boss.getDefeated());
+        values.put(AppDataBaseHelper.COLUMN_ATTEMPTED_THIS_LEVEL, boss.isAttemptedThisLevel());
         values.put(AppDataBaseHelper.COLUMN_USER_ID, boss.getUserId());
         values.put(AppDataBaseHelper.COLUMN_BOSS_LEVEL, boss.getBossLevel());
         values.put(AppDataBaseHelper.COLUMN_COINS_REWARD, boss.getCoinsReward());
@@ -261,11 +299,14 @@ public class BossRepository {
                 boss.setBossLevel(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_BOSS_LEVEL)));
                 boss.setCurrentHP(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CURRENT_HP)));
                 boss.setCoinsReward(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_COINS_REWARD)));
-                boss.setCoinsRewardPercent(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_COINS_REWARD_PERCENT)));
+                boss.setCoinsRewardPercent(cursor.getDouble(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_COINS_REWARD_PERCENT)));
 
 
                 String isDefeated = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IS_DEFEATED));
                 boss.setDefeated(Boolean.parseBoolean(isDefeated));
+
+                String isAttempted = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_ATTEMPTED_THIS_LEVEL));
+                boss.setAttemptedThisLevel(Boolean.parseBoolean(isAttempted));
 
 
                 bosses.add(boss);

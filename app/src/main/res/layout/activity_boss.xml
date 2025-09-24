@@ -13,6 +13,14 @@
         android:layout_height="match_parent"
         android:background="@drawable/bossbcg">
 
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/bossBattleGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="hpProgressBar,hpTextView,attackAttemptsImage,myAnimatedImage,attackButton,userInfo,avatarImageView,ppProgressBar,ppTextView,rewardsAnimationLayout,activatedEqScroll"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
         <ProgressBar
             android:id="@+id/hpProgressBar"
             style="?android:attr/progressBarStyleHorizontal"
@@ -202,6 +210,40 @@
         </LinearLayout>
 
     </HorizontalScrollView>
+
+        <LinearLayout
+            android:id="@+id/noBoss"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone"
+            tools:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <ImageView
+                android:id="@+id/sleepingBoss"
+                android:layout_width="300dp"
+                android:layout_height="300dp"
+                android:background="@drawable/boss_sleeping"
+                android:scaleType="fitCenter" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="RELAX FOR NOW, TRAVELER..."
+                android:textColor="#DA9100"
+                android:textSize="22sp"
+                android:fontFamily="@font/educursivebold"/>
+
+        </LinearLayout>
+
+
+
         <androidx.constraintlayout.motion.widget.MotionLayout
             android:id="@+id/rewardsAnimationLayout"
             android:layout_width="150dp"

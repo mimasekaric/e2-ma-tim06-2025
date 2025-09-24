@@ -36,7 +36,15 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+
 public class BattleViewModel extends ViewModel {
+
+
+    public enum BattleScreenState {
+        LOADING,
+        BOSS_FOUND,
+        NO_BOSS_FOUND
+    }
     private final TaskService taskService;
     private final BossService bossService;
     private final BattleService battleService;
@@ -74,8 +82,13 @@ public class BattleViewModel extends ViewModel {
     private final MutableLiveData<String> _equipmentName = new MutableLiveData<>();
     public MutableLiveData<String> getEquipmentName() { return _equipmentName;}
     public void setEquipmentName(String name) { _equipmentName.setValue(name);}
+    public boolean attemptedThisLevel = false;
+    public boolean getAttemptedThisLevel() {return attemptedThisLevel;}
+    public void setAttemptedThisLevel(boolean flag) { attemptedThisLevel = flag;}
 
+    private final MutableLiveData<BattleScreenState> _screenState = new MutableLiveData<>(BattleScreenState.LOADING);
 
+    public LiveData<BattleScreenState> getScreenState() {return _screenState;}
 
     public MutableLiveData<Equipment> getEquipment() { return _equipment;}
     public void setEquipment(Equipment equipment) { _equipment.setValue(equipment);}
@@ -123,6 +136,13 @@ public class BattleViewModel extends ViewModel {
     public void loadBattleState(String userId){
 
         currentBoss = bossService.getLowestLevelBossForUser(userId);
+        if(currentBoss.isAttemptedThisLevel()){
+            currentBoss = null;
+            _screenState.setValue(BattleScreenState.NO_BOSS_FOUND);
+            return;
+        }
+
+        _screenState.setValue(BattleScreenState.BOSS_FOUND);
 
         //int userPower = battleService.calculateUserAttackPower(userId);
 
@@ -229,6 +249,8 @@ public class BattleViewModel extends ViewModel {
                 currentBoss.setDefeated(true);
                 setCoins(currentBoss.getCoinsReward());
                 _isBattleOver.setValue(true);
+                setAttemptedThisLevel(true);
+                currentBoss.setAttemptedThisLevel(true);
                 profileService.getProfileById(userUid).addOnSuccessListener(profile -> {
                     userEquipmentService.incrementFightsCounter(userUid,profile);
                 });
@@ -249,6 +271,9 @@ public class BattleViewModel extends ViewModel {
 
         if (_remainingAttacks.getValue() <= 0 && currentBoss.getCurrentHP() > 0) {
             _isBattleOver.setValue(true);
+            setAttemptedThisLevel(true);
+            currentBoss.setAttemptedThisLevel(true);
+            battleService.updateBoss(currentBoss);
 
 
             double halfMaxHp = currentBoss.getHP() / 2.0;

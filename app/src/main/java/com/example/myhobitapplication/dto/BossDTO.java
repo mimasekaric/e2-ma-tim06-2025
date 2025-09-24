@@ -19,12 +19,15 @@ public class BossDTO {
 
     private Integer CoinsReward;
 
+    private boolean attemptedThisLevel;
+
     public BossDTO(Integer HP) {
 
         this.HP = HP;
     }
 
     public BossDTO() {
+        this.attemptedThisLevel = false;
     }
 
     public BossDTO(Integer id, Integer HP, String userId, Integer currentHP, Boolean isDefeated, Integer bossLevel, Integer coinsReward) {
@@ -55,6 +58,7 @@ public class BossDTO {
         BossLevel = boss.getBossLevel();
         CoinsReward = boss.getCoinsReward();
         CoinRewardPercent = boss.getCoinsRewardPercent();
+        this.attemptedThisLevel = boss.isAttemptedThisLevel();
     }
 
     public Integer getId() {
@@ -113,6 +117,13 @@ public class BossDTO {
         BossLevel = bossLevel;
     }
 
+    public boolean isAttemptedThisLevel() {
+        return attemptedThisLevel;
+    }
+
+    public void setAttemptedThisLevel(boolean attemptedThisLevel) {
+        this.attemptedThisLevel = attemptedThisLevel;
+    }
 
     public Integer getCoinsReward() {
         return CoinsReward;

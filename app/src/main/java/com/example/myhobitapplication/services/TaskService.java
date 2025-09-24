@@ -421,6 +421,7 @@ public class TaskService {
                             Log.d("Firestore", "XP uspešno ažuriran!");
                             if(newLevel!=null){
                                 battleService.generateBossForUser(userId,newLevel);
+                                battleService.resetAttemptForUndefeatedBosses(userId);
                             }
 
                         });
@@ -444,7 +445,7 @@ public class TaskService {
         boolean shouldAwardXp = completedCount < limit;
         int xpGained = 0;
 
-        if (shouldAwardXp) {
+        if (true) {
             task.setAwarded(true);
             xpGained = task.getDifficulty() + task.getImportance();
             profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
@@ -452,6 +453,7 @@ public class TaskService {
                             Log.d("Firestore", "XP uspešno ažuriran!");
                             if(newLevel!=null){
                                 battleService.generateBossForUser(userId,newLevel);
+                                battleService.resetAttemptForUndefeatedBosses(userId);
                             }
 
                         });
@@ -485,6 +487,7 @@ public class TaskService {
                         profileService.checkForLevelUpdatesAndGenerateBoss(userId).addOnSuccessListener(newLevel->{
                             if(newLevel!=null){
                                 generateBossForUser(userId,newLevel);
+                                battleService.resetAttemptForUndefeatedBosses(userId);
                             }
                             Log.d("Firestore", "XP uspešno ažuriran!");
                         });
@@ -516,6 +519,7 @@ public class TaskService {
                             Log.d("Firestore", "XP uspješno ažuriran!");
                             if(newLevel!=null){
                                 generateBossForUser(userId,newLevel);
+                                battleService.resetAttemptForUndefeatedBosses(userId);
                             }
 
                         });

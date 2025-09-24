@@ -60,6 +60,8 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_HP = "hp";
 
     public static final String COLUMN_IS_DEFEATED = "is_defeated";
+    public static final String COLUMN_ATTEMPTED_THIS_LEVEL = "attempted_this_level";
+
 
     public static final String COLUMN_BOSS_LEVEL = "boss_level";
     public static final String COLUMN_COINS_REWARD = "coins_reward";
@@ -152,6 +154,7 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
                 + COLUMN_HP + " TEXT,"
                 + COLUMN_COINS_REWARD + " INTEGER,"
                 + COLUMN_COINS_REWARD_PERCENT + " REAL,"
+                + COLUMN_ATTEMPTED_THIS_LEVEL + " TEXT,"
                 + COLUMN_CURRENT_HP + " TEXT" + ")";
         db.execSQL(CREATE_BOSS_TABLE);
 
