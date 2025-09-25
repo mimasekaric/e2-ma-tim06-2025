@@ -62,7 +62,7 @@ public class RecurringTaskEditFragment extends Fragment {
         }
 
         taskRepository = new TaskRepository(getContext());
-        ProfileService profileService = new ProfileService();
+        ProfileService profileService =  ProfileService.getInstance();
         taskService = new TaskService(taskRepository, profileService);
 
         taskEditViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {

@@ -155,7 +155,7 @@ import java.util.UUID;
                 return tcs.getTask();
             }
 
-            public Task<Void> updateLevel(String uid, int newLevel, int newXpRequired) {
+            public Task<Void> updateLevel(String uid, int newLevel, int newXpRequired, int newPP, String newTitle) {
                 TaskCompletionSource<Void> tcs = new TaskCompletionSource<>();
 
                 profileCollection.whereEqualTo("userUid", uid).limit(1).get()
@@ -168,6 +168,8 @@ import java.util.UUID;
                                 Map<String, Object> updates = new HashMap<>();
                                 updates.put("level", newLevel);
                                 updates.put("xpRequired", newXpRequired);
+                                updates.put("pp", newPP);
+                                updates.put("title", newTitle);
 
                                 document.getReference()
                                         .update(updates)

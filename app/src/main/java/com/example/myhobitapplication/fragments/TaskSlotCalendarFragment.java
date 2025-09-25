@@ -84,7 +84,7 @@ public class TaskSlotCalendarFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         repository = new TaskRepository(getContext());
-        ProfileService profileService = new ProfileService();
+        ProfileService profileService =  ProfileService.getInstance();
 
         TaskService taskService = new TaskService(repository, profileService);
         categoryRepository = new CategoryRepository(getContext());

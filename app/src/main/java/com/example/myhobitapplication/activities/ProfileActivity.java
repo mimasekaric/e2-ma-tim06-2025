@@ -77,7 +77,7 @@ public class ProfileActivity extends Fragment {
         }
         BossRepository bossRepository = new BossRepository(requireContext());
         EquipmentRepository equipmentRepository = new EquipmentRepository(requireContext());
-        ProfileService profileService = new ProfileService();
+        ProfileService profileService = ProfileService.getInstance();
         BossService bossService = new BossService(bossRepository);
         EquipmentService equipmentService = new EquipmentService(equipmentRepository);
         viewModel = new ViewModelProvider(requireActivity()).get(ProfileViewModel.class);
@@ -138,18 +138,22 @@ public class ProfileActivity extends Fragment {
 
                 if (profile.getTitle() != null) {
                     switch (profile.getTitle()) {
-                        case CURIOUS_WANDERER:
+                        case "CURIOUS_WANDERER":
                             binding.titleput.setText("Curious Wanderer");
                             break;
-                        case BRAVE_ADVENTURER:
+                        case "BRAVE_ADVENTURER":
                             binding.titleput.setText("Brave Adventurer");
                             break;
-                        case DEFENDER_OF_THE_REALM:
+                        case "DEFENDER_OF_THE_REALM":
                             binding.titleput.setText("Realm Defender");
                             break;
-                        case MASTER_OF_SECRETS:
+                        case "MASTER_OF_SECRETS":
                             binding.titleput.setText("Master Of Secrets");
                             break;
+                        default:
+                            binding.titleput.setText(profile.getTitle());
+                            break;
+
                     }
                 }
             }
