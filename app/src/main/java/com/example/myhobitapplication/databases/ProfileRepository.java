@@ -155,8 +155,8 @@ public class ProfileRepository {
         return tcs.getTask();
     }
 
-    public Task<Void> updateLevel(String uid, int newLevel, int newXpRequired) {
-        TaskCompletionSource<Void> tcs = new TaskCompletionSource<>();
+            public Task<Void> updateLevel(String uid, int newLevel, int newXpRequired, int newPP, String newTitle) {
+                TaskCompletionSource<Void> tcs = new TaskCompletionSource<>();
 
         profileCollection.whereEqualTo("userUid", uid).limit(1).get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
@@ -165,9 +165,11 @@ public class ProfileRepository {
                     } else {
                         DocumentSnapshot document = queryDocumentSnapshots.getDocuments().get(0);
 
-                        Map<String, Object> updates = new HashMap<>();
-                        updates.put("level", newLevel);
-                        updates.put("xpRequired", newXpRequired);
+                                Map<String, Object> updates = new HashMap<>();
+                                updates.put("level", newLevel);
+                                updates.put("xpRequired", newXpRequired);
+                                updates.put("pp", newPP);
+                                updates.put("title", newTitle);
 
                         document.getReference()
                                 .update(updates)

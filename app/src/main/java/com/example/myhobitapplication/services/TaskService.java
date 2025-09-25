@@ -10,6 +10,7 @@ import com.example.myhobitapplication.enums.RecurrenceUnit;
 import com.example.myhobitapplication.enums.RecurringTaskStatus;
 import com.example.myhobitapplication.enums.TaskQuote;
 import com.example.myhobitapplication.exceptions.ValidationException;
+import com.example.myhobitapplication.interfaces.LevelUpListener;
 import com.example.myhobitapplication.models.OneTimeTask;
 import com.example.myhobitapplication.models.Profile;
 import com.example.myhobitapplication.models.RecurringTask;
@@ -23,8 +24,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-public class TaskService {
+public class TaskService implements LevelUpListener {
 
     private final TaskRepository repository;
     private final ProfileService profileService;
@@ -36,6 +38,8 @@ public class TaskService {
         this.repository = repository;
         this.profileService = profileService;
         this.battleService = battleService;
+       // this.profileService.setLevelUpListener(this);
+        this.profileService.addLevelUpListener(this);
         scheduledTasks = new HashMap<>();
 
     }
@@ -174,6 +178,26 @@ public class TaskService {
         taskList.addAll(oneTimeTasks);
 
         return taskList;
+    }
+
+    public List<OneTimeTask> getAllActiveAndPausedOneTimeTasks(String userUid){
+
+
+        List<OneTimeTask> oneTimeTasks = getAllOneTimeTasks(userUid).stream().filter(task -> task.getStatus().equals(OneTimeTaskStatus.ACTIVE)
+                        || task.getStatus().equals(OneTimeTaskStatus.PAUSED))
+                .collect(Collectors.toList());
+        return oneTimeTasks;
+
+    }
+
+    public List<RecurringTask> getAllActiveAndPausedReccuringTasks(String userUid){
+
+
+        List<RecurringTask> recurringTasks = getAllRecurringTasks(userUid).stream().filter(task -> task.getStatus().equals(RecurringTaskStatus.ACTIVE)
+                        || task.getStatus().equals(OneTimeTaskStatus.PAUSED))
+                .collect(Collectors.toList());
+        return recurringTasks;
+
     }
     public RecurringTaskDTO getTaskById(long id) {
         RecurringTask taskModel =  repository.getTaskById(id);
@@ -417,13 +441,15 @@ public class TaskService {
             task.setStatus(RecurringTaskStatus.COMPLETED);
             repository.updateRecurringTask(task);
             profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
-                        profileService.checkForLevelUpdatesAndGenerateBoss(userId).addOnSuccessListener(newLevel->{
-                            Log.d("Firestore", "XP uspešno ažuriran!");
-                            if(newLevel!=null){
-                                battleService.generateBossForUser(userId,newLevel);
+                        Log.d("Firestore", "XP azuriran!");
+                        profileService.checkForLevelUpdates(userId).addOnSuccessListener(v->{
+                            Log.d("Firestore", "Level chek uspjesan!");
+                            if(v!=null){
+                                battleService.generateBossForUser(userId,v);
                                 battleService.resetAttemptForUndefeatedBosses(userId);
                             }
-
+                        }).addOnFailureListener(v->{
+                            Log.d("Firestore", "Level check nije uspjesan!");
                         });
 
                     })
@@ -449,13 +475,15 @@ public class TaskService {
             task.setAwarded(true);
             xpGained = task.getDifficulty() + task.getImportance();
             profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
-                        profileService.checkForLevelUpdatesAndGenerateBoss(userId).addOnSuccessListener(newLevel->{
-                            Log.d("Firestore", "XP uspešno ažuriran!");
-                            if(newLevel!=null){
-                                battleService.generateBossForUser(userId,newLevel);
+                        Log.d("Firestore", "XP azuriran!");
+                        profileService.checkForLevelUpdates(userId).addOnSuccessListener(v->{
+                            Log.d("Firestore", "Level chek uspjesan!");
+                            if(v!=null){
+                                battleService.generateBossForUser(userId,v);
                                 battleService.resetAttemptForUndefeatedBosses(userId);
                             }
-
+                        }).addOnFailureListener(v->{
+                            Log.d("Firestore", "Level check nije uspjesan!");
                         });
 
                     })
@@ -484,12 +512,15 @@ public class TaskService {
             oneTimeTask.setStatus(OneTimeTaskStatus.COMPLETED);
             repository.updateOneTimeTask(oneTimeTask);
             profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
-                        profileService.checkForLevelUpdatesAndGenerateBoss(userId).addOnSuccessListener(newLevel->{
-                            if(newLevel!=null){
-                                generateBossForUser(userId,newLevel);
+                        Log.d("Firestore", "XP azuriran!");
+                        profileService.checkForLevelUpdates(userId).addOnSuccessListener(v->{
+                            Log.d("Firestore", "Level chek uspjesan!");
+                            if(v!=null){
+                                battleService.generateBossForUser(userId,v);
                                 battleService.resetAttemptForUndefeatedBosses(userId);
                             }
-                            Log.d("Firestore", "XP uspešno ažuriran!");
+                        }).addOnFailureListener(v->{
+                            Log.d("Firestore", "Level check nije uspjesan!");
                         });
 
                     })
@@ -515,13 +546,15 @@ public class TaskService {
             oneTimeTask.setAwarded(true);
             xpGained = oneTimeTask.getDifficulty() + oneTimeTask.getImportance();
             profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
-                        profileService.checkForLevelUpdatesAndGenerateBoss(userId).addOnSuccessListener(newLevel->{
-                            Log.d("Firestore", "XP uspješno ažuriran!");
-                            if(newLevel!=null){
-                                generateBossForUser(userId,newLevel);
+                        Log.d("Firestore", "XP azuriran!");
+                        profileService.checkForLevelUpdates(userId).addOnSuccessListener(v->{
+                            Log.d("Firestore", "Level chek uspjesan!");
+                            if(v!=null){
+                                battleService.generateBossForUser(userId,v);
                                 battleService.resetAttemptForUndefeatedBosses(userId);
                             }
-
+                        }).addOnFailureListener(v->{
+                            Log.d("Firestore", "Level check nije uspjesan!");
                         });
 
                     })
@@ -602,10 +635,52 @@ public class TaskService {
     public void generateBossForUser(String userId, int newLevel){
         battleService.generateBossForUser(userId,newLevel);
     }
+    public void importanceBoostOneTime(OneTimeTask task){
+        int oldValue = task.getImportance();
+        int newValue = Math.round(oldValue + ((float) oldValue /2));
+        task.setImportance(newValue);
+        repository.updateOneTimeTask(task);
+    }
 
+    public void importanceBoostRecurring(RecurringTask task){
+        int oldValue = task.getImportance();
+        int newValue = Math.round(oldValue + ((float) oldValue /2));
+        task.setImportance(newValue);
+        repository.updateRecurringTask(task);
+    }
 
+    public void difficultyBoostOneTime(OneTimeTask task){
+        int oldValue = task.getDifficulty();
+        int newValue = Math.round(oldValue + ((float) oldValue /2));
+        task.setDifficulty(newValue);
+        repository.updateOneTimeTask(task);
+    }
 
+    public void difficultyBoostRecurring(RecurringTask task){
+        int oldValue = task.getDifficulty();
+        int newValue = Math.round(oldValue + ((float) oldValue /2));
+        task.setDifficulty(newValue);
+        repository.updateRecurringTask(task);
+    }
 
+    @Override
+    public void onLevelUp(String userId, int newLevel) {
+        updateTasksXP(userId);
+    }
+
+    public void updateTasksXP(String userid){
+        List<RecurringTask> tasks= getAllActiveAndPausedReccuringTasks(userid);
+        tasks.forEach(task1 -> {
+            difficultyBoostRecurring(task1);
+            importanceBoostRecurring(task1);
+        });
+
+        List <OneTimeTask> tasksOneTime= getAllActiveAndPausedOneTimeTasks(userid);
+        tasksOneTime.forEach(task2 -> {
+            difficultyBoostOneTime(task2);
+           importanceBoostOneTime(task2);
+        });
+    }
 
 
 

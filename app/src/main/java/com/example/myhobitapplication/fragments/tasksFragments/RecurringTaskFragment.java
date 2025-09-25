@@ -52,7 +52,7 @@ public class RecurringTaskFragment extends Fragment {
 
         TaskRepository repository = new TaskRepository(requireContext());
         CategoryRepository categoryRepository = new CategoryRepository(requireContext());
-        ProfileService profileService = new ProfileService();
+        ProfileService profileService =  ProfileService.getInstance();
         BossRepository bossRepository = new BossRepository(getContext());
         BossService bossService = new BossService(bossRepository);
         BattleService battleService = new BattleService(bossService, profileService);

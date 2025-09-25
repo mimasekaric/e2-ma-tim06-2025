@@ -84,7 +84,7 @@ public class BossActivity extends AppCompatActivity {
         TaskRepository taskRepository = new TaskRepository(getApplicationContext());
         BossRepository bossRepository = new BossRepository(getApplicationContext());
         EquipmentRepository equipmentRepository = new EquipmentRepository(getApplicationContext());
-        ProfileService profileService = new ProfileService();
+        ProfileService profileService = ProfileService.getInstance();
         //Boss boss = new Boss(2,400,userUid,400,false,2,200, 0.2);
         //bossRepository.insertBoss(boss);
         BossService bossService = new BossService(bossRepository);

@@ -6,14 +6,19 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.myhobitapplication.databases.BossRepository;
+import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.dto.UserInfoDTO;
 import com.example.myhobitapplication.models.Equipment;
 import com.example.myhobitapplication.models.Profile;
 import com.example.myhobitapplication.models.User;
+import com.example.myhobitapplication.services.BattleService;
 import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.EquipmentService;
 import com.example.myhobitapplication.services.ProfileService;
+import com.example.myhobitapplication.services.TaskService;
 import com.example.myhobitapplication.services.UserEquipmentService;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,15 +27,38 @@ public class ProfileViewModel extends ViewModel {
 
     private final UserEquipmentService userEquipmentService;
     private final ProfileService profileService;
+    private final TaskService taskService;
     private final MutableLiveData<Profile> profile = new MutableLiveData<>(new Profile());
+    private final MutableLiveData<Integer> _levelUpEvent = new MutableLiveData<>();
+    public MutableLiveData<Integer> levelUpEvent = _levelUpEvent;
+
+
+    public void onLevelUpEventHandled() {
+        _levelUpEvent.setValue(null);
+    }
     private final MutableLiveData<UserInfoDTO> userInfo = new MutableLiveData<>(new UserInfoDTO());
     private final MutableLiveData<String> response = new MutableLiveData<>("");
     private final MutableLiveData<Boolean> loadSuccess = new MutableLiveData<>(false);
-    public ProfileViewModel(Context context, BossService bossService, EquipmentService equipmentService ) {
-        this.profileService = new ProfileService();
+    public ProfileViewModel(Context context, BossService bossService, EquipmentService equipmentService) {
+        this.profileService = ProfileService.getInstance();
+        BattleService battleService = new BattleService(bossService, profileService);
+        this.taskService = new TaskService(new TaskRepository(context),profileService, battleService);
+      /*  this.profileService.setLevelUpListener(taskService);
+
+
+        profileService.setLevelUpListener((userUid, newLevel) -> {
+            Log.d("ProfileViewModel", "Level up event received: " + newLevel);
+            loadProfile(userUid);
+            _levelUpEvent.postValue(newLevel);
+        });*/
+        this.profileService.addLevelUpListener(taskService);
+        this.profileService.addLevelUpListener((userUid, newLevel) -> {
+            Log.d("ProfileViewModel", "Level up event received: " + newLevel);
+            loadProfile(userUid);
+            _levelUpEvent.postValue(newLevel);
+        });
         this.userEquipmentService= new UserEquipmentService(context, profileService, bossService, equipmentService);
     }
-
     public MutableLiveData<Profile> getProfile() {
         return profile;
     }

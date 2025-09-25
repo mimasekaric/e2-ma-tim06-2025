@@ -68,7 +68,7 @@ public class OneTimeTaskEditFragment extends Fragment {
         }
 
         taskRepository = new TaskRepository(getContext());
-        ProfileService profileService = new ProfileService();
+        ProfileService profileService =  ProfileService.getInstance();
         BossRepository bossRepository = new BossRepository(getContext());
         BossService bossService = new BossService(bossRepository);
         BattleService battleService = new BattleService(bossService, profileService);

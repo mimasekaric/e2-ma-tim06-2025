@@ -12,7 +12,7 @@ import java.util.List;
 public class Profile {
 
     private String userUid;
-    private Title title;
+    private String title;
     private Integer coins;
     private Integer pp;
     private Integer xp;
@@ -27,7 +27,7 @@ public class Profile {
     private Date previousLevelDate;
     private Date currentLevelDate;
 
-    public Profile(String userUid, Integer coins, Integer xp, Integer level, Integer numberOfbadges, List<String> badges, int xpRequired, Title title, Integer pp, Date lastLevelDate, Date currentLevelDate) {
+    public Profile(String userUid, Integer coins, Integer xp, Integer level, Integer numberOfbadges, List<String> badges, int xpRequired, String title, Integer pp, Date lastLevelDate, Date currentLevelDate) {
         this.userUid = userUid;
         this.coins = coins;
         this.xp = xp;
@@ -45,7 +45,7 @@ public class Profile {
         this.userUid = userUid;
         this.coins = 0;
         this.xp = 0;
-        this.title= Title.CURIOUS_WANDERER;
+        this.title= Title.CURIOUS_WANDERER.toString();
         this.level = 0;
         this.numberOgBadges = 0;
         this.badges = new ArrayList<>();
@@ -115,11 +115,11 @@ public class Profile {
         this.badges = badges;
     }
 
-    public Title getTitle() {
+    public String getTitle() {
         return title;
     }
 
-    public void setTitle(Title title) {
+    public void setTitle(String title) {
         this.title = title;
     }
 
