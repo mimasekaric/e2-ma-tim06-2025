@@ -25,7 +25,6 @@ public class OneTimeTaskDetailsViewModel extends ViewModel {
     private final CategoryService categoryService;
     private final MutableLiveData<OneTimeTaskDTO> taskDetails = new MutableLiveData<>();
 
-
     private final MutableLiveData<Boolean> _taskDeletedEvent = new MutableLiveData<>();
     private final MutableLiveData<Boolean> _taskStatusUpdatedEvent = new MutableLiveData<>();
     public LiveData<Boolean> getTaskStatusUpdatedEvent() {

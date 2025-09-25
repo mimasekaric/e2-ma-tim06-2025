@@ -18,7 +18,7 @@ public class UserService {
     private  String userIdd;
     public UserService(){
         this.repository = new UserRepository();
-        this.profileService = new ProfileService();
+        this.profileService = ProfileService.getInstance();
         this.userIdd="";
     }
     public String getId(){

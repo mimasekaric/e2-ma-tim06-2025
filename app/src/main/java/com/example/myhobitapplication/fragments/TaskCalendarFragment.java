@@ -69,7 +69,7 @@ public class TaskCalendarFragment extends Fragment {
         calendarView = calendarBinding.calendarView;
 
         TaskRepository repository = new TaskRepository(getContext());
-        ProfileService profileService =  new ProfileService();
+        ProfileService profileService =  ProfileService.getInstance();
         TaskService taskService = new TaskService(repository, profileService);
         TextView monthTextView = view.findViewById(R.id.calendarMonthText);
         ImageView prevButton = view.findViewById(R.id.previousMonthButton);

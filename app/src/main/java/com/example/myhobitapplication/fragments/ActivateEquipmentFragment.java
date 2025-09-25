@@ -54,7 +54,7 @@ public class ActivateEquipmentFragment extends Fragment {
         profileViewModel = new ViewModelProvider(requireActivity()).get(ProfileViewModel.class);
         BossRepository bossRepository = new BossRepository(requireContext());
         EquipmentRepository equipmentRepository = new EquipmentRepository(requireContext());
-        ProfileService profileService = new ProfileService();
+        ProfileService profileService = ProfileService.getInstance();
         BossService bossService = new BossService(bossRepository);
         EquipmentService equipmentService = new EquipmentService(equipmentRepository);
         viewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
