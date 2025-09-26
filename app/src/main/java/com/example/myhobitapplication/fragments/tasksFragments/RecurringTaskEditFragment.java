@@ -69,7 +69,8 @@ public class RecurringTaskEditFragment extends Fragment {
         BossRepository bossRepository = new BossRepository(getContext());
         BossService bossService = new BossService(bossRepository);
         BattleService battleService = new BattleService(bossService, profileService);
-        taskService = new TaskService(taskRepository, profileService,battleService);
+        taskService =  TaskService.getInstance(taskRepository, profileService, battleService);
+
 
         taskEditViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @NonNull

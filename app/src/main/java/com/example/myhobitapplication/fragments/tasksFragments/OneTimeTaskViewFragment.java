@@ -86,7 +86,8 @@ public class OneTimeTaskViewFragment extends Fragment {
         BossRepository bossRepository = new BossRepository(getContext());
         BossService bossService = new BossService(bossRepository);
         BattleService battleService = new BattleService(bossService, profileService);
-        TaskService taskService = new TaskService(taskRepository, profileService, battleService);
+        TaskService  taskService =  TaskService.getInstance(taskRepository, profileService, battleService);
+
 
         String userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 

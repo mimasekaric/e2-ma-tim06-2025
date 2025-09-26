@@ -78,7 +78,8 @@ public class TaskCalendarFragment extends Fragment {
         BossRepository bossRepository = new BossRepository(getContext());
         BossService bossService = new BossService(bossRepository);
         BattleService battleService = new BattleService(bossService, profileService);
-        TaskService taskService = new TaskService(repository, profileService, battleService);
+        TaskService  taskService =  TaskService.getInstance(repository, profileService, battleService);
+
         TextView monthTextView = view.findViewById(R.id.calendarMonthText);
         ImageView prevButton = view.findViewById(R.id.previousMonthButton);
         ImageView nextButton = view.findViewById(R.id.nextMonthButton);

@@ -109,8 +109,10 @@ public class ProfileService {
     private final List<LevelUpListener> levelUpListeners = new ArrayList<>();
 
     public void addLevelUpListener(LevelUpListener listener) {
-        Log.d("ProfileService", "Adding listener: " + listener);
-        this.levelUpListeners.add(listener);
+        if (!this.levelUpListeners.contains(listener)) {
+            Log.d("ProfileService", "Adding listener: " + listener);
+            this.levelUpListeners.add(listener);
+        }
     }
 
     public void removeLevelUpListener(LevelUpListener listener) {

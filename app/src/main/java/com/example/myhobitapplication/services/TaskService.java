@@ -33,8 +33,16 @@ public class TaskService implements LevelUpListener {
 
     private final BattleService battleService;
     private RecurringTask task;
+    private static TaskService instance;
     private final Map<LocalDate, List<RecurringTask>> scheduledTasks;
-    public TaskService(TaskRepository repository, ProfileService profileService, BattleService battleService){
+
+    public static synchronized TaskService getInstance(TaskRepository repository, ProfileService profileService, BattleService battleService) {
+        if (instance == null) {
+            instance = new TaskService(repository, profileService, battleService);
+        }
+        return instance;
+    }
+    private  TaskService(TaskRepository repository, ProfileService profileService, BattleService battleService){
         this.repository = repository;
         this.profileService = profileService;
         this.battleService = battleService;
@@ -470,7 +478,7 @@ public class TaskService implements LevelUpListener {
 
         boolean shouldAwardXp = completedCount < limit;
         int xpGained = 0;
-
+        /// TODO: ne treba true pred odbranu ovdje i u sledecoj metodi vec shouldAwardXp
         if (true) {
             task.setAwarded(true);
             xpGained = task.getDifficulty() + task.getImportance();

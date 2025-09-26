@@ -129,7 +129,7 @@ public class BattleViewModel extends ViewModel {
         this.bossService = new BossService(bossRepository);
         this.profileService = profileService;
         this.battleService = new BattleService(bossService, profileService);
-        this.taskService = new TaskService(taskRepository, profileService, battleService);
+        this.taskService = TaskService.getInstance(taskRepository, profileService, battleService);
         this.userEquipmentService = userEquipmentService;
         userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
     }

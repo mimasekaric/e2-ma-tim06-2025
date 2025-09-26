@@ -92,7 +92,7 @@ public class TaskSlotCalendarFragment extends Fragment {
         BossService bossService = new BossService(bossRepository);
         BattleService battleService = new BattleService(bossService, profileService);
 
-        TaskService taskService = new TaskService(repository, profileService,battleService);
+        TaskService taskService = TaskService.getInstance(repository, profileService, battleService);
 
         categoryRepository = new CategoryRepository(getContext());
         categoryService = new CategoryService(categoryRepository,repository);
