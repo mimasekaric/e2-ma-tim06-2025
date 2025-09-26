@@ -12,12 +12,15 @@ import com.example.myhobitapplication.enums.TaskQuote;
 import com.example.myhobitapplication.exceptions.ValidationException;
 import com.example.myhobitapplication.interfaces.LevelUpListener;
 import com.example.myhobitapplication.models.OneTimeTask;
+import com.example.myhobitapplication.models.Profile;
 import com.example.myhobitapplication.models.RecurringTask;
 import com.example.myhobitapplication.models.Task;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,15 +30,48 @@ public class TaskService implements LevelUpListener {
 
     private final TaskRepository repository;
     private final ProfileService profileService;
+
+    private final BattleService battleService;
     private RecurringTask task;
+    private static TaskService instance;
     private final Map<LocalDate, List<RecurringTask>> scheduledTasks;
-    public TaskService(TaskRepository repository, ProfileService profileService){
+
+    public static synchronized TaskService getInstance(TaskRepository repository, ProfileService profileService, BattleService battleService) {
+        if (instance == null) {
+            instance = new TaskService(repository, profileService, battleService);
+        }
+        return instance;
+    }
+    private  TaskService(TaskRepository repository, ProfileService profileService, BattleService battleService){
         this.repository = repository;
         this.profileService = profileService;
+        this.battleService = battleService;
        // this.profileService.setLevelUpListener(this);
         this.profileService.addLevelUpListener(this);
         scheduledTasks = new HashMap<>();
 
+    }
+
+    public Double calculateChanceForAttack(Profile profile){
+
+        if (profile == null || profile.getCurrentLevelDate() == null) {
+            return 0.0;
+        }
+
+        Date startDate = profile.getPreviousLevelDate();
+        Date endDate = profile.getCurrentLevelDate();
+
+        LocalDate localStartDate = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate localEndaDate = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+        Integer completedTasks = countFinishedTasksForDateRange(localStartDate,localEndaDate, profile.getuserUid());
+        Integer createdTasks = countCreatedTasksForDateRange(localStartDate,localEndaDate, profile.getuserUid());
+
+        if (createdTasks == null || createdTasks == 0) {
+            return 0.0;
+        }
+
+        return (double)completedTasks /createdTasks;
     }
 
 
@@ -256,12 +292,16 @@ public class TaskService implements LevelUpListener {
 
     public int countCreatedTasksForDateRange(LocalDate previousLevelDate, LocalDate currentLevelDate, String userUid){
 
-        return repository.countTasksByDateRange(previousLevelDate,currentLevelDate, userUid);
+        int rCount =  repository.countRecurringTasksByDateRange(previousLevelDate,currentLevelDate, userUid);
+        int oCount =  repository.countOneTimeTasksByDateRange(previousLevelDate,currentLevelDate, userUid);
+        return rCount + oCount;
     }
 
     public int countFinishedTasksForDateRange(LocalDate previousLevelDate, LocalDate currentLevelDate, String userUid){
 
-        return repository.countTasksByStatusInDateRange(RecurringTaskStatus.COMPLETED,previousLevelDate,currentLevelDate, userUid);
+        int rCount =  repository.countRecurringTasksByStatusInDateRange(RecurringTaskStatus.COMPLETED,previousLevelDate,currentLevelDate, userUid);
+        int oCount =  repository.countOneTimeTasksByStatusInDateRange(RecurringTaskStatus.COMPLETED,previousLevelDate,currentLevelDate, userUid);
+        return rCount + oCount;
     }
 
     public void createOneTimeTask(OneTimeTaskDTO taskDTO) throws ValidationException {
@@ -412,6 +452,10 @@ public class TaskService implements LevelUpListener {
                         Log.d("Firestore", "XP azuriran!");
                         profileService.checkForLevelUpdates(userId).addOnSuccessListener(v->{
                             Log.d("Firestore", "Level chek uspjesan!");
+                            if(v!=null){
+                                battleService.generateBossForUser(userId,v);
+                                battleService.resetAttemptForUndefeatedBosses(userId);
+                            }
                         }).addOnFailureListener(v->{
                             Log.d("Firestore", "Level check nije uspjesan!");
                         });
@@ -423,7 +467,7 @@ public class TaskService implements LevelUpListener {
             return;
         }
 
-        LocalDate today = task.getStartDate();
+        LocalDate today = task.getFinishedDate();
         LocalDate startDate = getStartDateForQuota(quote, today);
         LocalDate endDate = getEndDateForQuota(quote, today);
         int limit = getLimitForCategory(quote);
@@ -434,14 +478,18 @@ public class TaskService implements LevelUpListener {
 
         boolean shouldAwardXp = completedCount < limit;
         int xpGained = 0;
-
-        if (true) {/// /
+        /// TODO: ne treba true pred odbranu ovdje i u sledecoj metodi vec shouldAwardXp
+        if (true) {
             task.setAwarded(true);
             xpGained = task.getDifficulty() + task.getImportance();
             profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
                         Log.d("Firestore", "XP azuriran!");
                         profileService.checkForLevelUpdates(userId).addOnSuccessListener(v->{
                             Log.d("Firestore", "Level chek uspjesan!");
+                            if(v!=null){
+                                battleService.generateBossForUser(userId,v);
+                                battleService.resetAttemptForUndefeatedBosses(userId);
+                            }
                         }).addOnFailureListener(v->{
                             Log.d("Firestore", "Level check nije uspjesan!");
                         });
@@ -475,6 +523,10 @@ public class TaskService implements LevelUpListener {
                         Log.d("Firestore", "XP azuriran!");
                         profileService.checkForLevelUpdates(userId).addOnSuccessListener(v->{
                             Log.d("Firestore", "Level chek uspjesan!");
+                            if(v!=null){
+                                battleService.generateBossForUser(userId,v);
+                                battleService.resetAttemptForUndefeatedBosses(userId);
+                            }
                         }).addOnFailureListener(v->{
                             Log.d("Firestore", "Level check nije uspjesan!");
                         });
@@ -486,7 +538,7 @@ public class TaskService implements LevelUpListener {
             return;
         }
 
-        LocalDate today = oneTimeTask.getStartDate();
+        LocalDate today = oneTimeTask.getFinishedDate();
         LocalDate startDate = getStartDateForQuota(quote, today);
         LocalDate endDate = getEndDateForQuota(quote, today);
         int limit = getLimitForCategory(quote);
@@ -498,13 +550,17 @@ public class TaskService implements LevelUpListener {
         boolean shouldAwardXp = completedCount < limit;
         int xpGained = 0;
 
-        if (true) {///
+        if (true) {
             oneTimeTask.setAwarded(true);
             xpGained = oneTimeTask.getDifficulty() + oneTimeTask.getImportance();
             profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
                         Log.d("Firestore", "XP azuriran!");
                         profileService.checkForLevelUpdates(userId).addOnSuccessListener(v->{
                             Log.d("Firestore", "Level chek uspjesan!");
+                            if(v!=null){
+                                battleService.generateBossForUser(userId,v);
+                                battleService.resetAttemptForUndefeatedBosses(userId);
+                            }
                         }).addOnFailureListener(v->{
                             Log.d("Firestore", "Level check nije uspjesan!");
                         });
@@ -584,6 +640,9 @@ public class TaskService implements LevelUpListener {
         }
     }
 
+    public void generateBossForUser(String userId, int newLevel){
+        battleService.generateBossForUser(userId,newLevel);
+    }
     public void importanceBoostOneTime(OneTimeTask task){
         int oldValue = task.getImportance();
         int newValue = Math.round(oldValue + ((float) oldValue /2));

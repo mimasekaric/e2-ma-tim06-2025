@@ -6,11 +6,14 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.myhobitapplication.databases.BossRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.dto.UserInfoDTO;
+import com.example.myhobitapplication.interfaces.LevelUpListener;
 import com.example.myhobitapplication.models.Equipment;
 import com.example.myhobitapplication.models.Profile;
 import com.example.myhobitapplication.models.User;
+import com.example.myhobitapplication.services.BattleService;
 import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.EquipmentService;
 import com.example.myhobitapplication.services.ProfileService;
@@ -37,9 +40,21 @@ public class ProfileViewModel extends ViewModel {
     private final MutableLiveData<UserInfoDTO> userInfo = new MutableLiveData<>(new UserInfoDTO());
     private final MutableLiveData<String> response = new MutableLiveData<>("");
     private final MutableLiveData<Boolean> loadSuccess = new MutableLiveData<>(false);
+    private LevelUpListener levelUpListener = new LevelUpListener() {
+        @Override
+        public void onLevelUp(String userUid, int newLevel) {
+            Log.d("ProfileViewModel", "Level up event received: " + newLevel);
+            loadProfile(userUid);
+            _levelUpEvent.postValue(newLevel);
+        }
+    };
+
+
     public ProfileViewModel(Context context, BossService bossService, EquipmentService equipmentService) {
         this.profileService = ProfileService.getInstance();
-        this.taskService = new TaskService(new TaskRepository(context),profileService);
+        BattleService battleService = new BattleService(bossService, profileService);
+        this.taskService =  TaskService.getInstance(new TaskRepository(context), profileService, battleService);
+
       /*  this.profileService.setLevelUpListener(taskService);
 
 
@@ -48,12 +63,13 @@ public class ProfileViewModel extends ViewModel {
             loadProfile(userUid);
             _levelUpEvent.postValue(newLevel);
         });*/
-        this.profileService.addLevelUpListener(taskService);
-        this.profileService.addLevelUpListener((userUid, newLevel) -> {
+        profileService.addLevelUpListener(levelUpListener);
+
+      /* this.profileService.addLevelUpListener((userUid, newLevel) -> {
             Log.d("ProfileViewModel", "Level up event received: " + newLevel);
             loadProfile(userUid);
             _levelUpEvent.postValue(newLevel);
-        });
+        });*/
         this.userEquipmentService= new UserEquipmentService(context, profileService, bossService, equipmentService);
     }
     public MutableLiveData<Profile> getProfile() {
@@ -70,6 +86,11 @@ public class ProfileViewModel extends ViewModel {
         return loadSuccess;
     }
 
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        profileService.removeLevelUpListener(levelUpListener);
+    }
     public void loadProfile(String userUid) {
         response.setValue("");
         loadSuccess.setValue(false);

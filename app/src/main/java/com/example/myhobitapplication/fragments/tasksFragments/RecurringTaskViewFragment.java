@@ -39,6 +39,7 @@ import com.example.myhobitapplication.databinding.FragmentRecurringTaskListBindi
 import com.example.myhobitapplication.dto.RecurringTaskDTO;
 import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.EquipmentService;
+import com.example.myhobitapplication.services.BattleService;
 import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.TaskService;
 import com.example.myhobitapplication.viewModels.ProfileViewModel;
@@ -86,7 +87,10 @@ public class RecurringTaskViewFragment extends Fragment {
 
         TaskRepository taskRepository = new TaskRepository(getContext());
         ProfileService profileService =  ProfileService.getInstance();
-        TaskService taskService = new TaskService(taskRepository, profileService);
+        BossRepository bossRepository = new BossRepository(getContext());
+        BossService bossService = new BossService(bossRepository);
+        BattleService battleService = new BattleService(bossService, profileService);
+        TaskService taskService =  TaskService.getInstance(taskRepository, profileService, battleService);
 
         String userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 

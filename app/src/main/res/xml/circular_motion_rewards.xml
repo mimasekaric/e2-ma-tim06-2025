@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:motion="http://schemas.android.com/apk/res-auto">
+
+    <!--
+        autoTransition="jumpToEnd" znači da će odmah skočiti na kraj i animirati se prema početku.
+        Zatim će se animirati natrag prema kraju, stvarajući beskonačnu petlju.
+    -->
+    <Transition
+        motion:constraintSetEnd="@+id/end"
+        motion:constraintSetStart="@+id/start"
+        motion:duration="2000"
+         >
+        <!-- Atribut 'autoTransition' će se pobrinuti za beskonačnu petlju -->
+    </Transition>
+
+
+    <!-- POČETNO STANJE ('start'): Sve sličice su grupirane u centru -->
+    <ConstraintSet android:id="@+id/start">
+        <!-- Sve imaju iste koordinate - centar roditelja (MotionLayout-a) -->
+        <Constraint android:id="@+id/boots"  android:layout_width="30dp" android:layout_height="30dp" motion:layout_constraintTop_toTopOf="parent" motion:layout_constraintBottom_toBottomOf="parent" motion:layout_constraintStart_toStartOf="parent" motion:layout_constraintEnd_toEndOf="parent" />
+        <Constraint android:id="@+id/gloves" android:layout_width="30dp" android:layout_height="30dp" motion:layout_constraintTop_toTopOf="parent" motion:layout_constraintBottom_toBottomOf="parent" motion:layout_constraintStart_toStartOf="parent" motion:layout_constraintEnd_toEndOf="parent" />
+        <Constraint android:id="@+id/shield" android:layout_width="30dp" android:layout_height="30dp" motion:layout_constraintTop_toTopOf="parent" motion:layout_constraintBottom_toBottomOf="parent" motion:layout_constraintStart_toStartOf="parent" motion:layout_constraintEnd_toEndOf="parent" />
+        <Constraint android:id="@+id/sword"  android:layout_width="30dp" android:layout_height="30dp" motion:layout_constraintTop_toTopOf="parent" motion:layout_constraintBottom_toBottomOf="parent" motion:layout_constraintStart_toStartOf="parent" motion:layout_constraintEnd_toEndOf="parent" />
+        <Constraint android:id="@+id/arrow"  android:layout_width="30dp" android:layout_height="30dp" motion:layout_constraintTop_toTopOf="parent" motion:layout_constraintBottom_toBottomOf="parent" motion:layout_constraintStart_toStartOf="parent" motion:layout_constraintEnd_toEndOf="parent" />
+    </ConstraintSet>
+
+
+    <!-- ZAVRŠNO STANJE ('end'): Sličice su raširene po svojim pozicijama -->
+    <ConstraintSet android:id="@+id/end">
+
+        <!-- BOOTS: Gore-Centar -->
+        <Constraint
+            android:id="@+id/boots"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp" />
+
+        <!-- SHIELD: Dolje-Centar -->
+        <Constraint
+            android:id="@+id/shield"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="16dp" />
+
+        <!-- GLOVES: Sredina-Lijevo -->
+        <Constraint
+            android:id="@+id/gloves"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="16dp" />
+
+        <!-- SWORD: Sredina-Desno -->
+        <Constraint
+            android:id="@+id/sword"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="16dp" />
+
+        <!-- ARROW: Dijagonalno Dolje-Desno -->
+        <Constraint
+            android:id="@+id/arrow"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp" />
+
+    </ConstraintSet>
+
+</MotionScene>

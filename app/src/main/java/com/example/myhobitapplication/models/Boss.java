@@ -18,15 +18,18 @@ public class Boss {
     private Integer CoinsReward;
     private double CoinsRewardPercent;
 
+    private boolean attemptedThisLevel;
+
     public Boss(Integer HP) {
 
         this.HP = HP;
+        this.attemptedThisLevel = false;
     }
 
     public Boss() {
     }
 
-    public Boss(Integer id, Integer HP, String userId, Integer currentHP, Boolean isDefeated, Integer bossLevel, Integer coinsReward, double coinsRewardPercent) {
+    public Boss(Integer id, Integer HP, String userId, Integer currentHP, Boolean isDefeated, Integer bossLevel, Integer coinsReward, double coinsRewardPercent, boolean attemptedThisLevel) {
         Id = id;
         this.HP = HP;
         UserId = userId;
@@ -35,6 +38,7 @@ public class Boss {
         BossLevel = bossLevel;
         CoinsReward = coinsReward;
         CoinsRewardPercent = coinsRewardPercent;
+        this.attemptedThisLevel = attemptedThisLevel;
     }
 
     public Boss(Integer HP, String userId, Integer currentHP, Boolean isDefeated, Integer bossLevel, Integer coinsReward) {
@@ -105,6 +109,14 @@ public class Boss {
     public void calculateHP(){
 
         setHP(getHP()*2+getHP()/2);
+    }
+
+    public boolean isAttemptedThisLevel() {
+        return attemptedThisLevel;
+    }
+
+    public void setAttemptedThisLevel(boolean attemptedThisLevel) {
+        this.attemptedThisLevel = attemptedThisLevel;
     }
 
     public Integer getCoinsReward() {

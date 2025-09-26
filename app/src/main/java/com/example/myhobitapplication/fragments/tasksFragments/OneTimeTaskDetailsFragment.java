@@ -34,6 +34,7 @@ import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.FragmentOneTimeTaskDetailsBinding;
 import com.example.myhobitapplication.enums.OneTimeTaskStatus;
 import com.example.myhobitapplication.enums.RecurringTaskStatus;
+import com.example.myhobitapplication.services.BattleService;
 import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.CategoryService;
 import com.example.myhobitapplication.services.EquipmentService;
@@ -84,10 +85,15 @@ public class OneTimeTaskDetailsFragment extends Fragment {
 
         }
 
+
+
         taskRepository = new TaskRepository(getContext());
         categoryRepository = new CategoryRepository(getContext());
         ProfileService profileService =  ProfileService.getInstance();
-        taskService = new TaskService(taskRepository, profileService);
+        BossRepository bossRepository = new BossRepository(getContext());
+        BossService bossService = new BossService(bossRepository);
+        BattleService battleService = new BattleService(bossService, profileService);
+        taskService =  TaskService.getInstance(taskRepository, profileService, battleService);
 
         taskDetailsViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @NonNull

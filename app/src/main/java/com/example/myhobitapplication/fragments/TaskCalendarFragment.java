@@ -17,9 +17,12 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.activities.TaskDetailActivity;
+import com.example.myhobitapplication.databases.BossRepository;
 import com.example.myhobitapplication.databases.ProfileRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.FragmentTaskCalendarBinding;
+import com.example.myhobitapplication.services.BattleService;
+import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.TaskService;
 import com.example.myhobitapplication.viewModels.TaskCalendarViewModel;
@@ -68,9 +71,15 @@ public class TaskCalendarFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         calendarView = calendarBinding.calendarView;
 
+
+
         TaskRepository repository = new TaskRepository(getContext());
         ProfileService profileService =  ProfileService.getInstance();
-        TaskService taskService = new TaskService(repository, profileService);
+        BossRepository bossRepository = new BossRepository(getContext());
+        BossService bossService = new BossService(bossRepository);
+        BattleService battleService = new BattleService(bossService, profileService);
+        TaskService  taskService =  TaskService.getInstance(repository, profileService, battleService);
+
         TextView monthTextView = view.findViewById(R.id.calendarMonthText);
         ImageView prevButton = view.findViewById(R.id.previousMonthButton);
         ImageView nextButton = view.findViewById(R.id.nextMonthButton);

@@ -256,7 +256,7 @@ public class UserEquipmentService {
         if (profile != null && profile.getlevel() > 1) {
             var boss = bossService.getPreviousBossForUser(
                     profile.getuserUid(),
-                    profile.getlevel() - 2
+                    profile.getlevel() /// ovde ne treba minus 2
             );
 
             if (boss != null) {

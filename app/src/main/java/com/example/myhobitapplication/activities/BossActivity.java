@@ -3,6 +3,7 @@ package com.example.myhobitapplication.activities;
 import android.animation.Animator;
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
@@ -11,8 +12,11 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +24,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.motion.widget.MotionLayout;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -29,8 +34,10 @@ import com.example.myhobitapplication.databases.BossRepository;
 import com.example.myhobitapplication.databases.EquipmentRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.ActivityBossBinding;
+import com.example.myhobitapplication.dto.UserEquipmentDTO;
 import com.example.myhobitapplication.models.Avatar;
 import com.example.myhobitapplication.models.Boss;
+import com.example.myhobitapplication.models.Equipment;
 import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.EquipmentService;
 import com.example.myhobitapplication.services.ProfileService;
@@ -42,9 +49,12 @@ import com.example.myhobitapplication.viewModels.ProfileViewModel;
 import com.example.myhobitapplication.viewModels.ProfileViewModelFactory;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.List;
+
 public class BossActivity extends AppCompatActivity {
 
     private ActivityBossBinding binding;
+    private MotionLayout rewardsAnimationLayout;
     private ProfileViewModel profileViewModel;
     private AnimationDrawable currentAnimation;
 
@@ -75,8 +85,8 @@ public class BossActivity extends AppCompatActivity {
         BossRepository bossRepository = new BossRepository(getApplicationContext());
         EquipmentRepository equipmentRepository = new EquipmentRepository(getApplicationContext());
         ProfileService profileService = ProfileService.getInstance();
-        Boss boss = new Boss(2,400,userUid,400,false,2,200, 0.2);
-        bossRepository.insertBoss(boss);
+        //Boss boss = new Boss(2,400,userUid,400,false,2,200, 0.2);
+        //bossRepository.insertBoss(boss);
         BossService bossService = new BossService(bossRepository);
         EquipmentService equipmentService = new EquipmentService(equipmentRepository);
         battleViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
@@ -97,6 +107,8 @@ public class BossActivity extends AppCompatActivity {
         binding = ActivityBossBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         chestContainer = binding.chestOverlayContainer;
+        rewardsAnimationLayout = binding.rewardsAnimationLayout;
+        //rewardsAnimationLayout.transitionToEnd();
 
 
 
@@ -117,6 +129,7 @@ public class BossActivity extends AppCompatActivity {
 
         battleViewModel.loadBattleState(userUid);
         profileViewModel.loadProfile(userUid);
+
 
         setupObservers();
         setupShakeDetector();
@@ -211,6 +224,40 @@ public class BossActivity extends AppCompatActivity {
             }
         });
 
+        battleViewModel.getActivatedEquipment().observe(this, equipmentList -> {
+            if (equipmentList != null) {
+                loadActivatedEquipment(equipmentList);
+            }
+        });
+
+        battleViewModel.getScreenState().observe(this, state -> {
+            if (state == null) return;
+
+            switch (state) {
+                case BOSS_FOUND:
+                    binding.bossBattleGroup.setVisibility(View.VISIBLE);
+                    binding.noBoss.setVisibility(View.GONE);
+                    binding.sleepingBoss.clearAnimation();
+                    break;
+                case NO_BOSS_FOUND:
+                    binding.bossBattleGroup.setVisibility(View.GONE);
+                    binding.noBoss.setVisibility(View.VISIBLE);
+                    startFloatingAnimation();
+                    break;
+                case LOADING:
+                    binding.bossBattleGroup.setVisibility(View.GONE);
+                    binding.noBoss.setVisibility(View.GONE);
+                    break;
+            }
+        });
+
+    }
+
+    private void startFloatingAnimation() {
+
+        Animation floatingAnimation = AnimationUtils.loadAnimation(this, R.anim.dragon_up_down);
+        ImageView sleepingBossImage = binding.sleepingBoss;
+        sleepingBossImage.startAnimation(floatingAnimation);
     }
 
 
@@ -420,5 +467,82 @@ public class BossActivity extends AppCompatActivity {
                 finish();
             }
         }, DIALOG_DISPLAY_TIME_MS);
+    }
+
+
+
+    private void loadActivatedEquipment(List<UserEquipmentDTO> userEquipmentDTOList) {
+
+
+            if(userEquipmentDTOList.isEmpty()){
+                TextView textView = new TextView(this);
+                textView.setText("NO ACTIVATED EQUIPMENT");
+                textView.setTextColor(Color.parseColor("#DA9100"));
+                int widthInDp = 100;
+                float scale = getResources().getDisplayMetrics().density;
+                int widthInPx = (int) (widthInDp * scale + 0.5f);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                        widthInPx,
+                        LinearLayout.LayoutParams.MATCH_PARENT
+                );
+                textView.setLayoutParams(params);
+                binding.rewardsLinearLayout.addView(textView);
+                return;
+            }
+
+            binding.rewardsLinearLayout.removeAllViews();
+            for (UserEquipmentDTO res : userEquipmentDTOList) {
+                ImageView imageView2 = new ImageView(this);
+                imageView2.setImageResource(res.getEquipment().getImage());
+                int widthInDp = 100;
+                float scale = getResources().getDisplayMetrics().density;
+                int widthInPx = (int) (widthInDp * scale + 0.5f);
+
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                        widthInPx,
+                        LinearLayout.LayoutParams.MATCH_PARENT
+                );
+                imageView2.setLayoutParams(params);
+                binding.rewardsLinearLayout.addView(imageView2);
+            }
+    }
+
+    //generated by chat-gpt
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Pokrećemo animaciju kada se aktivnost prikaže
+        startRewardsAnimation();
+    }
+
+    private void startRewardsAnimation() {
+        // Dohvatimo MotionLayout preko binding objekta
+        MotionLayout rewardsAnimationLayout = binding.rewardsAnimationLayout;
+
+        // Postavljamo listener koji će restartati animaciju kada završi, stvarajući beskonačnu petlju
+        rewardsAnimationLayout.setTransitionListener(new MotionLayout.TransitionListener() {
+            @Override
+            public void onTransitionStarted(MotionLayout motionLayout, int startId, int endId) {}
+
+            @Override
+            public void onTransitionChange(MotionLayout motionLayout, int startId, int endId, float progress) {}
+
+            @Override
+            public void onTransitionCompleted(MotionLayout motionLayout, int currentId) {
+                // Kada animacija dođe do kraja, odmah je pokreni ponovo
+                if (currentId == R.id.end) {
+                    motionLayout.transitionToStart(); // Vrati na početak bez animacije
+                    motionLayout.transitionToEnd();   // Pokreni animaciju ponovo
+                }
+            }
+
+            @Override
+            public void onTransitionTrigger(MotionLayout motionLayout, int triggerId, boolean positive, float progress) {}
+        });
+
+        // Pokreni animaciju prvi put
+        rewardsAnimationLayout.transitionToEnd();
+
     }
 }

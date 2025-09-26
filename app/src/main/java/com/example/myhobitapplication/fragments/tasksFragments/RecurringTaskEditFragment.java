@@ -20,8 +20,11 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myhobitapplication.adapters.DifficultySpinnerAdapter;
 import com.example.myhobitapplication.adapters.ImportanceSpinnerAdapter;
+import com.example.myhobitapplication.databases.BossRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.FragmentRecurringTaskEditBinding;
+import com.example.myhobitapplication.services.BattleService;
+import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.TaskService;
 import com.example.myhobitapplication.viewModels.taskViewModels.RecurringTaskEditViewModel;
@@ -63,7 +66,11 @@ public class RecurringTaskEditFragment extends Fragment {
 
         taskRepository = new TaskRepository(getContext());
         ProfileService profileService =  ProfileService.getInstance();
-        taskService = new TaskService(taskRepository, profileService);
+        BossRepository bossRepository = new BossRepository(getContext());
+        BossService bossService = new BossService(bossRepository);
+        BattleService battleService = new BattleService(bossService, profileService);
+        taskService =  TaskService.getInstance(taskRepository, profileService, battleService);
+
 
         taskEditViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @NonNull

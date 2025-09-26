@@ -36,7 +36,15 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+
 public class BattleViewModel extends ViewModel {
+
+
+    public enum BattleScreenState {
+        LOADING,
+        BOSS_FOUND,
+        NO_BOSS_FOUND
+    }
     private final TaskService taskService;
     private final BossService bossService;
     private final BattleService battleService;
@@ -55,6 +63,7 @@ public class BattleViewModel extends ViewModel {
     private final MutableLiveData<Integer> _userPP = new MutableLiveData<>();
     private final MutableLiveData<Integer> _remainingAttacks = new MutableLiveData<>();
     private final MutableLiveData<Boolean> _hitAnimationEvent = new MutableLiveData<>();
+    MutableLiveData<List<UserEquipmentDTO>> activatedEquipmentList= new MutableLiveData<List<UserEquipmentDTO>>();
     private final MutableLiveData<Integer> _coins = new MutableLiveData<>(0);
 
     private final MutableLiveData<Boolean> _attackMissedEvent = new MutableLiveData<>();
@@ -63,7 +72,8 @@ public class BattleViewModel extends ViewModel {
     private final MutableLiveData<Integer> _rewardEquipmentImage = new MutableLiveData<>(0);
     public MutableLiveData<Integer> getImageResource() { return _rewardEquipmentImage;}
     public void setImageResource(Integer src) { _rewardEquipmentImage.setValue(src);}
-
+    public MutableLiveData<List<UserEquipmentDTO>> getActivatedEquipment() { return activatedEquipmentList;}
+    public void setActivatedEquipment(List<UserEquipmentDTO> activatedEquipmentsdata) { activatedEquipmentList.setValue(activatedEquipmentsdata);}
     public double getHitChance() {return hitChance;}
     public int getStartAttackNumber() {return startAttackNumber;}
     public void setStartAttackNumber(int number) {startAttackNumber = number;}
@@ -72,8 +82,13 @@ public class BattleViewModel extends ViewModel {
     private final MutableLiveData<String> _equipmentName = new MutableLiveData<>();
     public MutableLiveData<String> getEquipmentName() { return _equipmentName;}
     public void setEquipmentName(String name) { _equipmentName.setValue(name);}
+    public boolean attemptedThisLevel = false;
+    public boolean getAttemptedThisLevel() {return attemptedThisLevel;}
+    public void setAttemptedThisLevel(boolean flag) { attemptedThisLevel = flag;}
 
+    private final MutableLiveData<BattleScreenState> _screenState = new MutableLiveData<>(BattleScreenState.LOADING);
 
+    public LiveData<BattleScreenState> getScreenState() {return _screenState;}
 
     public MutableLiveData<Equipment> getEquipment() { return _equipment;}
     public void setEquipment(Equipment equipment) { _equipment.setValue(equipment);}
@@ -113,20 +128,27 @@ public class BattleViewModel extends ViewModel {
     public BattleViewModel(TaskRepository taskRepository, BossRepository bossRepository, ProfileService profileService, UserEquipmentService userEquipmentService) {
         this.bossService = new BossService(bossRepository);
         this.profileService = profileService;
-        this.taskService = new TaskService(taskRepository, profileService);
-        this.battleService = new BattleService(taskService, bossService, profileService);
+        this.battleService = new BattleService(bossService, profileService);
+        this.taskService = TaskService.getInstance(taskRepository, profileService, battleService);
         this.userEquipmentService = userEquipmentService;
         userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
     public void loadBattleState(String userId){
 
         currentBoss = bossService.getLowestLevelBossForUser(userId);
+        if(currentBoss.isAttemptedThisLevel()){
+            currentBoss = null;
+            _screenState.setValue(BattleScreenState.NO_BOSS_FOUND);
+            return;
+        }
+
+        _screenState.setValue(BattleScreenState.BOSS_FOUND);
 
         //int userPower = battleService.calculateUserAttackPower(userId);
 
         //int userPower = 80;
 
-        _bossCurrentHp.setValue(currentBoss.getCurrentHP());
+        _bossCurrentHp.setValue(currentBoss.getHP());
         _bossMaxHp.setValue(currentBoss.getHP());
 
         this.hitChance = 1.0;
@@ -141,6 +163,7 @@ public class BattleViewModel extends ViewModel {
             userEquipmentService.activatedEquipmentEffect(profile);
             _userProfile.setValue(profile);
             List<UserEquipmentDTO> ueList= userEquipmentService.getUserActivatedEquipment(profile.getuserUid());
+            setActivatedEquipment(ueList);
             for(UserEquipmentDTO u :  ueList){
                 UserEquipment userEquipment = userEquipmentService.getById(u.getUserEquipmentId());
                 if (u.getEquipment().getequipmentType().equals(EquipmentTypes.CLOTHING)){
@@ -226,12 +249,14 @@ public class BattleViewModel extends ViewModel {
                 currentBoss.setDefeated(true);
                 setCoins(currentBoss.getCoinsReward());
                 _isBattleOver.setValue(true);
+                setAttemptedThisLevel(true);
+                currentBoss.setAttemptedThisLevel(true);
                 profileService.getProfileById(userUid).addOnSuccessListener(profile -> {
                     userEquipmentService.incrementFightsCounter(userUid,profile);
                 });
                 deleteEquipmentEffect();
                 battleService.rewardUserWithCoins(currentBoss);
-                Equipment equipment = rewardUserWithEquipment();
+                Equipment equipment = rewardUserWithEquipment(1.0);
                 setEquipmentDetails(equipment);
             }
 
@@ -246,12 +271,32 @@ public class BattleViewModel extends ViewModel {
 
         if (_remainingAttacks.getValue() <= 0 && currentBoss.getCurrentHP() > 0) {
             _isBattleOver.setValue(true);
+            setAttemptedThisLevel(true);
+            currentBoss.setAttemptedThisLevel(true);
+            battleService.updateBoss(currentBoss);
+
+
+            double halfMaxHp = currentBoss.getHP() / 2.0;
+
+            if (currentBoss.getCurrentHP() <= halfMaxHp) {
+
+                int halfCoinsReward = currentBoss.getCoinsReward() / 2;
+                setCoins(halfCoinsReward);
+                battleService.rewardUserWithHalfCoins(currentBoss.getUserId(), halfCoinsReward, currentBoss.getBossLevel());
+
+                Equipment equipment = rewardUserWithEquipment(0.5);
+                setEquipmentDetails(equipment);
+
+            } else {
+                setCoins(0);
+            }
             profileService.getProfileById(userUid).addOnSuccessListener(profile -> {
                 userEquipmentService.incrementFightsCounter(userUid,profile);
-                });
+            });
             deleteEquipmentEffect();
-
         }
+
+
 
 
     }
@@ -292,7 +337,7 @@ public class BattleViewModel extends ViewModel {
         }
     }
 
-    public Equipment rewardUserWithEquipment() {
+    public Equipment rewardUserWithEquipment(double modificator) {
 
         double randomChanceToGainEquipment = Math.random();
         double randomChanceEquipment = Math.random();
@@ -303,14 +348,39 @@ public class BattleViewModel extends ViewModel {
         WeaponTypes weaponTypes;
         //randomChanceToGainEquipment <= chanceToGainEquipment
 
-        if (true) {
-            if (randomChanceEquipment <= weaponChance) {
-                if (randomChanceEquipmentType < 0.333) {
-                    clothingTypes = ClothingTypes.GLOVES;
-                } else if (randomChanceEquipmentType < 0.666) {
-                    clothingTypes = ClothingTypes.SHIELD;
+        if (randomChanceToGainEquipment <= chanceToGainEquipment*modificator) {
+            if(randomChanceEquipment <= weaponChance) {
+                if (randomChanceEquipmentType < 0.5) {
+                    weaponTypes = WeaponTypes.BOW_AND_ARROW_OF_LEGOLAS;
                 } else {
+                    weaponTypes = WeaponTypes.ANDURIL_OF_ARAGORN;
+                }
+                List<Equipment> weapons = userEquipmentService.getByType(EquipmentTypes.WEAPON);
+
+                Optional<Weapon> foundWeapon = weapons.stream()
+                        .filter(item -> item instanceof Weapon)
+                        .map(item -> (Weapon) item)
+                        .filter(clothing -> clothing.getType() == weaponTypes)
+                        .findFirst();
+
+                if (foundWeapon.isPresent()) {
+
+                    Weapon weapon = foundWeapon.get();
+                    userEquipmentService.gainEquipment(userUid,weapon);
+                    return weapon;
+
+                } else {
+                    return null;
+                }
+            }
+
+            else {
+                if (randomChanceEquipmentType < 0.333) {
                     clothingTypes = ClothingTypes.BOOTS;
+                } else if (randomChanceEquipmentType < 0.666) {
+                    clothingTypes = ClothingTypes.GLOVES;
+                } else {
+                    clothingTypes = ClothingTypes.SHIELD;
                 }
 
                 List<Equipment> clothes = userEquipmentService.getByType(EquipmentTypes.CLOTHING);
@@ -326,31 +396,6 @@ public class BattleViewModel extends ViewModel {
                     Clothing clothing = foundBoots.get();
                     userEquipmentService.gainEquipment(userUid,clothing);
                     return clothing;
-
-                } else {
-                   return null;
-                }
-
-            }
-            else {
-                if (randomChanceEquipmentType < 0.5) {
-                    weaponTypes = WeaponTypes.ANDURIL_OF_ARAGORN;
-                } else {
-                    weaponTypes = WeaponTypes.BOW_AND_ARROW_OF_LEGOLAS;
-                }
-                List<Equipment> weapons = userEquipmentService.getByType(EquipmentTypes.WEAPON);
-
-                Optional<Weapon> foundWeapon = weapons.stream()
-                        .filter(item -> item instanceof Weapon)
-                        .map(item -> (Weapon) item)
-                        .filter(clothing -> clothing.getType() == weaponTypes)
-                        .findFirst();
-
-                if (foundWeapon.isPresent()) {
-
-                    Weapon weapon = foundWeapon.get();
-                    userEquipmentService.gainEquipment(userUid,weapon);
-                    return weapon;
 
                 } else {
                     return null;
