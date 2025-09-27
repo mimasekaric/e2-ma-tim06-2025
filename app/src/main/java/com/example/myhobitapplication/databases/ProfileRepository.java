@@ -11,7 +11,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -181,5 +183,29 @@ public class ProfileRepository {
 
         return tcs.getTask();
     }
+
+
+    public Task<List<DocumentReference>> getAll() {
+        final TaskCompletionSource<List<DocumentReference>> taskCompletionSource = new TaskCompletionSource<>();
+
+        profileCollection.get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    List<DocumentReference> references = new ArrayList<>();
+
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        for (int i = 0; i < queryDocumentSnapshots.size(); i++) {
+                            references.add(queryDocumentSnapshots.getDocuments().get(i).getReference());
+                        }
+                        taskCompletionSource.setResult(references);
+                    } else {
+                        taskCompletionSource.setException(new Exception("No profiles found!"));
+                        Log.d("Firestore", "No profiles found in collection");
+                    }
+                })
+                .addOnFailureListener(e -> taskCompletionSource.setException(e));
+
+        return taskCompletionSource.getTask();
+    }
+
 }
 

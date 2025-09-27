@@ -38,6 +38,7 @@ import com.example.myhobitapplication.staticData.AvatarList;
 import com.example.myhobitapplication.viewModels.LoginViewModel;
 import com.example.myhobitapplication.viewModels.ProfileViewModel;
 import com.example.myhobitapplication.viewModels.UserEquipmentViewModel;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
@@ -119,6 +120,14 @@ public class ProfileActivity extends Fragment {
         viewModel.getProfile().observe(getViewLifecycleOwner(), loadedProfile -> {
             if (loadedProfile != null) {
                 this.profile = loadedProfile;
+                if(!userId.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                    binding.putpp.setVisibility(View.INVISIBLE);
+                    binding.putcoins.setVisibility(View.INVISIBLE);
+                    binding.imgcoin.setVisibility(View.INVISIBLE);
+                    binding.imgpp.setVisibility(View.INVISIBLE);
+                    binding.imageButton.setVisibility(View.INVISIBLE);
+                    binding.chng.setVisibility(View.INVISIBLE);
+                }
 
                 if (profile.getnumberOgbadges() != null) {
                     binding.putbadges.setText(profile.getnumberOgbadges().toString());
@@ -248,13 +257,6 @@ public class ProfileActivity extends Fragment {
                 R.mipmap.ic_launcher_bulb,
                 R.mipmap.ic_launcher_bulb
         };
-       /* int[] equip = {
-                R.mipmap.ic_launcher_equ,
-                R.mipmap.ic_launcher_equ,
-                R.mipmap.ic_launcher_equ,
-                R.mipmap.ic_launcher_equ,
-                R.mipmap.ic_launcher_equ
-        };*/
 
         for (int res : images) {
             ImageView imageView = new ImageView(getContext());

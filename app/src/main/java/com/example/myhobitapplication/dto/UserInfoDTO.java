@@ -4,17 +4,20 @@ import java.util.Date;
 
 public class UserInfoDTO {
 
+    public String uid;
     public String username;
 
     public String avatarName;
 
-    public UserInfoDTO(String username,String avatarName) {
+    public UserInfoDTO(String uid,String username,String avatarName) {
+        this.uid= uid;
         this.username = username;
         this.avatarName = avatarName;
     }
 
     public UserInfoDTO() {
     }
+
 
     public String getusername() {
         return username;
@@ -26,5 +29,8 @@ public class UserInfoDTO {
     }
 
 
+    public String getUid() {
+        return uid;
+    }
 }
 

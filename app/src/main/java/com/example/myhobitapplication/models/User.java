@@ -4,7 +4,7 @@ package com.example.myhobitapplication.models;
 import java.util.Date;
 
 public class User {
-    public String id;
+    public String uid;
     public String username;
     public String password;
     public String email;
@@ -12,8 +12,8 @@ public class User {
     public Boolean isRegistered;
     public Date registrationDate;
 
-    public User(String id, String email, String username, String password, String avatarName,Date registrationDate) {
-        this.id= id;
+    public User(String uid, String email, String username, String password, String avatarName,Date registrationDate) {
+        this.uid= uid;
         this.email = email;
         this.username = username;
         this.password = password;
@@ -32,6 +32,14 @@ public class User {
     }
 
     public User() {
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public Boolean getRegistered() {

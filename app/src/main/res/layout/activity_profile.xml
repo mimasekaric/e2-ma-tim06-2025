@@ -58,6 +58,7 @@
             />
 
         <ImageView
+            android:id="@+id/imgcoin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@mipmap/ic_launcher_coins" />
@@ -104,6 +105,7 @@
             />
 
         <ImageView
+            android:id="@+id/imgpp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@mipmap/ic_launcher_pp" />
@@ -301,6 +303,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
     <TextView
+        android:id="@+id/chng"
         android:layout_width="124dp"
         android:layout_height="21dp"
         android:text="CHANGE PASSWORD"

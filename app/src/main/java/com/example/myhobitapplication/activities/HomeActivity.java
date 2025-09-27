@@ -21,6 +21,7 @@ import com.example.myhobitapplication.databases.EquipmentRepository;
 import com.example.myhobitapplication.databinding.ActivityHomeBBinding;
 import com.example.myhobitapplication.activities.ProfileActivity;
 import com.example.myhobitapplication.fragments.ActivateEquipmentFragment;
+import com.example.myhobitapplication.fragments.FriendsFragment;
 import com.example.myhobitapplication.fragments.ShopFragment;
 import com.example.myhobitapplication.models.Profile;
 import com.example.myhobitapplication.services.BossService;
@@ -44,7 +45,8 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
         LoginViewModel viewModel= new LoginViewModel();
-         userId = intent.getStringExtra("USER_ID");
+         //userId = intent.getStringExtra("USER_ID");
+        userId=FirebaseAuth.getInstance().getCurrentUser().getUid();
         binding = ActivityHomeBBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -132,7 +134,13 @@ public class HomeActivity extends AppCompatActivity {
                             .addToBackStack(null)
                             .commit();
                 }
-
+                else if(id == R.id.nav_friends) {
+                    FriendsFragment friendsFragment = new FriendsFragment();
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, friendsFragment)
+                            .addToBackStack(null)
+                            .commit();
+                }
                 else if(id == R.id.nav_activate) {
                     ActivateEquipmentFragment activateFragment = new ActivateEquipmentFragment();
                     getSupportFragmentManager().beginTransaction()

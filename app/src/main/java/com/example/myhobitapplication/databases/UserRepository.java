@@ -11,12 +11,16 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class UserRepository {
@@ -33,6 +37,13 @@ public class UserRepository {
         profileRepo = new ProfileRepository();
         usersCollection = db.collection("users");
     }
+
+    public Task<QuerySnapshot> getAllUsers() {
+        return usersCollection.whereEqualTo("isRegistered", true)
+                .get();
+    }
+
+
     public Task<DocumentReference> getUserInfo(String uid){
         final TaskCompletionSource<DocumentReference> taskCompletionSource = new TaskCompletionSource<>();
         usersCollection.whereEqualTo("uid", uid).get().addOnSuccessListener(queryDocumentSnapshots ->{
@@ -40,6 +51,64 @@ public class UserRepository {
             taskCompletionSource.setResult(queryDocumentSnapshots.getDocuments().get(0).getReference());}
         }) .addOnFailureListener(e -> taskCompletionSource.setException(new Exception("Coudnt retrieve user data")));
         return taskCompletionSource.getTask();
+    }
+    public void addFriend(String userUid, String friendUid) {
+        usersCollection
+                .whereEqualTo("uid", userUid)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        DocumentReference userDocRef = queryDocumentSnapshots.getDocuments().get(0).getReference();
+
+                        DocumentReference friendDoc = userDocRef
+                                .collection("friends")
+                                .document(friendUid);
+
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("addedAt", FieldValue.serverTimestamp());
+
+                        friendDoc.set(data)
+                                .addOnSuccessListener(aVoid -> Log.d("Firestore", "Friend added"))
+                                .addOnFailureListener(e -> Log.e("Firestore", "Error adding friend", e));
+                    } else {
+                        Log.e("Firestore", "User with uid " + userUid + " not found!");
+                    }
+                })
+                .addOnFailureListener(e -> Log.e("Firestore", "Error fetching user", e));
+    }
+
+
+    public Task<List<String>> getFriends(String userUid) {
+
+        return usersCollection
+                .whereEqualTo("uid", userUid)
+                .get()
+                .continueWithTask(task -> {
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
+
+                    QuerySnapshot querySnapshot = task.getResult();
+                    if (querySnapshot.isEmpty()) {
+                        throw new Exception("User with uid " + userUid + " not found!");
+                    }
+
+                    DocumentReference userDocRef = querySnapshot.getDocuments().get(0).getReference();
+
+                    return userDocRef.collection("friends").get();
+                })
+                .continueWith(task -> {
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
+
+                    QuerySnapshot querySnapshot = task.getResult();
+                    List<String> friendsList = new ArrayList<>();
+                    for (DocumentSnapshot doc : querySnapshot) {
+                        friendsList.add(doc.getId()); // ovde doc.getId() = friendUid
+                    }
+                    return friendsList;
+                });
     }
 
     public Task<DocumentReference> mailExistsCheck(String email){

@@ -49,7 +49,9 @@ public class ProfileService {
     public Task<Void> updatePp( String uid,int newValue){
         return  profileRepository.updatePp(uid, newValue);
     }
-
+    public Task<List<DocumentReference>> getAll(){
+        return profileRepository.getAll();
+    }
     public Task<Void> updateCoins( String uid,int newValue){
         return  profileRepository.updateCoins(uid, newValue);
     }
@@ -61,6 +63,7 @@ public class ProfileService {
     public Task<Void> updateLevel( String uid,int newLevel, int newxp, int newPP, String newTitle){
         return  profileRepository.updateLevel(uid, newLevel, newxp, newPP, newTitle);
     }
+
 
     public Task<Integer> checkForLevelUpdates(String uid) {
         TaskCompletionSource<Integer> tcs = new TaskCompletionSource<>();
@@ -101,11 +104,6 @@ public class ProfileService {
 
     }
 
-    /*private LevelUpListener levelUpListener;
-    public void setLevelUpListener(LevelUpListener listener) {
-        Log.d("ProfileService", "Listener set: " + listener);
-        this.levelUpListener = listener;
-    }*/
     private final List<LevelUpListener> levelUpListeners = new ArrayList<>();
 
     public void addLevelUpListener(LevelUpListener listener) {

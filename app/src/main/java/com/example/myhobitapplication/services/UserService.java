@@ -8,8 +8,10 @@ import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Date;
+import java.util.List;
 
 public class UserService {
     private final UserRepository repository;
@@ -27,7 +29,6 @@ public class UserService {
     public Task<Void> updatePass(String pass){
         return repository.changePass(pass);
     }
-
     public void logout(){
         repository.logout();
     }
@@ -89,5 +90,15 @@ public class UserService {
                                     taskCompletionSource.setException(e);
                                 });
         return taskCompletionSource.getTask();
+    }
+    public void addFriend(String userId, String friendId){
+        repository.addFriend(userId,friendId);
+    }
+    public Task<List<String>> getFriends(String userId){
+        return repository.getFriends(userId);
+    }
+
+    public Task<QuerySnapshot> getAllUsers(){
+       return  repository.getAllUsers();
     }
 }
