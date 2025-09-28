@@ -2,11 +2,14 @@ package com.example.myhobitapplication.fragments;
 
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import androidx.activity.result.ActivityResultLauncher;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +18,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
 import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.activities.ProfileActivity;
 import com.example.myhobitapplication.databinding.FragmentFriendsBinding;
@@ -27,6 +31,7 @@ import com.example.myhobitapplication.models.User;
 import com.example.myhobitapplication.staticData.AvatarList;
 import com.example.myhobitapplication.viewModels.FriendsViewModel;
 import com.google.firebase.auth.FirebaseAuth;
+
 
 import java.util.List;
 
@@ -65,6 +70,11 @@ public class FriendsFragment extends Fragment {
             mViewModel.fiterFriends(binding.textView11.getText().toString());
             observeViewModel();
         });
+
+        binding.buttonn3.setOnClickListener(v -> {
+            startQrScanner();
+        });
+
 
         return  binding.getRoot();
     }
@@ -152,20 +162,22 @@ public class FriendsFragment extends Fragment {
         });
     }
 
-  /*  private final ActivityResultLauncher<ScanOptions> barcodeLauncher =
+    private final ActivityResultLauncher<ScanOptions> barcodeLauncher =
             registerForActivityResult(new ScanContract(), result -> {
                 if (result.getContents() != null) {
                     String scannedData = result.getContents();
 
-                    if (scannedData.startsWith("https://myhobitapplication/profil/")) {
+                    if (scannedData.startsWith("https://myhobbitapplication/profil/")) {
                         String scannedUserId = scannedData.substring(scannedData.lastIndexOf("/") + 1);
 
+                        if(friends.stream().anyMatch(f->f.getUid().equals(scannedUserId))){
+                            Toast.makeText(requireContext(), "This user is already a friend!", Toast.LENGTH_SHORT).show();
+                        }else {
+                            mViewModel.addFriend(FirebaseAuth.getInstance().getCurrentUser().getUid(), scannedUserId);
 
-                        mViewModel.addFriend(FirebaseAuth.getInstance().getCurrentUser().getUid(),scannedUserId);
-
-
+                        }
                         Bundle bundle = new Bundle();
-                        bundle.putString("USER_ID", userId);
+                        bundle.putString("USER_ID",scannedUserId);
 
                         ProfileActivity profileFragment = new ProfileActivity();
                         profileFragment.setArguments(bundle);
@@ -185,10 +197,10 @@ public class FriendsFragment extends Fragment {
         ScanOptions options = new ScanOptions();
         options.setPrompt("Scan a QR code");
         options.setBeepEnabled(true);
-        options.setOrientationLocked(true);
+        options.setOrientationLocked(false);
         barcodeLauncher.launch(options);
     }
 
-*/
+
 
 }
