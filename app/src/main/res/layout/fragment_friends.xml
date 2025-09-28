@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/baccpng"
+    tools:context=".fragments.FriendsFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+            <EditText
+                android:id="@+id/textView11"
+                android:layout_weight="0.7"
+                android:layout_marginTop="20dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:background="@drawable/logincard"
+                android:foregroundGravity="center_horizontal"
+                android:gravity="center_horizontal"
+            />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/button_layout"
+                android:layout_width="0dp"
+                android:layout_marginTop="15dp"
+                android:layout_height="30dp"
+                android:layout_weight="0.2"
+            >
+                <ImageView
+                    android:id="@+id/buttonn"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/button"
+                    android:scaleType="fitXY" />
+
+                <ImageView
+                    android:id="@+id/buttonnn"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@mipmap/ic_launcher_search"
+                    android:scaleType="fitXY" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/button2_layout"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_height="30dp"
+
+            >
+            <ImageView
+                android:id="@+id/buttonn2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/button"
+                android:scaleType="fitXY" />
+
+            <ImageView
+                android:id="@+id/buttonnn2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@mipmap/ic_launcher_search"
+                android:scaleType="fitXY" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintStart_toEndOf="@id/buttonnn2"
+                android:fontFamily="@font/educursivesemibold"
+                android:text="My friends"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/button3_layout"
+                android:layout_width="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_height="30dp"
+
+                >
+                <ImageView
+                    android:id="@+id/buttonn3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/button"
+                    android:scaleType="fitXY" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_marginLeft="18dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_horizontal"
+                    app:layout_constraintStart_toEndOf="@id/buttonn3"
+                    android:fontFamily="@font/educursivesemibold"
+                    android:text="Add with QR"
+                    />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+            <LinearLayout
+                android:id="@+id/imgLayout2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </ScrollView>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/button5_layout"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_height="30dp"
+            >
+            <ImageView
+                android:id="@+id/buttonn5"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/button"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:scaleType="fitXY" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:foregroundGravity="center_horizontal"
+                android:layout_marginLeft="88dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                app:layout_constraintStart_toStartOf="@id/buttonn5"
+                android:fontFamily="@font/educursivesemibold"
+                android:text="Make Alliance"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
+</FrameLayout>

@@ -39,6 +39,11 @@
             android:icon="@mipmap/ic_launcher_xp"
             android:title="@string/category" />
 
+        <item
+            android:id="@+id/nav_friends"
+            android:icon="@mipmap/ic_launcher_witch"
+            android:title="Friends" />
+
     </group>
 
 </menu>
