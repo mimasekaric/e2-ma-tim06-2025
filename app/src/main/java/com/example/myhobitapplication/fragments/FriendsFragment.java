@@ -2,6 +2,7 @@ package com.example.myhobitapplication.fragments;
 
 import androidx.lifecycle.ViewModelProvider;
 
+import android.app.Dialog;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 
@@ -14,10 +15,15 @@ import androidx.activity.result.ActivityResultLauncher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.myhobitapplication.models.Alliance;
+import com.example.myhobitapplication.viewModels.AllianceViewModel;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 import com.example.myhobitapplication.R;
@@ -33,11 +39,13 @@ import com.example.myhobitapplication.viewModels.FriendsViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 
 
+import java.util.Date;
 import java.util.List;
 
 public class FriendsFragment extends Fragment {
 
     private FriendsViewModel mViewModel;
+    private AllianceViewModel allianceViewModel;
     private FragmentFriendsBinding binding;
     private List<UserInfoDTO> friends;
 
@@ -57,6 +65,8 @@ public class FriendsFragment extends Fragment {
         binding = FragmentFriendsBinding.inflate(inflater, container, false);
 
         mViewModel = new FriendsViewModel(requireContext());
+         allianceViewModel = new ViewModelProvider(this).get(AllianceViewModel.class);
+
         mViewModel.loadFriends(FirebaseAuth.getInstance().getUid());
         mViewModel.getFriends().observe(getViewLifecycleOwner(), list -> {
             mViewModel.loadAllUsers();
@@ -74,11 +84,31 @@ public class FriendsFragment extends Fragment {
         binding.buttonn3.setOnClickListener(v -> {
             startQrScanner();
         });
+        binding.buttonn5.setOnClickListener(v -> {
+            showAllianceDialog();
+        });
 
 
         return  binding.getRoot();
     }
 
+    private  void showAllianceDialog(){
+            final Dialog dialog = new Dialog(requireContext());
+            dialog.setCancelable(true);
+            dialog.setContentView(R.layout.alliance_form);
+
+            final EditText editName = dialog.findViewById(R.id.allyname);
+            ImageButton submit = dialog.findViewById(R.id.imgbuttconf);
+
+            submit.setOnClickListener(v -> {
+                Alliance alliance= new Alliance(editName.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getUid(),false,null,null);
+                allianceViewModel.createAlliance(alliance);
+                dialog.hide();
+                Toast.makeText(requireContext(),"Alliance "+editName.getText().toString()+" made succesfully", Toast.LENGTH_SHORT).show();
+            });
+            dialog.show();
+
+    }
     public void observeViewModel(){
         mViewModel.getUsersFiltered().observe(getViewLifecycleOwner(),users->{
             binding.imgLayout2.removeAllViews();

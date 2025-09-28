@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class Alliance {
     String id;
+    String name;
     String leaderId;
     boolean hasActivatedMission;
     Date missionStartDate;
@@ -11,12 +12,28 @@ public class Alliance {
 
     public Alliance(){}
 
+    public Alliance(String name, String leaderId, boolean hasActivatedMission, Date missionStartDate, Date missionEndDate) {
+        this.name = name;
+        this.leaderId = leaderId;
+        this.hasActivatedMission = hasActivatedMission;
+        this.missionStartDate = missionStartDate;
+        this.missionEndDate = missionEndDate;
+    }
+
     public String getId() {
         return id;
     }
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getLeaderId() {
@@ -27,7 +44,7 @@ public class Alliance {
         this.leaderId = leaderId;
     }
 
-    public boolean isHasActivatedMission() {
+    public boolean getHasActivatedMission() {
         return hasActivatedMission;
     }
 

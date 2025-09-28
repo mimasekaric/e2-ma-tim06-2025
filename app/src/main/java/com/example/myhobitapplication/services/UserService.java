@@ -101,4 +101,8 @@ public class UserService {
     public Task<QuerySnapshot> getAllUsers(){
        return  repository.getAllUsers();
     }
+
+    public Task<Void> updateAllianceId(String userId, String newValue){
+        return repository.updateAllianceId(userId, newValue);
+    }
 }

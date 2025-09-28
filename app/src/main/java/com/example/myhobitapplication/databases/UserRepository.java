@@ -110,7 +110,25 @@ public class UserRepository {
                     return friendsList;
                 });
     }
+    public Task<Void> updateAllianceId(String uid, String newAlliance) {
+        TaskCompletionSource<Void> tcs = new TaskCompletionSource<>();
 
+        usersCollection.whereEqualTo("uid", uid).limit(1).get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (queryDocumentSnapshots.isEmpty()) {
+                        tcs.setException(new Exception("User not found for UID: " + uid));
+                    } else {
+                        DocumentSnapshot document = queryDocumentSnapshots.getDocuments().get(0);
+                        document.getReference()
+                                .update("allianceId", newAlliance)
+                                .addOnSuccessListener(aVoid -> tcs.setResult(null))
+                                .addOnFailureListener(tcs::setException);
+                    }
+                })
+                .addOnFailureListener(tcs::setException);
+
+        return tcs.getTask();
+    }
     public Task<DocumentReference> mailExistsCheck(String email){
         final TaskCompletionSource<DocumentReference> taskCompletionSource = new TaskCompletionSource<>();
         usersCollection.whereEqualTo("email", email).get().addOnSuccessListener(queryDocumentSnapshots ->{
@@ -129,6 +147,7 @@ public class UserRepository {
         user2.put("avatarName", avatarName);
         user2.put("registrationDate", registrationDate);
         user2.put("isRegistered", isRegistered);
+        user2.put("allianceId", "");
         return usersCollection
                 .add(user2);
     }
