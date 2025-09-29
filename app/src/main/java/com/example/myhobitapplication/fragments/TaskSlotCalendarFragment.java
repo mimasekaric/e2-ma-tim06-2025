@@ -30,11 +30,13 @@ import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.models.OneTimeTask;
 import com.example.myhobitapplication.models.RecurringTask;
 import com.example.myhobitapplication.models.Task;
+import com.example.myhobitapplication.services.AllianceMissionService;
 import com.example.myhobitapplication.services.BattleService;
 import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.CategoryService;
 import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.TaskService;
+import com.example.myhobitapplication.services.UserService;
 import com.example.myhobitapplication.viewModels.TaskCalendarViewModel;
 import com.example.myhobitapplication.viewModels.TaskCalendarViewModelFactory;
 
@@ -91,8 +93,8 @@ public class TaskSlotCalendarFragment extends Fragment {
         BossRepository bossRepository = new BossRepository(getContext());
         BossService bossService = new BossService(bossRepository);
         BattleService battleService = new BattleService(bossService, profileService);
-
-        TaskService taskService = TaskService.getInstance(repository, profileService, battleService);
+        AllianceMissionService missionService = new AllianceMissionService(profileService);
+        TaskService taskService = TaskService.getInstance(repository, profileService, battleService, missionService);
 
         categoryRepository = new CategoryRepository(getContext());
         categoryService = new CategoryService(categoryRepository,repository);

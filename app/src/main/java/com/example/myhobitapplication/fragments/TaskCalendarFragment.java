@@ -21,10 +21,12 @@ import com.example.myhobitapplication.databases.BossRepository;
 import com.example.myhobitapplication.databases.ProfileRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.FragmentTaskCalendarBinding;
+import com.example.myhobitapplication.services.AllianceMissionService;
 import com.example.myhobitapplication.services.BattleService;
 import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.TaskService;
+import com.example.myhobitapplication.services.UserService;
 import com.example.myhobitapplication.viewModels.TaskCalendarViewModel;
 import com.example.myhobitapplication.viewModels.TaskCalendarViewModelFactory;
 import com.kizitonwose.calendar.core.CalendarDay;
@@ -78,7 +80,8 @@ public class TaskCalendarFragment extends Fragment {
         BossRepository bossRepository = new BossRepository(getContext());
         BossService bossService = new BossService(bossRepository);
         BattleService battleService = new BattleService(bossService, profileService);
-        TaskService  taskService =  TaskService.getInstance(repository, profileService, battleService);
+        AllianceMissionService missionService = new AllianceMissionService(profileService);
+        TaskService  taskService =  TaskService.getInstance(repository, profileService, battleService, missionService);
 
         TextView monthTextView = view.findViewById(R.id.calendarMonthText);
         ImageView prevButton = view.findViewById(R.id.previousMonthButton);

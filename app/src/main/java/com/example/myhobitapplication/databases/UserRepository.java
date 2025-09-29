@@ -245,6 +245,24 @@ public class UserRepository {
         return tcs.getTask();
     }
 
+    public Task<List<String>> getAllianceMembers(String allianceId) {
+
+        return usersCollection.whereEqualTo("allianceId", allianceId).get()
+                .continueWith(task -> {
+
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
+                    QuerySnapshot querySnapshot = task.getResult();
+                    List<String> memberIds = new ArrayList<>();
+
+                    for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                        memberIds.add(document.getId());
+                    }
+                    return memberIds;
+                });
+    }
+
 
 }
 
