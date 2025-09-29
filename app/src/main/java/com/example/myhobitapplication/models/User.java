@@ -11,6 +11,7 @@ public class User {
     public String avatarName;
     public Boolean isRegistered;
     public Date registrationDate;
+    public String allianceId="";
 
     public User(String uid, String email, String username, String password, String avatarName,Date registrationDate) {
         this.uid= uid;
@@ -29,6 +30,14 @@ public class User {
         this.avatarName = avatarName;
         this.registrationDate = registrationDate;
         isRegistered = false;
+    }
+
+    public String getAllianceId() {
+        return allianceId;
+    }
+
+    public void setAllianceId(String allianceId) {
+        this.allianceId = allianceId;
     }
 
     public User() {
