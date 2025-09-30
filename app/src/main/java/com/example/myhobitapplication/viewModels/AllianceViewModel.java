@@ -1,5 +1,6 @@
 package com.example.myhobitapplication.viewModels;
 
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -111,7 +112,7 @@ public class AllianceViewModel extends ViewModel {
 
         RequestBody body = RequestBody.create(jsonBody, JSON);
         Request request = new Request.Builder()
-                .url("http://192.168.1.130:3000/api/notifications/invite")
+                .url("http://192.168.1.130:3001/api/notifications/invite")
                 .post(body)
                 .build();
 
@@ -123,8 +124,19 @@ public class AllianceViewModel extends ViewModel {
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                createdResponse.postValue("Succesfully sent");
+                try (ResponseBody responseBody = response.body()) {  // <-- automatski zatvara body
+                    if (response.isSuccessful() && responseBody != null) {
+                        String result = responseBody.string();  // možeš ga iskoristiti za debug ili log
+                        Log.d("HTTP", result);
+                        createdResponse.postValue("Successfully sent");
+                    } else {
+                        Log.e("HTTP", "Request failed: " + response.code());
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
+
         });
     }
 

@@ -31,6 +31,7 @@ import com.example.myhobitapplication.viewModels.LoginViewModel;
 import com.example.myhobitapplication.viewModels.ProfileViewModel;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.onesignal.OneSignal;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -47,6 +48,7 @@ public class HomeActivity extends AppCompatActivity {
         LoginViewModel viewModel= new LoginViewModel();
          //userId = intent.getStringExtra("USER_ID");
         userId=FirebaseAuth.getInstance().getCurrentUser().getUid();
+        OneSignal.setExternalUserId(userId);
         binding = ActivityHomeBBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 

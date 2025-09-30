@@ -12,7 +12,6 @@ public class MyApp extends Application {
         OneSignal.initWithContext(this);
         OneSignal.setAppId(ONESIGNAL_APP_ID);
 
-       /* String currentUid = com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser().getUid();
-        OneSignal.setExternalUserId(currentUid);*/
+
     }
 }
