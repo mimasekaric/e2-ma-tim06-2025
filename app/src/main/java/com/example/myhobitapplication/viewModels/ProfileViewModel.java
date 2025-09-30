@@ -13,6 +13,7 @@ import com.example.myhobitapplication.interfaces.LevelUpListener;
 import com.example.myhobitapplication.models.Equipment;
 import com.example.myhobitapplication.models.Profile;
 import com.example.myhobitapplication.models.User;
+import com.example.myhobitapplication.services.AllianceMissionService;
 import com.example.myhobitapplication.services.BattleService;
 import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.EquipmentService;
@@ -53,8 +54,9 @@ public class ProfileViewModel extends ViewModel {
     public ProfileViewModel(Context context, BossService bossService, EquipmentService equipmentService) {
         this.profileService = ProfileService.getInstance();
         BattleService battleService = new BattleService(bossService, profileService);
-        this.taskService =  TaskService.getInstance(new TaskRepository(context), profileService, battleService);
-
+        AllianceMissionService missionService = new AllianceMissionService(profileService);
+        this.taskService =  TaskService.getInstance(new TaskRepository(context), profileService, battleService, missionService);
+        AllianceMissionService allianceMissionService = new AllianceMissionService(profileService);
       /*  this.profileService.setLevelUpListener(taskService);
 
 
@@ -70,7 +72,7 @@ public class ProfileViewModel extends ViewModel {
             loadProfile(userUid);
             _levelUpEvent.postValue(newLevel);
         });*/
-        this.userEquipmentService= new UserEquipmentService(context, profileService, bossService, equipmentService);
+        this.userEquipmentService= new UserEquipmentService(context, profileService, bossService, equipmentService, allianceMissionService);
     }
     public MutableLiveData<Profile> getProfile() {
         return profile;

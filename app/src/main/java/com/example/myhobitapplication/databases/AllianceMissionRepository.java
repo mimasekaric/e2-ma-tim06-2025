@@ -43,4 +43,8 @@ public class AllianceMissionRepository {
 
         return batch.commit();
     }
+
+    public Task<QuerySnapshot> getAllUserProgressForMission(String missionId) {
+        return allianceMissionsRef.document(missionId).collection("userProgress").get();
+    }
 }

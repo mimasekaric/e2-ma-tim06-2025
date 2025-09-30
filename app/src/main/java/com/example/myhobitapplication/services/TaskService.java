@@ -9,6 +9,8 @@ import com.example.myhobitapplication.enums.OneTimeTaskStatus;
 import com.example.myhobitapplication.enums.RecurrenceUnit;
 import com.example.myhobitapplication.enums.RecurringTaskStatus;
 import com.example.myhobitapplication.enums.TaskQuote;
+import com.example.myhobitapplication.events.GameEvent;
+import com.example.myhobitapplication.events.GameEventBus;
 import com.example.myhobitapplication.exceptions.ValidationException;
 import com.example.myhobitapplication.interfaces.LevelUpListener;
 import com.example.myhobitapplication.models.OneTimeTask;
@@ -697,10 +699,9 @@ public class TaskService implements LevelUpListener {
     }
 
     public void getSpecialMissionPoints(String userId, int difficulty, int importance){
-        allianceMissionService.checkIfUserHasActiveAlliance(userId)
-                .addOnSuccessListener(hasActiveMission -> {
 
-                    if (hasActiveMission != null && hasActiveMission) {
+
+
                         AllianceMissionService.MissionEventType eventType;
 
                         boolean isEasyTask = false;
@@ -730,25 +731,19 @@ public class TaskService implements LevelUpListener {
                             return;
                         }
 
-                        profileService.getUserData(userId).onSuccessTask(documentReference -> {
-                            return documentReference.get();
-                        }).addOnSuccessListener(documentSnapshot -> {
-                            if (documentSnapshot.exists()) {
-                                User user = documentSnapshot.toObject(User.class);
-                                if (user != null && user.getAllianceId() != null) {
-                                    allianceMissionService.trackProgress(userId, user.getAllianceId(), eventType);
+                        allianceMissionService.handleGameEvent(new GameEvent(eventType, userId));
 
-                                }
-                            }
-                        });
-                    } else {
-
-                        Log.d("MissionProgress", "User doesn't have active mission.");
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("MissionProgress", "Error checking mission status.", e);
-                });
+//                        profileService.getUserData(userId).onSuccessTask(documentReference -> {
+//                            return documentReference.get();
+//                        }).addOnSuccessListener(documentSnapshot -> {
+//                            if (documentSnapshot.exists()) {
+//                                User user = documentSnapshot.toObject(User.class);
+//                                if (user != null && user.getAllianceId() != null) {
+//                                    allianceMissionService.trackProgress(userId, user.getAllianceId(), eventType);
+//
+//                                }
+//                            }
+//                        });
 
     }
 

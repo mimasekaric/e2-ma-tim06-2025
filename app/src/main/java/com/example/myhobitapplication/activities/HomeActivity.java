@@ -23,6 +23,7 @@ import com.example.myhobitapplication.activities.ProfileActivity;
 import com.example.myhobitapplication.fragments.ActivateEquipmentFragment;
 import com.example.myhobitapplication.fragments.FriendsFragment;
 import com.example.myhobitapplication.fragments.ShopFragment;
+import com.example.myhobitapplication.fragments.UserProgressFragment;
 import com.example.myhobitapplication.models.Profile;
 import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.EquipmentService;
@@ -156,6 +157,14 @@ public class HomeActivity extends AppCompatActivity {
                     Intent intent = new Intent(HomeActivity.this, CategoryViewActivity.class);
                     startActivity(intent);
                 }
+                else if (id == R.id.nav_progress) {
+                    UserProgressFragment userProgressFragment = new UserProgressFragment();
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, userProgressFragment)
+                            .addToBackStack(null)
+                            .commit();
+                }
+
 
 
                 drawerLayout.closeDrawer(GravityCompat.START);

@@ -88,6 +88,10 @@ public class FriendsFragment extends Fragment {
             showAllianceDialog();
         });
 
+        binding.buttonn6.setOnClickListener(v -> {
+            mViewModel.activateMission("SepFZFusR8JKNCTqhaNn");
+        });
+
 
         return  binding.getRoot();
     }

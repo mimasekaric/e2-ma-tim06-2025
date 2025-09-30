@@ -148,6 +148,25 @@
                 android:text="Make Alliance"
                 />
 
+            <ImageView
+                android:id="@+id/buttonn6"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/button"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:scaleType="fitXY" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:foregroundGravity="center_horizontal"
+                android:layout_marginLeft="88dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                app:layout_constraintStart_toStartOf="@id/buttonn6"
+                android:fontFamily="@font/educursivesemibold"
+                android:text="ActivateAlliance"
+                />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 

@@ -3,6 +3,7 @@ package com.example.myhobitapplication.services;
 import android.content.Context;
 
 import com.example.myhobitapplication.dto.BossDTO;
+import com.example.myhobitapplication.events.GameEvent;
 import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.EquipmentService;
 import com.example.myhobitapplication.services.ProfileService;
@@ -41,19 +42,24 @@ public class UserEquipmentService {
 
     private final EquipmentService equipmentService;
     private final ProfileService profileService;
-    public UserEquipmentService(UserEquipmentRepository repository, ProfileService profileService, BossService bossService, EquipmentService equipmentService){
+    private final AllianceMissionService allianceMissionService;
+
+
+    public UserEquipmentService(UserEquipmentRepository repository, ProfileService profileService, BossService bossService, EquipmentService equipmentService, AllianceMissionService allianceMissionService){
         this.repository = repository;
         this.profileService = profileService;
         this.bossService = bossService;
         this.equipmentService = equipmentService;
+        this.allianceMissionService = allianceMissionService;
         this.repository.open();
     }
 
-    public UserEquipmentService(Context context,  ProfileService profileService, BossService bossService, EquipmentService equipmentService){
+    public UserEquipmentService(Context context, ProfileService profileService, BossService bossService, EquipmentService equipmentService, AllianceMissionService allianceMissionService){
         this.repository = new UserEquipmentRepository(context);
         this.profileService = profileService;
         this.bossService = bossService;
         this.equipmentService = equipmentService;
+        this.allianceMissionService = allianceMissionService;
         this.repository.open();
     }
 
@@ -234,6 +240,7 @@ public class UserEquipmentService {
             save(profile.getuserUid(), equipment);
             int newCoinsValue = (int) Math.round(profile.getcoins() - price);
             profileService.updateCoins(profile.getuserUid(), newCoinsValue);
+            allianceMissionService.handleGameEvent(new GameEvent(AllianceMissionService.MissionEventType.BUY_FROM_SHOP,profile.getuserUid()));
             return true;
         }
         return false;

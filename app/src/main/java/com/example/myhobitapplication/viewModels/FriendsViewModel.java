@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel;
 import com.example.myhobitapplication.dto.UserInfoDTO;
 import com.example.myhobitapplication.models.Profile;
 import com.example.myhobitapplication.models.User;
+import com.example.myhobitapplication.services.AllianceMissionService;
 import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.UserService;
 import com.google.firebase.auth.FirebaseAuth;
@@ -22,6 +23,7 @@ public class FriendsViewModel extends ViewModel {
 
     private final ProfileService profileService;
     private final UserService userService;
+    private final AllianceMissionService missionService;
 
     private final MutableLiveData<List<User>> allUsers = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<List<UserInfoDTO>> friends = new MutableLiveData<>(new ArrayList<>());
@@ -34,6 +36,16 @@ public class FriendsViewModel extends ViewModel {
     public FriendsViewModel(Context context) {
         this.profileService = ProfileService.getInstance();
         this.userService = new UserService();
+        this.missionService =  new AllianceMissionService(profileService);
+    }
+
+
+    public MutableLiveData<String> getMissionActivationResponse() {
+        return missionActivationResponse;
+    }
+
+    public MutableLiveData<Boolean> getMissionActivationSuccess() {
+        return missionActivationSuccess;
     }
 
     public MutableLiveData<List<User>> getAllUsers() {
@@ -63,6 +75,9 @@ public class FriendsViewModel extends ViewModel {
     public MutableLiveData<Boolean> getLoadSuccess() {
         return loadSuccess;
     }
+
+    private final MutableLiveData<String> missionActivationResponse = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> missionActivationSuccess = new MutableLiveData<>();
 
     public void addFriend(String userId, String friendId){
         userService.addFriend(userId, friendId);
@@ -189,6 +204,36 @@ public class FriendsViewModel extends ViewModel {
                 ).addOnFailureListener(e -> {
                     response.setValue(e.getMessage());
                     loadSuccess.setValue(false);
+                });
+    }
+
+    public void activateMission(String allianceId) {
+
+        missionActivationResponse.setValue("Activating mission...");
+        missionActivationSuccess.setValue(false);
+
+        userService.getAllianceMember(allianceId)
+                .addOnSuccessListener(memberIds -> {
+
+                    if (memberIds == null || memberIds.isEmpty()) {
+                        missionActivationResponse.setValue("Cannot start mission: No members in the alliance.");
+                        missionActivationSuccess.setValue(false);
+                        return;
+                    }
+
+                    missionService.startMissionForAlliance(allianceId, memberIds)
+                            .addOnSuccessListener(aVoid -> {
+                                missionActivationResponse.setValue("Special mission has been successfully activated!");
+                                missionActivationSuccess.setValue(true);
+                            })
+                            .addOnFailureListener(e -> {
+                                missionActivationResponse.setValue("Failed to activate mission: " + e.getMessage());
+                                missionActivationSuccess.setValue(false);
+                            });
+                })
+                .addOnFailureListener(e -> {
+                    missionActivationResponse.setValue("Failed to get alliance members: " + e.getMessage());
+                    missionActivationSuccess.setValue(false);
                 });
     }
 }

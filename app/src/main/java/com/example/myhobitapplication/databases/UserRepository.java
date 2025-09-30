@@ -246,19 +246,45 @@ public class UserRepository {
     }
 
     public Task<List<String>> getAllianceMembers(String allianceId) {
-
         return usersCollection.whereEqualTo("allianceId", allianceId).get()
                 .continueWith(task -> {
-
                     if (!task.isSuccessful()) {
                         throw task.getException();
                     }
+
                     QuerySnapshot querySnapshot = task.getResult();
                     List<String> memberIds = new ArrayList<>();
 
                     for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-                        memberIds.add(document.getId());
+                        User user = document.toObject(User.class);
+
+                        if (user != null && user.getUid() != null) {
+                            memberIds.add(user.getUid());
+                        }
                     }
+
+                    return memberIds;
+                });
+    }
+
+    public Task<List<User>> getAllAllianceMembers(String allianceId) {
+        return usersCollection.whereEqualTo("allianceId", allianceId).get()
+                .continueWith(task -> {
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
+
+                    QuerySnapshot querySnapshot = task.getResult();
+                    List<User> memberIds = new ArrayList<>();
+
+                    for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                        User user = document.toObject(User.class);
+
+                        if (user != null && user.getUid() != null) {
+                            memberIds.add(user);
+                        }
+                    }
+
                     return memberIds;
                 });
     }
