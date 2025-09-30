@@ -43,6 +43,11 @@ public class UserRepository {
                 .get();
     }
 
+    public Task<QuerySnapshot> getAllUsersInAlliance(String alliancedId) {
+        return usersCollection.whereEqualTo("allianceId", alliancedId)
+                .get();
+    }
+
 
     public Task<DocumentReference> getUserInfo(String uid){
         final TaskCompletionSource<DocumentReference> taskCompletionSource = new TaskCompletionSource<>();

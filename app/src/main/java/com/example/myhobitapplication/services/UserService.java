@@ -105,4 +105,11 @@ public class UserService {
     public Task<Void> updateAllianceId(String userId, String newValue){
         return repository.updateAllianceId(userId, newValue);
     }
+    public Task<DocumentReference> getUser(String uid){
+        return repository.getUserInfo(uid);
+    }
+
+    public Task<QuerySnapshot> getUsersInAlliance(String allianceId){
+        return repository.getAllUsersInAlliance(allianceId);
+    }
 }

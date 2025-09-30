@@ -1,19 +1,33 @@
 package com.example.myhobitapplication.viewModels;
 
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.myhobitapplication.models.Alliance;
+import com.example.myhobitapplication.models.User;
 import com.example.myhobitapplication.services.AllianceService;
 import com.example.myhobitapplication.services.UserService;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+
+import okhttp3.*;
 public class AllianceViewModel extends ViewModel {
 
     private final AllianceService allianceService;
     private final UserService userService;
 
     private final MutableLiveData<Alliance> createdAlliance = new MutableLiveData<>(null);
+
+    private final MutableLiveData<List<User>> members = new MutableLiveData<>(new ArrayList<>());
+    private final MutableLiveData<Alliance> userAlliance = new MutableLiveData<>(null);
     private final MutableLiveData<String> createdResponse = new MutableLiveData<>("");
 
     public AllianceViewModel() {
@@ -21,9 +35,45 @@ public class AllianceViewModel extends ViewModel {
         this.userService = new UserService();
     }
 
+    public MutableLiveData<Alliance> getUserAlliance() {
+        return userAlliance;
+    }
+
+    public MutableLiveData<List<User>> getMembers() {
+        return members;
+    }
+
     public MutableLiveData<Alliance> getCreatedAlliance() { return createdAlliance; }
     public MutableLiveData<String> getCreatedREsponse() { return createdResponse; }
+    public void getAlliance(String userId){
+        userAlliance.setValue(null);
+        allianceService.getAllianceByUser(userId)
+                .addOnSuccessListener(documentRef -> {
+                    documentRef.get().addOnSuccessListener(snapshot -> {
+                        if (snapshot.exists()) {
+                            Alliance found = snapshot.toObject(Alliance.class);
+                            found.setId(snapshot.getId());
+                           userAlliance.setValue(found);
+                        }
+                    }).addOnFailureListener(e -> createdResponse.setValue(e.getMessage()));
+                })
+                .addOnFailureListener(e -> createdResponse.setValue(e.getMessage()));
 
+    }
+
+    public void getUsersInAlliance(){
+        userService.getUsersInAlliance(userAlliance.getValue().getId()).addOnSuccessListener(queryDocumentSnapshots -> {
+            List<User> list = new ArrayList<>();
+            for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                User user = doc.toObject(User.class);
+                if (user != null ) {
+                    list.add(user);
+                    }
+
+                }
+            members.setValue(list);
+        });
+    }
     public void createAlliance(Alliance alliance) {
 
         createdAlliance.setValue(null);
@@ -32,7 +82,9 @@ public class AllianceViewModel extends ViewModel {
                     documentRef.get().addOnSuccessListener(snapshot -> {
                                 if (snapshot.exists()) {
                                     Alliance inserted = snapshot.toObject(Alliance.class);
+                                    inserted.setId(snapshot.getId());
                                     createdAlliance.setValue(inserted);
+                                    userAlliance.setValue(inserted);
                                     createdResponse.setValue("Alliance successfully created!");
                                     userService.updateAllianceId(FirebaseAuth.getInstance().getCurrentUser().getUid(), snapshot.getId());
                                 } else {
@@ -44,4 +96,36 @@ public class AllianceViewModel extends ViewModel {
 
 
     }
+
+
+
+    public void sendInvite(String invitedUserUid, String inviterName, String allianceName) {
+        OkHttpClient client = new OkHttpClient();
+
+        MediaType JSON = MediaType.get("application/json; charset=utf-8");
+        String jsonBody = "{"
+                + "\"invitedUserUid\":\"" + invitedUserUid + "\","
+                + "\"inviterName\":\"" + inviterName + "\","
+                + "\"allianceName\":\"" + allianceName + "\""
+                + "}";
+
+        RequestBody body = RequestBody.create(jsonBody, JSON);
+        Request request = new Request.Builder()
+                .url("http://192.168.1.130:3000/api/notifications/invite")
+                .post(body)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                createdResponse.postValue("Succesfully sent");
+            }
+        });
+    }
+
 }

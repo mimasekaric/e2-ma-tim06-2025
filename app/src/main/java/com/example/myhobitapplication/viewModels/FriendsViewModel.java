@@ -29,15 +29,23 @@ public class FriendsViewModel extends ViewModel {
     private final MutableLiveData<Profile> friendProfile = new MutableLiveData<>(new Profile());
     private final MutableLiveData<UserInfoDTO> friendUserInfo = new MutableLiveData<>(new UserInfoDTO());
     private final MutableLiveData<String> response = new MutableLiveData<>("");
+
+    private final MutableLiveData<User> owner = new MutableLiveData<>(new User());
     private final MutableLiveData<Boolean> loadSuccess = new MutableLiveData<>(false);
 
-    public FriendsViewModel(Context context) {
+
+    public FriendsViewModel() {
         this.profileService = ProfileService.getInstance();
         this.userService = new UserService();
     }
 
+
     public MutableLiveData<List<User>> getAllUsers() {
         return allUsers;
+    }
+
+    public MutableLiveData<User> getOwner() {
+        return owner;
     }
 
     public MutableLiveData<List<UserInfoDTO>> getFriends() {
@@ -79,6 +87,7 @@ public class FriendsViewModel extends ViewModel {
                             User user = doc.toObject(User.class);
                             if (user != null ) {
                                 if(user.getemail().equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())) {
+                                    owner.setValue(user);
                                     continue;
                                 }
                                /* if (friendList != null && friendList.stream()

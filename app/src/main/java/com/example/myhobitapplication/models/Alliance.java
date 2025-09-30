@@ -19,6 +19,14 @@ public class Alliance {
         this.missionStartDate = missionStartDate;
         this.missionEndDate = missionEndDate;
     }
+    public Alliance(String id,String name, String leaderId, boolean hasActivatedMission, Date missionStartDate, Date missionEndDate) {
+        this.name = name;
+        this.leaderId = leaderId;
+        this.hasActivatedMission = hasActivatedMission;
+        this.missionStartDate = missionStartDate;
+        this.missionEndDate = missionEndDate;
+        this.id = id;
+    }
 
     public String getId() {
         return id;
