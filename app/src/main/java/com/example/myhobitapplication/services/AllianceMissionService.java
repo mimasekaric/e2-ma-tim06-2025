@@ -241,4 +241,21 @@ public class AllianceMissionService {
         return missionRepository.getAllUserProgressForMission(missionId);
     }
 
+    public Task<AllianceMission> getActiveMission(String allianceId) {
+
+        return missionRepository.getActiveMissionForAlliance(allianceId)
+                .continueWith(task -> {
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
+
+                    QuerySnapshot querySnapshot = task.getResult();
+                    if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                        return querySnapshot.getDocuments().get(0).toObject(AllianceMission.class);
+                    } else {
+                        return null;
+                    }
+                });
+    }
+
 }
