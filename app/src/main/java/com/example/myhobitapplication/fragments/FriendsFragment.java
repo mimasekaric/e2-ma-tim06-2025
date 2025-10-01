@@ -87,12 +87,6 @@ public class FriendsFragment extends Fragment {
         binding.buttonn5.setOnClickListener(v -> {
             showAllianceDialog();
         });
-
-        binding.buttonn6.setOnClickListener(v -> {
-            mViewModel.activateMission("SepFZFusR8JKNCTqhaNn");
-        });
-
-
         return  binding.getRoot();
     }
 
