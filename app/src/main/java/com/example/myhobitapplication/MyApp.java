@@ -11,7 +11,5 @@ public class MyApp extends Application {
 
         OneSignal.initWithContext(this);
         OneSignal.setAppId(ONESIGNAL_APP_ID);
-
-
     }
 }

@@ -112,6 +112,7 @@ public class AllianceViewModel extends ViewModel {
 
         RequestBody body = RequestBody.create(jsonBody, JSON);
         Request request = new Request.Builder()
+                /// TO DO: ne zaboravi pormijeniti i[ ovdje a i u res/xml/network_security_config]
                 .url("http://192.168.1.130:3001/api/notifications/invite")
                 .post(body)
                 .build();
@@ -124,9 +125,9 @@ public class AllianceViewModel extends ViewModel {
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                try (ResponseBody responseBody = response.body()) {  // <-- automatski zatvara body
+                try (ResponseBody responseBody = response.body()) {
                     if (response.isSuccessful() && responseBody != null) {
-                        String result = responseBody.string();  // možeš ga iskoristiti za debug ili log
+                        String result = responseBody.string();
                         Log.d("HTTP", result);
                         createdResponse.postValue("Successfully sent");
                     } else {
@@ -139,5 +140,45 @@ public class AllianceViewModel extends ViewModel {
 
         });
     }
+
+    public void respondToInvite(String invitedUserUid, String inviterUid, String action) {
+        OkHttpClient client = new OkHttpClient();
+
+        MediaType JSON = MediaType.get("application/json; charset=utf-8");
+        String jsonBody = "{"
+                + "\"invitedUserUid\":\"" + invitedUserUid + "\","
+                + "\"inviterUid\":\"" + inviterUid + "\","
+                + "\"action\":\"" + action + "\""
+                + "}";
+
+        RequestBody body = RequestBody.create(jsonBody, JSON);
+        Request request = new Request.Builder()
+                .url("http://192.168.1.130:3001/api/notifications/respond")
+                .post(body)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                /**try (ResponseBody responseBody = response.body()) {
+                    if (response.isSuccessful() && responseBody != null) {
+                        String result = responseBody.string();
+                        Log.d("HTTP", "Response: " + result);
+                        createdResponse.postValue("Response sent: " + action);
+                    } else {
+                        Log.e("HTTP", "Request failed: " + response.code());
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }*/
+            }
+        });
+    }
+
 
 }

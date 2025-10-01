@@ -27,6 +27,7 @@ import com.example.myhobitapplication.models.Profile;
 import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.EquipmentService;
 import com.example.myhobitapplication.services.ProfileService;
+import com.example.myhobitapplication.viewModels.AllianceViewModel;
 import com.example.myhobitapplication.viewModels.LoginViewModel;
 import com.example.myhobitapplication.viewModels.ProfileViewModel;
 import com.google.android.material.navigation.NavigationView;
@@ -49,6 +50,20 @@ public class HomeActivity extends AppCompatActivity {
          //userId = intent.getStringExtra("USER_ID");
         userId=FirebaseAuth.getInstance().getCurrentUser().getUid();
         OneSignal.setExternalUserId(userId);
+        AllianceViewModel allianceViewModel = new ViewModelProvider(this).get(AllianceViewModel.class);
+
+        OneSignal.setNotificationOpenedHandler(result -> {
+            String actionId = result.getAction().getActionId();
+            String inviterUid = result.getNotification().getAdditionalData().optString("inviterUid", "");
+            String invitedUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+            if ("accept".equals(actionId)) {
+                allianceViewModel.respondToInvite(invitedUserUid, inviterUid, "accept");
+            } else if ("decline".equals(actionId)) {
+                allianceViewModel.respondToInvite(invitedUserUid, inviterUid, "decline");
+            }
+        });
+
         binding = ActivityHomeBBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
