@@ -64,7 +64,7 @@ public class FriendsFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentFriendsBinding.inflate(inflater, container, false);
 
-        mViewModel = new FriendsViewModel(requireContext());
+        mViewModel = new FriendsViewModel();
          allianceViewModel = new ViewModelProvider(this).get(AllianceViewModel.class);
 
         mViewModel.loadFriends(FirebaseAuth.getInstance().getUid());
@@ -87,6 +87,16 @@ public class FriendsFragment extends Fragment {
         binding.buttonn5.setOnClickListener(v -> {
             showAllianceDialog();
         });
+        binding.buttonn6.setOnClickListener(v->{
+            AllianceFragment allianceFragment = new AllianceFragment();
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, allianceFragment)
+
+                    .addToBackStack(null)
+                    .commit();
+        });
+
         return  binding.getRoot();
     }
 
@@ -186,6 +196,16 @@ public class FriendsFragment extends Fragment {
                             .addToBackStack(null)
                             .commit();
                 });
+            }
+        });
+
+        mViewModel.getOwner().observe(getViewLifecycleOwner(),owner->{
+            if(owner.getAllianceId().equals("")){
+                binding.button6Layout.setVisibility(View.INVISIBLE);
+                binding.buttonn6.setVisibility(View.INVISIBLE);
+            }else{
+                binding.button6Layout.setVisibility(View.VISIBLE);
+                binding.buttonn6.setVisibility(View.VISIBLE);
             }
         });
     }

@@ -44,6 +44,7 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
+import com.onesignal.OneSignal;
 
 import java.util.List;
 
@@ -76,6 +77,7 @@ public class ProfileActivity extends Fragment {
 
         if (getArguments() != null) {
             userId = getArguments().getString("USER_ID");
+
         }
         BossRepository bossRepository = new BossRepository(requireContext());
         EquipmentRepository equipmentRepository = new EquipmentRepository(requireContext());
@@ -102,6 +104,8 @@ public class ProfileActivity extends Fragment {
 
 
         viewModel.loadProfile(userId);
+
+
         observeViewModels();
 
         profileUrl = "https://myhobbitapplication/profil/" + userId;
