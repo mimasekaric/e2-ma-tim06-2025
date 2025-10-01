@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
         <TextView
             android:id="@+id/allianceName"
             android:layout_width="match_parent"
@@ -20,6 +21,16 @@
             android:textColor="@color/white"
             android:gravity="center"
             android:textSize="20sp"
+            />
+        <TextView
+            android:id="@+id/allianceNameLeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Leader: "
+            android:fontFamily="@font/educursivebold"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:textSize="19sp"
             />
 
             <androidx.constraintlayout.widget.ConstraintLayout

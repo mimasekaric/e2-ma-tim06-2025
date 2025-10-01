@@ -40,7 +40,7 @@ public class AllianceFragment extends Fragment {
     private AllianceViewModel allianceViewModel;
     private FragmentAllianceBinding binding;
     private Alliance alliance;
-    private List<UserInfoDTO> friends;
+    private List<User> members;
     private boolean isMembersViewActive = true;
 
     @Override
@@ -83,11 +83,43 @@ public class AllianceFragment extends Fragment {
                 allianceViewModel.getUsersInAlliance();
             }
         });
+        allianceViewModel.getOwner().observe(getViewLifecycleOwner(),owner->{
+            binding.allianceNameLeader.setText("Leader : " + owner.getusername());
+        });
         allianceViewModel.getMembers().observe(getViewLifecycleOwner(),members->{
             binding.imgLayout2.removeAllViews();
             LayoutInflater inflater = LayoutInflater.from(getContext());
-
+            this.members = members;
             for (User res : members) {
+                View friendView = inflater.inflate(R.layout.item_friend, binding.imgLayout2, false);
+                ImageView avatarView = friendView.findViewById(R.id.imageVieww);
+                TextView usernameView = friendView.findViewById(R.id.textView);
+                TextView addFriendButton = friendView.findViewById(R.id.buytext);
+
+                for (Avatar a : AvatarList.getAvatarList()) {
+                    if (a.getName().equals(res.getavatarName())) {
+                        avatarView.setImageResource(a.getImage());
+                        break;
+                    }
+                }
+
+
+                usernameView.setText(res.getusername());
+
+                friendView.findViewById(R.id.buytext).setVisibility(View.INVISIBLE);
+                friendView.findViewById(R.id.button_layoutt).setVisibility(View.INVISIBLE);
+
+                binding.imgLayout2.addView(friendView);
+            }
+        });
+    }
+
+   public void  observeFriends(){
+        friendsViewModel.getFriends().observe(getViewLifecycleOwner(),users->{
+            binding.imgLayout2.removeAllViews();
+            LayoutInflater inflater = LayoutInflater.from(getContext());
+
+            for (UserInfoDTO res : users) {
                 View friendView = inflater.inflate(R.layout.item_friend, binding.imgLayout2, false);
                 ImageView avatarView = friendView.findViewById(R.id.imageVieww);
                 TextView usernameView = friendView.findViewById(R.id.textView);
@@ -105,36 +137,6 @@ public class AllianceFragment extends Fragment {
                     addFriendButton.setVisibility(View.INVISIBLE);
                     friendView.findViewById(R.id.button_layoutt).setVisibility(View.INVISIBLE);
                 }
-                usernameView.setText(res.getusername());
-
-                friendView.findViewById(R.id.buytext).setVisibility(View.INVISIBLE);
-                friendView.findViewById(R.id.button_layoutt).setVisibility(View.INVISIBLE);
-
-                binding.imgLayout2.addView(friendView);
-            }
-        });
-    }
-
-   public void  observeFriends(){
-        friendsViewModel.getFriends().observe(getViewLifecycleOwner(),users->{
-            friends = users;
-            binding.imgLayout2.removeAllViews();
-            LayoutInflater inflater = LayoutInflater.from(getContext());
-
-            for (UserInfoDTO res : users) {
-                View friendView = inflater.inflate(R.layout.item_friend, binding.imgLayout2, false);
-                ImageView avatarView = friendView.findViewById(R.id.imageVieww);
-                TextView usernameView = friendView.findViewById(R.id.textView);
-                TextView addFriendButton = friendView.findViewById(R.id.buytext);
-
-                for (Avatar a : AvatarList.getAvatarList()) {
-                    if (a.getName().equals(res.getavatarName())) {
-                        avatarView.setImageResource(a.getImage());
-                        break;
-                    }
-                }
-
-
                 usernameView.setText(res.getusername());
 
                 addFriendButton.setText("Invite Member");

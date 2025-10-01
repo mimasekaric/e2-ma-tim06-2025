@@ -29,6 +29,7 @@ public class AllianceViewModel extends ViewModel {
 
     private final MutableLiveData<List<User>> members = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Alliance> userAlliance = new MutableLiveData<>(null);
+    private final MutableLiveData<User> owner = new MutableLiveData<>(new User());
     private final MutableLiveData<String> createdResponse = new MutableLiveData<>("");
 
     public AllianceViewModel() {
@@ -38,6 +39,10 @@ public class AllianceViewModel extends ViewModel {
 
     public MutableLiveData<Alliance> getUserAlliance() {
         return userAlliance;
+    }
+
+    public MutableLiveData<User> getOwner() {
+        return owner;
     }
 
     public MutableLiveData<List<User>> getMembers() {
@@ -70,7 +75,9 @@ public class AllianceViewModel extends ViewModel {
                 if (user != null ) {
                     list.add(user);
                     }
-
+                if (user.getUid().equals(userAlliance.getValue().getLeaderId())){
+                    owner.setValue(user);
+                }
                 }
             members.setValue(list);
         });
@@ -107,7 +114,8 @@ public class AllianceViewModel extends ViewModel {
         String jsonBody = "{"
                 + "\"invitedUserUid\":\"" + invitedUserUid + "\","
                 + "\"inviterName\":\"" + inviterName + "\","
-                + "\"allianceName\":\"" + allianceName + "\""
+                + "\"allianceName\":\"" + allianceName + "\","
+                + "\"inviterUid\":\"" + FirebaseAuth.getInstance().getCurrentUser().getUid() + "\""
                 + "}";
 
         RequestBody body = RequestBody.create(jsonBody, JSON);
@@ -138,6 +146,26 @@ public class AllianceViewModel extends ViewModel {
                 }
             }
 
+        });
+    }
+    public void addUserToAlliance(String ownerId, String memberId) {
+
+        allianceService.getAllianceByUser(ownerId).addOnSuccessListener(allianceDocRef -> {
+            if (allianceDocRef != null) {
+                String allianceId = allianceDocRef.getId();
+
+                userService.updateAllianceId(memberId, allianceId)
+                        .addOnSuccessListener(aVoid -> {
+                            System.out.println("User " + memberId + " successfully added to alliance " + allianceId);
+                        })
+                        .addOnFailureListener(e -> {
+                            System.err.println("Failed to add user to alliance: " + e.getMessage());
+                        });
+            } else {
+                System.err.println("Alliance not found for owner: " + ownerId);
+            }
+        }).addOnFailureListener(e -> {
+            System.err.println("Error fetching alliance for owner: " + e.getMessage());
         });
     }
 
