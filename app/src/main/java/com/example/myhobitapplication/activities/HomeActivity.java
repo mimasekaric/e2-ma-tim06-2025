@@ -27,10 +27,12 @@ import com.example.myhobitapplication.models.Profile;
 import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.EquipmentService;
 import com.example.myhobitapplication.services.ProfileService;
+import com.example.myhobitapplication.viewModels.AllianceViewModel;
 import com.example.myhobitapplication.viewModels.LoginViewModel;
 import com.example.myhobitapplication.viewModels.ProfileViewModel;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.onesignal.OneSignal;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -47,6 +49,51 @@ public class HomeActivity extends AppCompatActivity {
         LoginViewModel viewModel= new LoginViewModel();
          //userId = intent.getStringExtra("USER_ID");
         userId=FirebaseAuth.getInstance().getCurrentUser().getUid();
+        OneSignal.setExternalUserId(userId);
+        AllianceViewModel allianceViewModel = new ViewModelProvider(this).get(AllianceViewModel.class);
+
+        ///  TO DO: ovo otkomentarisati ako se notifikaicja skloni iako ne kliknes na accept/decline nego samo nestane
+/*OneSignal.setNotificationOpenedHandler(result -> {
+    String actionId = result.getAction().getActionId();
+
+    if (actionId == null || actionId.isEmpty()) {
+
+        NotificationCompat.Builder builder =
+            new NotificationCompat.Builder(context, "invite_channel")
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle("New alliance invite")
+                .setContentText("You must Accept or Decline!")
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(false);
+
+        NotificationManagerCompat.from(context).notify(1001, builder.build());
+        return;
+    }
+
+
+    String inviterUid = result.getNotification().getAdditionalData().optString("inviterUid", "");
+    String invitedUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+    if ("accept".equals(actionId)) {
+        allianceViewModel.respondToInvite(invitedUserUid, inviterUid, "accept");
+    } else if ("decline".equals(actionId)) {
+        allianceViewModel.respondToInvite(invitedUserUid, inviterUid, "decline");
+    }
+});
+*/
+        OneSignal.setNotificationOpenedHandler(result -> {
+            String actionId = result.getAction().getActionId();
+            String inviterUid = result.getNotification().getAdditionalData().optString("inviterUid", "");
+            String invitedUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+            if ("accept".equals(actionId)) {
+                allianceViewModel.respondToInvite(invitedUserUid, inviterUid, "accept");
+                allianceViewModel.addUserToAlliance(inviterUid, invitedUserUid);
+            } else if ("decline".equals(actionId)) {
+                allianceViewModel.respondToInvite(invitedUserUid, inviterUid, "decline");
+            }
+        });
+
         binding = ActivityHomeBBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
