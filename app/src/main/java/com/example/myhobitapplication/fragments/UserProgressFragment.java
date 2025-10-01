@@ -70,7 +70,7 @@ public class UserProgressFragment extends Fragment {
 
         setupObservers();
         String allianceId = "SepFZFusR8JKNCTqhaNn";
-        viewModel.loadAllianceMissionProgress(allianceId);
+        viewModel.attachListeners(allianceId);
 
     }
 

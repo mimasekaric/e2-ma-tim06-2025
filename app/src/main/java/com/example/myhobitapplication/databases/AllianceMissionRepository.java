@@ -6,9 +6,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
-
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.ListenerRegistration;
 import java.util.List;
 
 public class AllianceMissionRepository {
@@ -48,5 +51,18 @@ public class AllianceMissionRepository {
         return allianceMissionsRef.document(missionId).collection("userProgress").get();
     }
 
+    public ListenerRegistration listenForActiveMission(String allianceId, EventListener<QuerySnapshot> listener) {
+        return allianceMissionsRef
+                .whereEqualTo("allianceId", allianceId)
+                .whereEqualTo("status", "ACTIVE")
+                .limit(1)
+                .addSnapshotListener(listener);
+    }
+
+    public ListenerRegistration listenForAllUserProgress(String missionId, EventListener<QuerySnapshot> listener) {
+        return allianceMissionsRef.document(missionId).collection("userProgress")
+                .orderBy("totalDamage", Query.Direction.DESCENDING)
+                .addSnapshotListener(listener);
+    }
 
 }

@@ -15,6 +15,9 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.Query;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -117,24 +120,6 @@ public class AllianceMissionService {
 
                     return db.runTransaction(transaction -> {
 
-                        DocumentSnapshot snapshot = transaction.get(userProgressRef);
-
-                        if (snapshot.exists()) {
-                            // Ako dokument postoji, pokušaj pročitati jedno polje
-                            Long purchaseCount = snapshot.getLong("purchaseCount");
-                            Log.d("FirestoreDebug", "Dokument postoji. Vrijednost purchaseCount: " + purchaseCount);
-
-                            // Sada pokušaj pretvoriti u objekt
-                            UserMission userProgress = snapshot.toObject(UserMission.class);
-                            if (userProgress == null) {
-                                Log.e("FirestoreDebug", "toObject() je vratio NULL unatoč postojanju dokumenta!");
-                            }
-
-                        } else {
-                            Log.e("FirestoreDebug", "DOKUMENT userProgress NE POSTOJI na putanji: " + userProgressRef.getPath());
-                        }
-
-
 
                         UserMission userProgress = transaction.get(userProgressRef).toObject(UserMission.class);
                         if (userProgress == null) return null;
@@ -153,10 +138,9 @@ public class AllianceMissionService {
                                 break;
                             case HARD_TASK_COMPLETED:
                                 currentCount = userProgress.getHardTaskCompleteCount();
+                                break;
                             case BUY_FROM_SHOP:
                                 currentCount = userProgress.getPurchaseCount();
-                            case SUCCESSFUL_HIT:
-                                currentCount = userProgress.getSuccessfulAttackCount();
                                 break;
                         }
 
@@ -165,14 +149,19 @@ public class AllianceMissionService {
                             return null;
                         }
 
-                        if(eventType.equals(MissionEventType.VERY_EASY_TASK_COMPLETED)){
-                            transaction.update(missionRef, "currentBossHp", FieldValue.increment(-rule.damage));
-                            transaction.update(userProgressRef, rule.fieldToIncrement, FieldValue.increment(2));
-                            transaction.update(userProgressRef, "totalDamage", FieldValue.increment(-rule.damage));
+                        int incrementValue = 1;
+
+                        if (eventType == MissionEventType.VERY_EASY_TASK_COMPLETED) {
+                            incrementValue = 2;
+
+                            if (currentCount + incrementValue > rule.limit) {
+
+                                incrementValue = 1;
+                            }
                         }
 
                         transaction.update(missionRef, "currentBossHp", FieldValue.increment(-rule.damage));
-                        transaction.update(userProgressRef, rule.fieldToIncrement, FieldValue.increment(1));
+                        transaction.update(userProgressRef, rule.fieldToIncrement, FieldValue.increment(incrementValue));
                         transaction.update(userProgressRef, "totalDamage", FieldValue.increment(-rule.damage));
 
                         return null;
@@ -256,6 +245,14 @@ public class AllianceMissionService {
                         return null;
                     }
                 });
+    }
+
+    public ListenerRegistration listenForActiveMission(String allianceId, EventListener<QuerySnapshot> listener) {
+        return missionRepository.listenForActiveMission(allianceId, listener);
+    }
+
+    public ListenerRegistration listenForAllUserProgress(String missionId, EventListener<QuerySnapshot> listener) {
+        return missionRepository.listenForAllUserProgress(missionId, listener);
     }
 
 }

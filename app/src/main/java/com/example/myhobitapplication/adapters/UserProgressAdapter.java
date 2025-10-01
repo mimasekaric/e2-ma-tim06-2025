@@ -10,19 +10,19 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.dto.UserProgressDTO;
+import com.example.myhobitapplication.models.Avatar;
+import com.example.myhobitapplication.staticData.AvatarList;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserProgressAdapter extends RecyclerView.Adapter<UserProgressAdapter.ProgressViewHolder> {
 
     private List<UserProgressDTO> progressList = new ArrayList<>();
-    private int maxDamageInAlliance = 1; // Počinjemo s 1 da izbjegnemo dijeljenje s nulom
 
-    // ViewHolder klasa koja drži reference na view elemente jednog reda
     public static class ProgressViewHolder extends RecyclerView.ViewHolder {
         ImageView memberAvatar;
         TextView memberUsername;
-        ProgressBar memberProgressBar;
         TextView memberTotalDamageText;
         TextView purchaseCountText, bossHitCountText, easyTaskCountText, hardTaskCountText;
 
@@ -42,7 +42,7 @@ public class UserProgressAdapter extends RecyclerView.Adapter<UserProgressAdapte
     @NonNull
     @Override
     public ProgressViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Kreira novi view za jedan red
+
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_user_progress, parent, false);
         return new ProgressViewHolder(view);
@@ -50,14 +50,17 @@ public class UserProgressAdapter extends RecyclerView.Adapter<UserProgressAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ProgressViewHolder holder, int position) {
-        // Popunjava view podacima iz DTO objekta
+
         UserProgressDTO currentProgress = progressList.get(position);
 
         holder.memberUsername.setText(currentProgress.getUsername());
         holder.memberTotalDamageText.setText(currentProgress.getTotalDamage() + " DMG");
-
-        // Ovdje postavite sliku avatara. Trebat će vam logika da iz 'avatarName' dobijete drawable resource.
-        // holder.memberAvatar.setImageResource(...);
+        for (Avatar a : AvatarList.getAvatarList()) {
+            if (a.getName().equals(currentProgress.getAvatarName())) {
+                holder.memberAvatar.setImageResource(a.getImage());
+                break;
+            }
+        }
         
         holder.purchaseCountText.setText(currentProgress.getPurchaseCount() + "/5");
         holder.bossHitCountText.setText(currentProgress.getSuccessfulAttackCount() + "/10");
@@ -71,7 +74,6 @@ public class UserProgressAdapter extends RecyclerView.Adapter<UserProgressAdapte
         return progressList.size();
     }
 
-    // Metoda koju će Fragment pozvati da ažurira podatke u adapteru
     public void updateProgressList(List<UserProgressDTO> newProgressList) {
         if (newProgressList == null) {
             return;

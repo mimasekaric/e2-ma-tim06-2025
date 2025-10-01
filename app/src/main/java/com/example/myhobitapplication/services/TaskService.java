@@ -707,7 +707,7 @@ public class TaskService implements LevelUpListener {
                         boolean isEasyTask = false;
                         boolean isVeryEasyTask = false;
                         boolean isHardTask = false;
-                        if((difficulty == 3 || difficulty == 1) && (importance == 1 || importance == 3 )){
+                        if((difficulty == 3 || difficulty == 1) || (importance == 1 || importance == 3 )){
                             isEasyTask = true;
                             isVeryEasyTask = false;
                             if(difficulty == 1 && importance == 1){
@@ -715,7 +715,7 @@ public class TaskService implements LevelUpListener {
                                 isEasyTask = false;
                             }
 
-                        }else if((difficulty == 7 || difficulty == 20) && (importance == 10 || importance == 100 )){
+                        }else if((difficulty == 7 || difficulty == 20) || (importance == 10 || importance == 100 )){
                             isHardTask = true;
                         }
 
