@@ -1,6 +1,7 @@
 package com.example.myhobitapplication.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,8 @@ public class MessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public int getItemViewType(int position) {
         Message message = messageList.get(position);
+        String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        Log.d("MessagesAdapter", "message senderId: " + message.getSenderId() + ", currentUid: " + currentUid);
         if(message.getSenderId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
             return TYPE_MY_MESSAGE;
         } else {
@@ -37,6 +40,11 @@ public class MessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
+    public void updateMessages(List<Message> messages) {
+        messageList.clear();
+        messageList.addAll(messages);
+        notifyDataSetChanged(); // ovo će pozvati getItemViewType za sve stavke
+    }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -66,9 +74,11 @@ public class MessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     static class MyMessageViewHolder extends RecyclerView.ViewHolder {
         TextView messageText;
+
         public MyMessageViewHolder( View itemView) {
             super(itemView);
             messageText = itemView.findViewById(R.id.textMessage);
+            itemView.findViewById(R.id.textMessage);
         }
         void bind(Message message){
             messageText.setText(message.getText());
@@ -77,12 +87,14 @@ public class MessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     static class OtherMessageViewHolder extends RecyclerView.ViewHolder {
         TextView messageText;
+        TextView senderName;
         public OtherMessageViewHolder( View itemView) {
             super(itemView);
             messageText = itemView.findViewById(R.id.textMessage);
+            senderName = itemView.findViewById(R.id.textSender);
         }
         void bind(Message message){
-            messageText.setText(message.getText());
+            messageText.setText(message.getText()); senderName.setText(message.getSenderName() + ":");
         }
     }
 

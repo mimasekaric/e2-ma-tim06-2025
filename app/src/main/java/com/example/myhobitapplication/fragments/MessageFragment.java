@@ -56,10 +56,10 @@ public class MessageFragment extends Fragment {
 
 
         viewModel.getMessages().observe(getViewLifecycleOwner(), messages -> {
-            adapter = new MessagesAdapter(messages, getContext()); // moze i adapter.updateList(messages)
-            recyclerView.setAdapter(adapter);
+            adapter.updateMessages(messages); // samo update postojeći adapter
             recyclerView.scrollToPosition(messages.size() - 1);
         });
+
 
 
         sendButton.setOnClickListener(v -> {
