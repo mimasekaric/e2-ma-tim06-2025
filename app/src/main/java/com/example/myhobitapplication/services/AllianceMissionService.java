@@ -1,6 +1,12 @@
 package com.example.myhobitapplication.services;
 
+import android.content.Context;
+import android.provider.ContactsContract;
 import android.util.Log;
+
+import androidx.work.Data;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 import com.example.myhobitapplication.databases.AllianceMissionRepository;
 import com.example.myhobitapplication.enums.MissionStatus;
@@ -8,6 +14,7 @@ import com.example.myhobitapplication.events.GameEvent;
 import com.example.myhobitapplication.models.AllianceMission;
 import com.example.myhobitapplication.models.User;
 import com.example.myhobitapplication.models.UserMission;
+import com.example.myhobitapplication.workers.MissionCompletionWorker;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -24,6 +31,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class AllianceMissionService {
     private final AllianceMissionRepository missionRepository;
@@ -45,7 +53,7 @@ public class AllianceMissionService {
 
     }
 
-    public Task<Void> startMissionForAlliance(String allianceId, List<String> memberIds) {
+    public Task<Void> startMissionForAlliance(String allianceId, List<String> memberIds, Context context) {
 
         int memberCount = memberIds.size();
         int totalHp = 100 * memberCount;
@@ -70,7 +78,35 @@ public class AllianceMissionService {
             initialProgressList.add(progress);
         }
 
-        return missionRepository.createMission(newMission, initialProgressList);
+        return missionRepository.createMission(newMission, initialProgressList)
+                .onSuccessTask(aVoid -> {
+
+                    long nowMillis = System.currentTimeMillis();
+                    long endDateMillis = newMission.getEndDate().getTime();
+                    long delayInMillis = endDateMillis - nowMillis;
+
+                    if (delayInMillis < 0) {
+                        delayInMillis = 0;
+                    }
+
+
+                    Data inputData = new Data.Builder()
+                            .putString(MissionCompletionWorker.KEY_MISSION_ID, newMission.getId())
+                            .build();
+
+                    OneTimeWorkRequest completionWorkRequest =
+                            new OneTimeWorkRequest.Builder(MissionCompletionWorker.class)
+                                    .setInitialDelay(delayInMillis, TimeUnit.MILLISECONDS)
+                                    .setInputData(inputData)
+                                    .build();
+
+                    WorkManager.getInstance(context)
+                            .enqueue(completionWorkRequest);
+
+                    Log.d("MissionStart", "Worker for mission finish is scheduled for " + newMission.getEndDate());
+
+                    return Tasks.forResult(null);
+                });
     }
     private static class MissionEventRule {
         final int damage;
@@ -254,5 +290,6 @@ public class AllianceMissionService {
     public ListenerRegistration listenForAllUserProgress(String missionId, EventListener<QuerySnapshot> listener) {
         return missionRepository.listenForAllUserProgress(missionId, listener);
     }
+
 
 }

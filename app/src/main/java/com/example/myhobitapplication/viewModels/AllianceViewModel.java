@@ -1,5 +1,6 @@
 package com.example.myhobitapplication.viewModels;
 
+import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -9,7 +10,9 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.myhobitapplication.models.Alliance;
 import com.example.myhobitapplication.models.User;
+import com.example.myhobitapplication.services.AllianceMissionService;
 import com.example.myhobitapplication.services.AllianceService;
+import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.UserService;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -31,10 +34,22 @@ public class AllianceViewModel extends ViewModel {
     private final MutableLiveData<Alliance> userAlliance = new MutableLiveData<>(null);
     private final MutableLiveData<User> owner = new MutableLiveData<>(new User());
     private final MutableLiveData<String> createdResponse = new MutableLiveData<>("");
+    private final AllianceMissionService missionService;
+    private final MutableLiveData<String> missionActivationResponse = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> missionActivationSuccess = new MutableLiveData<>();
+    public MutableLiveData<String> getMissionActivationResponse() {
+        return missionActivationResponse;
+    }
+
+    public MutableLiveData<Boolean> getMissionActivationSuccess() {
+        return missionActivationSuccess;
+    }
 
     public AllianceViewModel() {
         this.allianceService = new AllianceService();
         this.userService = new UserService();
+        ProfileService profileService = ProfileService.getInstance();
+        this.missionService = new AllianceMissionService(profileService);
     }
 
     public MutableLiveData<Alliance> getUserAlliance() {
@@ -206,6 +221,36 @@ public class AllianceViewModel extends ViewModel {
                 }*/
             }
         });
+    }
+
+    public void activateMission(String allianceId, Context context) {
+
+        missionActivationResponse.setValue("Activating mission...");
+        missionActivationSuccess.setValue(false);
+
+        userService.getAllianceMember(allianceId)
+                .addOnSuccessListener(memberIds -> {
+
+                    if (memberIds == null || memberIds.isEmpty()) {
+                        missionActivationResponse.setValue("Cannot start mission: No members in the alliance.");
+                        missionActivationSuccess.setValue(false);
+                        return;
+                    }
+
+                    missionService.startMissionForAlliance(allianceId, memberIds, context)
+                            .addOnSuccessListener(aVoid -> {
+                                missionActivationResponse.setValue("Special mission has been successfully activated!");
+                                missionActivationSuccess.setValue(true);
+                            })
+                            .addOnFailureListener(e -> {
+                                missionActivationResponse.setValue("Failed to activate mission: " + e.getMessage());
+                                missionActivationSuccess.setValue(false);
+                            });
+                })
+                .addOnFailureListener(e -> {
+                    missionActivationResponse.setValue("Failed to get alliance members: " + e.getMessage());
+                    missionActivationSuccess.setValue(false);
+                });
     }
 
 

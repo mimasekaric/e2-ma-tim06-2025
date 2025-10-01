@@ -72,6 +72,13 @@ public class AllianceFragment extends Fragment {
             }
             isMembersViewActive = !isMembersViewActive;
         });
+
+        binding.buttonn55.setOnClickListener(v->{
+            if(alliance.getId()!=null){
+                allianceViewModel.activateMission(alliance.getId(), getContext());
+            }
+        });
+
         return  binding.getRoot();
     }
 
