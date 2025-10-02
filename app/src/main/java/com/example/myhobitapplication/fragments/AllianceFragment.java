@@ -93,6 +93,24 @@ public class AllianceFragment extends Fragment {
         allianceViewModel.getOwner().observe(getViewLifecycleOwner(),owner->{
             binding.allianceNameLeader.setText("Leader : " + owner.getusername());
         });
+
+        binding.openChat.setOnClickListener(v -> {
+
+            MessageFragment messageFragment = new MessageFragment();
+
+
+            Bundle args = new Bundle();
+            args.putString("ALLIANCE_ID", alliance.getId());
+            messageFragment.setArguments(args);
+
+
+            getParentFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, messageFragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
+
         allianceViewModel.getMembers().observe(getViewLifecycleOwner(),members->{
             binding.imgLayout2.removeAllViews();
             LayoutInflater inflater = LayoutInflater.from(getContext());

@@ -51,7 +51,17 @@ public class HomeActivity extends AppCompatActivity {
          //userId = intent.getStringExtra("USER_ID");
         userId=FirebaseAuth.getInstance().getCurrentUser().getUid();
         OneSignal.setExternalUserId(userId);
+        OneSignal.sendTag("user_id", userId);
         AllianceViewModel allianceViewModel = new ViewModelProvider(this).get(AllianceViewModel.class);
+        allianceViewModel.getAlliance(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        allianceViewModel.getUserAlliance().observe(this, alliance -> {
+            if(alliance != null){
+                String allianceId = alliance.getId();
+                OneSignal.sendTag("alliance_id", allianceId);
+            }
+        });
+
+
 
         ///  TO DO: ovo otkomentarisati ako se notifikaicja skloni iako ne kliknes na accept/decline nego samo nestane
 /*OneSignal.setNotificationOpenedHandler(result -> {

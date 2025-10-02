@@ -81,7 +81,33 @@
                 android:orientation="vertical" />
         </ScrollView>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/openchatlay"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_height="30dp"
+            >
+            <ImageView
+                android:id="@+id/openChat"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/button"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:scaleType="fitXY" />
 
+            <TextView
+                android:layout_width="match_parent"
+                android:foregroundGravity="center_horizontal"
+                android:layout_marginLeft="88dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                app:layout_constraintStart_toStartOf="@id/openChat"
+                android:fontFamily="@font/educursivesemibold"
+                android:text="Open Chat"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/button55_layout"
             android:layout_width="wrap_content"
