@@ -34,9 +34,18 @@ public class MissionCompletionWorker extends Worker {
     private TaskRepository taskRepository;
     private AllianceMissionService allianceMissionService;
     private TaskService taskService;
+    private Context context;
 
     public MissionCompletionWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
+        this.context = context;
+
+    }
+
+    @NonNull
+    @Override
+    public Result doWork() {
+
         userService = new UserService();
         profileService = ProfileService.getInstance();
         bossRepository = new BossRepository(context);
@@ -45,11 +54,6 @@ public class MissionCompletionWorker extends Worker {
         taskRepository = new TaskRepository(context);
         allianceMissionService = new AllianceMissionService(profileService);
         taskService =  TaskService.getInstance(taskRepository,profileService,battleService,allianceMissionService);
-    }
-
-    @NonNull
-    @Override
-    public Result doWork() {
 
         String missionId = getInputData().getString(KEY_MISSION_ID);
 
@@ -65,7 +69,7 @@ public class MissionCompletionWorker extends Worker {
 
         try {
 
-            Task<Void> completionTask = userMissionService.processMissionCompletion(missionId);
+            Task<Void> completionTask = userMissionService.processMissionCompletionTest(missionId);
             Tasks.await(completionTask);
 
             Log.d("MissionWorker", "Mission " + missionId + " successfully obradjen.");

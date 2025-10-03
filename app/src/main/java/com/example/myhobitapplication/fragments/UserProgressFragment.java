@@ -33,10 +33,26 @@ public class UserProgressFragment extends Fragment {
     private FragmentUserProgressBinding binding;
     private UserProgressAdapter adapter;
 
+    private static final String ARG_ALLIANCE_ID = "alliance_id";
+
+    private String allianceId;
+    public static UserProgressFragment newInstance(String allianceId) {
+        UserProgressFragment fragment = new UserProgressFragment();
+
+        Bundle args = new Bundle();
+        args.putString(ARG_ALLIANCE_ID, allianceId);
+        fragment.setArguments(args);
+
+        return fragment;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (getArguments() != null) {
+            allianceId = getArguments().getString(ARG_ALLIANCE_ID);
+        }
 
         UserService userService = new UserService();
         ProfileService profileService = ProfileService.getInstance();
@@ -45,7 +61,7 @@ public class UserProgressFragment extends Fragment {
             @NonNull
             @Override
             public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-                // Kreiraj instance servisa i proslijedi ih u ViewMode
+
                 UserService userService = new UserService();
                 AllianceMissionService missionService = new AllianceMissionService(profileService);
                 return (T) new UserProgressViewModel(userService, missionService);
@@ -69,8 +85,10 @@ public class UserProgressFragment extends Fragment {
         setupRecyclerView();
 
         setupObservers();
-        String allianceId = "SepFZFusR8JKNCTqhaNn";
         viewModel.attachListeners(allianceId);
+        binding.endMission.setOnClickListener(v->{
+            viewModel.triggerMissionCompletion(requireContext());
+        });
 
     }
 
@@ -95,15 +113,12 @@ public class UserProgressFragment extends Fragment {
             }
         });
 
-        // GLAVNI OBSERVER: Za listu napretka članova
         viewModel.getAllianceProgress().observe(getViewLifecycleOwner(), progressList -> {
             if (progressList != null) {
-                // Kada stigne nova lista, samo je proslijedi adapteru
                 adapter.updateProgressList(progressList);
             }
         });
 
-        // Observer za poruke o statusu/greškama
         viewModel.getResponse().observe(getViewLifecycleOwner(), response -> {
             if (response != null && !response.isEmpty()) {
                 Toast.makeText(getContext(), response, Toast.LENGTH_SHORT).show();
@@ -114,6 +129,6 @@ public class UserProgressFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null; // Važno za sprječavanje curenja memorije
+        binding = null;
     }
 }

@@ -1,5 +1,6 @@
 package com.example.myhobitapplication.viewModels;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -190,6 +191,19 @@ public class UserProgressViewModel extends ViewModel {
             allianceProgress.setValue(dtoList);
         });
     }
+
+    public void triggerMissionCompletion(Context context) {
+
+        AllianceMission currentMission = activeMission.getValue();
+
+        if (currentMission != null) {
+            missionService.manuallyTriggerMissionCompletion(context, currentMission.getId());
+            response.setValue("Pokrenuta ručna provjera završetka misije...");
+        } else {
+            response.setValue("Nema aktivne misije za provjeru.");
+        }
+    }
+
 
     @Override
     protected void onCleared() {

@@ -79,6 +79,18 @@ public class AllianceFragment extends Fragment {
             }
         });
 
+        binding.missionProgress.setOnClickListener(v->{
+            Alliance currentAlliance = allianceViewModel.getUserAlliance().getValue();
+            if (currentAlliance != null && currentAlliance.getId() != null) {
+                String allianceId = currentAlliance.getId();
+
+                UserProgressFragment progressFragment = UserProgressFragment.newInstance(allianceId);
+                requireActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, progressFragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
         return  binding.getRoot();
     }
 
@@ -88,6 +100,7 @@ public class AllianceFragment extends Fragment {
                 alliance = alliance1;
                 binding.allianceName.setText(alliance1.getName());
                 allianceViewModel.getUsersInAlliance();
+                allianceViewModel.checkUserActiveMissionStatus(FirebaseAuth.getInstance().getCurrentUser().getUid());
             }
         });
         allianceViewModel.getOwner().observe(getViewLifecycleOwner(),owner->{
@@ -135,6 +148,36 @@ public class AllianceFragment extends Fragment {
                 friendView.findViewById(R.id.button_layoutt).setVisibility(View.INVISIBLE);
 
                 binding.imgLayout2.addView(friendView);
+            }
+        });
+
+        allianceViewModel.getHasUserActiveMission().observe(getViewLifecycleOwner(), hasActiveMission -> {
+            if (hasActiveMission == null) {
+
+                binding.button55Layout.setVisibility(View.GONE);
+
+                return;
+            }
+            String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            Alliance alliance = allianceViewModel.getUserAlliance().getValue();
+            boolean isUserLeader = alliance != null && currentUserId.equals(alliance.getLeaderId());
+
+            if (hasActiveMission) {
+
+                binding.button55Layout.setVisibility(View.GONE);
+
+                binding.missionProgress.setVisibility(View.VISIBLE);
+
+            } else {
+
+                binding.missionProgress.setVisibility(View.GONE);
+
+
+                if (isUserLeader) {
+                    binding.button55Layout.setVisibility(View.VISIBLE);
+                } else {
+                    binding.button55Layout.setVisibility(View.GONE);
+                }
             }
         });
     }

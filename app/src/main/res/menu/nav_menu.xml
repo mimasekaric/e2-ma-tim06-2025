@@ -43,10 +43,8 @@
             android:id="@+id/nav_friends"
             android:icon="@mipmap/ic_launcher_witch"
             android:title="Friends" />
-        <item
-            android:id="@+id/nav_progress"
-            android:icon="@mipmap/ic_launcher_witch"
-            android:title="UserProgress" />
+
+
 
     </group>
 

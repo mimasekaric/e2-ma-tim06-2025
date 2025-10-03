@@ -58,8 +58,8 @@
             app:layout_constraintTop_toTopOf="@id/alliance_boss_hp_bar"
             tools:text="3000 / 5000 HP" />
 
-        <TextView
-            android:id="@+id/mission_time_left_text"
+        <ImageButton
+            android:id="@+id/endMission"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
@@ -69,6 +69,8 @@
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:srcCompat="@mipmap/ic_launcher_potion10"
             tools:text="13d 5h left"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

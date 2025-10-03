@@ -5,10 +5,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.myhobitapplication.models.Alliance;
+import com.example.myhobitapplication.models.AllianceMission;
 import com.example.myhobitapplication.models.User;
 import com.example.myhobitapplication.services.AllianceMissionService;
 import com.example.myhobitapplication.services.AllianceService;
@@ -37,12 +39,17 @@ public class AllianceViewModel extends ViewModel {
     private final AllianceMissionService missionService;
     private final MutableLiveData<String> missionActivationResponse = new MutableLiveData<>();
     private final MutableLiveData<Boolean> missionActivationSuccess = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> hasUserActiveMission = new MutableLiveData<>();
+
     public MutableLiveData<String> getMissionActivationResponse() {
         return missionActivationResponse;
     }
 
     public MutableLiveData<Boolean> getMissionActivationSuccess() {
         return missionActivationSuccess;
+    }
+    public LiveData<Boolean> getHasUserActiveMission() {
+        return hasUserActiveMission;
     }
 
     public AllianceViewModel() {
@@ -250,6 +257,19 @@ public class AllianceViewModel extends ViewModel {
                 .addOnFailureListener(e -> {
                     missionActivationResponse.setValue("Failed to get alliance members: " + e.getMessage());
                     missionActivationSuccess.setValue(false);
+                });
+    }
+    public void checkUserActiveMissionStatus(String userId) {
+
+        hasUserActiveMission.setValue(null);
+
+        missionService.checkIfUserHasActiveAlliance(userId)
+                .addOnSuccessListener(isActive -> {
+                    hasUserActiveMission.setValue(isActive);
+                })
+                .addOnFailureListener(e -> {
+                    hasUserActiveMission.setValue(false);
+                    Log.e("AllianceVM", "Error.", e);
                 });
     }
 

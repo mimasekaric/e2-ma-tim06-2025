@@ -290,6 +290,29 @@ public class AllianceMissionService {
     public ListenerRegistration listenForAllUserProgress(String missionId, EventListener<QuerySnapshot> listener) {
         return missionRepository.listenForAllUserProgress(missionId, listener);
     }
+    public void manuallyTriggerMissionCompletion(Context context, String missionId) {
+        if (missionId == null || missionId.isEmpty()) {
+            Log.e("MissionService", "Ne mogu pokrenuti workera, missionId je prazan.");
+            return;
+        }
+
+        Log.d("MissionService", "Ručno pokrećem workera za misiju: " + missionId);
+
+        // 1. Kreiraj Data objekt koji će proslijediti ID misije Workeru
+        Data inputData = new Data.Builder()
+                .putString(MissionCompletionWorker.KEY_MISSION_ID, missionId)
+                .build();
+
+        // 2. Kreiraj zahtjev za posao bez ikakve odgode
+        OneTimeWorkRequest completionWorkRequest =
+                new OneTimeWorkRequest.Builder(MissionCompletionWorker.class)
+                        .setInputData(inputData)
+                        .build();
+
+        // 3. Zakaži posao da se izvrši odmah (ili što je prije moguće)
+        WorkManager.getInstance(context.getApplicationContext())
+                .enqueue(completionWorkRequest);
+    }
 
 
 }
