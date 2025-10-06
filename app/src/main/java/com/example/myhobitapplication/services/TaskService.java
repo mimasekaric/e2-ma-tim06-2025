@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 public class TaskService implements LevelUpListener {
@@ -134,8 +135,6 @@ public class TaskService implements LevelUpListener {
 
         repository.updateFirstRecurringTaskId(firstTaskId, firstTaskId);
     }
-
-
 
 
 
@@ -539,16 +538,17 @@ public void markRecurringTaskAsDone(int taskId, String userId) {
 
     boolean shouldAwardDifficultyXp = completedCountDiff < limitDifficulty;
     boolean shouldAwardImportanceXp = completedCountImp < limitImportance;
-    if(!shouldAwardDifficultyXp){
+    //// TODO: Otkomentarisi ovo
+   /* if(!shouldAwardDifficultyXp){
         task.setDifficulty(0);
     }
     if(!shouldAwardImportanceXp){
         task.setImportance(0);
-    }
+    }*/
     boolean shouldAward = shouldAwardDifficultyXp || shouldAwardImportanceXp;
     int xpGained = 0;
     /// TODO: ne treba true pred odbranu ovdje i u sledecoj metodi vec shouldAwardXp
-    if (shouldAward) {
+    if (true) {
         task.setAwarded(true);
         xpGained = task.getDifficulty() + task.getImportance();
         profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
@@ -675,12 +675,13 @@ public void markOneTimeTaskAsDone(int taskId, String userId) {
 
     boolean shouldAwardDifficultyXp = completedCountDiff < limitDifficulty;
     boolean shouldAwardImportanceXp = completedCountImp < limitImportance;
-    if(!shouldAwardDifficultyXp){
+    //// TODO: Otkomentarisi ovo
+    /*if(!shouldAwardDifficultyXp){
         oneTimeTask.setDifficulty(0);
     }
     if(!shouldAwardImportanceXp){
         oneTimeTask.setImportance(0);
-    }
+    }*/
     boolean shouldAward = shouldAwardDifficultyXp || shouldAwardImportanceXp;
     int xpGained = 0;
 
@@ -710,7 +711,199 @@ public void markOneTimeTaskAsDone(int taskId, String userId) {
     oneTimeTask.setStatus(OneTimeTaskStatus.COMPLETED);
     repository.updateOneTimeTask(oneTimeTask);
 }
+    public Map<String, Integer> getCompletedTasksByCategory(String userUid) {
+        List<Task> allTasks = getAllTasks(userUid);
 
+        Map<String, Integer> completedByCategory = new HashMap<>();
+
+        for (Task task : allTasks) {
+            boolean completed = false;
+
+            if (task instanceof OneTimeTask) {
+                completed = ((OneTimeTask) task).getStatus() == OneTimeTaskStatus.COMPLETED;
+            } else if (task instanceof RecurringTask) {
+                completed = ((RecurringTask) task).getStatus() == RecurringTaskStatus.COMPLETED;
+            }
+
+            if (completed) {
+                String category = task.getCategoryColour();
+                completedByCategory.put(category, completedByCategory.getOrDefault(category, 0) + 1);
+            }
+        }
+
+        return completedByCategory;
+    }
+
+    public Map<String, Integer> getTaskStatusCounts(String userUid) {
+        List<Task> allTasks = getAllTasks(userUid);
+
+        int total = allTasks.size();
+        int finished = 0;
+        int notDone = 0;
+        int canceled = 0;
+
+        for (Task task : allTasks) {
+            if (task instanceof OneTimeTask) {
+                OneTimeTaskStatus status = ((OneTimeTask) task).getStatus();
+                if (status == OneTimeTaskStatus.COMPLETED) {
+                    finished++;
+                } else if (status == OneTimeTaskStatus.CANCELED) {
+                    canceled++;
+                } else {
+                    notDone++; // sve ostalo smatramo "neurađeno"
+                }
+            } else if (task instanceof RecurringTask) {
+                RecurringTaskStatus status = ((RecurringTask) task).getStatus();
+                if (status == RecurringTaskStatus.COMPLETED) {
+                    finished++;
+                } else if (status == RecurringTaskStatus.CANCELED) {
+                    canceled++;
+                } else {
+                    notDone++;
+                }
+            }
+        }
+
+        Map<String, Integer> counts = new HashMap<>();
+        counts.put("Total", total);
+        counts.put("Finished", finished);
+        counts.put("NotDone", notDone);
+        counts.put("Canceled", canceled);
+
+        return counts;
+    }
+
+
+    public int getLongestActiveStreak(String userUid) {
+        List<LocalDate> activityDates = repository.getAllActivityDates(userUid);
+
+        if (activityDates.isEmpty()) return 0;
+
+        TreeSet<LocalDate> sortedDates = new TreeSet<>(activityDates);
+
+        int maxStreak = 1;
+        int currentStreak = 1;
+        LocalDate prev = null;
+
+        for (LocalDate date : sortedDates) {
+            if (prev != null) {
+                if (date.equals(prev.plusDays(1))) {
+                    currentStreak++;
+                    maxStreak = Math.max(maxStreak, currentStreak);
+                } else {
+                    currentStreak = 1;
+                }
+            }
+            prev = date;
+        }
+
+        return maxStreak;
+    }
+
+
+    public int calculateLongestSuccessfulStreak(String userUid) {
+        List<Task> allTasks = getAllTasks(userUid);
+
+        Map<LocalDate, Boolean> dayCompletedMap = new HashMap<>();
+
+        for (Task task : allTasks) {
+            LocalDate date = task.getCreationDate();
+            if (date == null) continue;
+
+            boolean completed = false;
+
+            if (task instanceof OneTimeTask) {
+                completed = ((OneTimeTask) task).getStatus() == OneTimeTaskStatus.COMPLETED;
+            } else if (task instanceof RecurringTask) {
+                completed = ((RecurringTask) task).getStatus() == RecurringTaskStatus.COMPLETED;
+            }
+
+            // Ako postoji bar jedan završen task u danu, dan je uspešan
+            if (completed) {
+                dayCompletedMap.put(date, true);
+            } else {
+                dayCompletedMap.putIfAbsent(date, false);
+            }
+        }
+
+        if (dayCompletedMap.isEmpty()) return 0;
+
+        // Sortiramo datume
+        TreeSet<LocalDate> sortedDates = new TreeSet<>(dayCompletedMap.keySet());
+
+        int maxStreak = 0;
+        int currentStreak = 0;
+        LocalDate prevDate = null;
+
+        for (LocalDate date : sortedDates) {
+            boolean successfulDay = dayCompletedMap.getOrDefault(date, false);
+
+            if (!successfulDay) {
+                // Dan sa zadacima koji nisu završeni prekida streak
+                currentStreak = 0;
+            } else {
+                // Ako dan uspešan, povećavamo streak
+                currentStreak++;
+                maxStreak = Math.max(maxStreak, currentStreak);
+            }
+
+            prevDate = date;
+        }
+
+        return maxStreak;
+    }
+
+    public List<Float> getAverageXpOfCompletedTasks(String userUid) {
+        List<Task> tasks = getAllTasks(userUid).stream()
+                .filter(task -> {
+                    if (task instanceof OneTimeTask) {
+                        return ((OneTimeTask) task).getStatus() == OneTimeTaskStatus.COMPLETED;
+                    } else if (task instanceof RecurringTask) {
+                        return ((RecurringTask) task).getStatus() == RecurringTaskStatus.COMPLETED;
+                    }
+                    return false;
+                }).collect(Collectors.toList());
+
+        List<Float> averageXpList = new ArrayList<>();
+        for (int i = 0; i < tasks.size(); i++) {
+            Task task = tasks.get(i);
+            int xp = task.getDifficulty() + task.getImportance();
+            averageXpList.add((float) xp);
+        }
+
+        return averageXpList;
+    }
+
+    public Map<LocalDate, Integer> getXpLast7Days(String userUid) {
+        LocalDate today = LocalDate.now();
+        LocalDate weekAgo = today.minusDays(6); // poslednjih 7 dana uključujući danas
+
+        // filtriraj sve završene zadatke
+        List<Task> completedTasks = getAllTasks(userUid).stream()
+                .filter(task -> {
+                    if (task instanceof OneTimeTask) {
+                        return ((OneTimeTask) task).getStatus() == OneTimeTaskStatus.COMPLETED &&  ((OneTimeTask) task).isAwarded() ;
+                    } else if (task instanceof RecurringTask) {
+                        return ((RecurringTask) task).getStatus() == RecurringTaskStatus.COMPLETED && ((RecurringTask) task).isAwarded();
+                    }
+                    return false;
+                })
+                .collect(Collectors.toList());
+
+        // kreiraj mapu datuma -> XP
+        Map<LocalDate, Integer> xpMap = new HashMap<>();
+        for (int i = 0; i < 7; i++) {
+            LocalDate date = weekAgo.plusDays(i);
+            int xpForDay = completedTasks.stream()
+                    .filter(task -> task.getFinishedDate().equals(date))
+
+                    .mapToInt(task -> task.getDifficulty() + task.getImportance())
+                    .sum();
+            xpMap.put(date, xpForDay);
+        }
+
+        return xpMap;
+    }
     private int getLimitForCategory(TaskQuote quote) {
 
         switch (quote) {
