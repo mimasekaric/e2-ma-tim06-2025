@@ -10,6 +10,8 @@ import com.example.myhobitapplication.databases.MessageRepository;
 import com.example.myhobitapplication.databases.UserRepository;
 import com.example.myhobitapplication.models.Message;
 import com.example.myhobitapplication.models.User;
+import com.example.myhobitapplication.services.AllianceMissionService;
+import com.example.myhobitapplication.services.ProfileService;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 
@@ -29,6 +31,7 @@ public class MessageViewModel extends ViewModel {
 
     private final MessageRepository messageRepo;
     private final UserRepository userRepo;
+    private final AllianceMissionService missionService;
 
     private final MutableLiveData<List<Message>> messages = new MutableLiveData<>(new ArrayList<>());
     private final Map<String, String> uidToUsername = new HashMap<>();
@@ -36,6 +39,7 @@ public class MessageViewModel extends ViewModel {
     public MessageViewModel() {
         messageRepo = new MessageRepository();
         userRepo = new UserRepository();
+        missionService = new AllianceMissionService(ProfileService.getInstance());
     }
 
     public LiveData<List<Message>> getMessages() {
@@ -126,6 +130,9 @@ public class MessageViewModel extends ViewModel {
 
     public void sendMessage(String allianceId, String text) {
         String currentUid = com.google.firebase.auth.FirebaseAuth.getInstance().getUid();
+        missionService.trackMessageSent(currentUid, allianceId)
+                .addOnSuccessListener(aVoid -> Log.d("MissionTracking", "Message tracking."))
+                .addOnFailureListener(e -> Log.e("MissionTracking", "Error message tracking", e));
         String senderName = uidToUsername.getOrDefault(currentUid, currentUid);
         messageRepo.sendMessage(allianceId, currentUid, senderName, text);
         sendOneSignalNotification(senderName, text, allianceId);

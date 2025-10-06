@@ -34,11 +34,13 @@ import com.example.myhobitapplication.databases.EquipmentRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.FragmentOnetimeTaskListBinding;
 import com.example.myhobitapplication.dto.OneTimeTaskDTO;
+import com.example.myhobitapplication.services.AllianceMissionService;
 import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.EquipmentService;
 import com.example.myhobitapplication.services.BattleService;
 import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.TaskService;
+import com.example.myhobitapplication.services.UserService;
 import com.example.myhobitapplication.viewModels.ProfileViewModel;
 import com.example.myhobitapplication.viewModels.taskViewModels.OneTimeTaskListViewModel;
 import com.google.firebase.auth.FirebaseAuth;
@@ -86,7 +88,8 @@ public class OneTimeTaskViewFragment extends Fragment {
         BossRepository bossRepository = new BossRepository(getContext());
         BossService bossService = new BossService(bossRepository);
         BattleService battleService = new BattleService(bossService, profileService);
-        TaskService  taskService =  TaskService.getInstance(taskRepository, profileService, battleService);
+        AllianceMissionService missionService = new AllianceMissionService(profileService);
+        TaskService  taskService =  TaskService.getInstance(taskRepository, profileService, battleService, missionService);
 
 
         String userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();

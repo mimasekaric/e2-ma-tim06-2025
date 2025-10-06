@@ -14,12 +14,14 @@ import com.example.myhobitapplication.dto.UserEquipmentDTO;
 import com.example.myhobitapplication.enums.ClothingTypes;
 import com.example.myhobitapplication.enums.EquipmentTypes;
 import com.example.myhobitapplication.enums.WeaponTypes;
+import com.example.myhobitapplication.events.GameEvent;
 import com.example.myhobitapplication.models.Boss;
 import com.example.myhobitapplication.models.Clothing;
 import com.example.myhobitapplication.models.Equipment;
 import com.example.myhobitapplication.models.Profile;
 import com.example.myhobitapplication.models.UserEquipment;
 import com.example.myhobitapplication.models.Weapon;
+import com.example.myhobitapplication.services.AllianceMissionService;
 import com.example.myhobitapplication.services.BattleService;
 import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.ProfileService;
@@ -49,7 +51,7 @@ public class BattleViewModel extends ViewModel {
     private final BossService bossService;
     private final BattleService battleService;
     private final ProfileService profileService;
-
+    private final AllianceMissionService missionService;
     private final UserEquipmentService userEquipmentService;
 
     private double hitChance = 1.0;
@@ -129,7 +131,8 @@ public class BattleViewModel extends ViewModel {
         this.bossService = new BossService(bossRepository);
         this.profileService = profileService;
         this.battleService = new BattleService(bossService, profileService);
-        this.taskService = TaskService.getInstance(taskRepository, profileService, battleService);
+        this.missionService = new AllianceMissionService(profileService);
+        this.taskService = TaskService.getInstance(taskRepository, profileService, battleService, missionService);
         this.userEquipmentService = userEquipmentService;
         userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
@@ -262,6 +265,7 @@ public class BattleViewModel extends ViewModel {
 
 
             battleService.updateBoss(currentBoss);
+            missionService.handleGameEvent(new GameEvent(AllianceMissionService.MissionEventType.SUCCESSFUL_BOSS_HIT,userUid));
 
             _hitAnimationEvent.setValue(true);
         } else {

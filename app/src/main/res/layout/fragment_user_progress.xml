@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/baccpng"
+    tools:context=".fragments.UserProgressFragment"
+    >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/boss_info_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#80123d30"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHeight_percent="0.30">
+
+        <ImageView
+            android:id="@+id/alliance_boss_image"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/boss_sleeping" />
+
+
+        <ProgressBar
+            android:id="@+id/alliance_boss_hp_bar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="8dp"
+            android:max="5000"
+            android:progressDrawable="@drawable/custom_hp_bar"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:progress="3000" />
+
+        <TextView
+            android:id="@+id/alliance_boss_hp_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="2dp"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/alliance_boss_hp_bar"
+            app:layout_constraintEnd_toEndOf="@id/alliance_boss_hp_bar"
+            app:layout_constraintStart_toStartOf="@id/alliance_boss_hp_bar"
+            app:layout_constraintTop_toTopOf="@id/alliance_boss_hp_bar"
+            tools:text="3000 / 5000 HP" />
+
+        <ImageButton
+            android:id="@+id/endMission"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:fontFamily="@font/educursivebold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:srcCompat="@mipmap/ic_launcher_potion10"
+            tools:text="13d 5h left"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/progress_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/educursivebold"
+        android:gravity="center"
+        android:text="Alliance Progress"
+        android:textColor="#EFEBEB"
+        android:textSize="20sp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/boss_info_container" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/alliance_progress_recycler"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/progress_title"
+        tools:listitem="@layout/item_user_progress" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

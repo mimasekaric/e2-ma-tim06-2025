@@ -3,6 +3,7 @@ package com.example.myhobitapplication.services;
 import android.content.Context;
 
 import com.example.myhobitapplication.dto.BossDTO;
+import com.example.myhobitapplication.events.GameEvent;
 import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.EquipmentService;
 import com.example.myhobitapplication.services.ProfileService;
@@ -28,6 +29,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+
 /// /vidi mozda ako vec ima aktiviran clothes istog tipa al da nije counterfight 0 i effect 0 ... p=mozda i tu treba sabirati ucinak?
 /// PROVJERI RADI LI ZA STIT
 ///kad gainuje isto oruyje povecava s evjerovatnocaa
@@ -41,19 +44,24 @@ public class UserEquipmentService {
 
     private final EquipmentService equipmentService;
     private final ProfileService profileService;
-    public UserEquipmentService(UserEquipmentRepository repository, ProfileService profileService, BossService bossService, EquipmentService equipmentService){
+    private final AllianceMissionService allianceMissionService;
+
+
+    public UserEquipmentService(UserEquipmentRepository repository, ProfileService profileService, BossService bossService, EquipmentService equipmentService, AllianceMissionService allianceMissionService){
         this.repository = repository;
         this.profileService = profileService;
         this.bossService = bossService;
         this.equipmentService = equipmentService;
+        this.allianceMissionService = allianceMissionService;
         this.repository.open();
     }
 
-    public UserEquipmentService(Context context,  ProfileService profileService, BossService bossService, EquipmentService equipmentService){
+    public UserEquipmentService(Context context, ProfileService profileService, BossService bossService, EquipmentService equipmentService, AllianceMissionService allianceMissionService){
         this.repository = new UserEquipmentRepository(context);
         this.profileService = profileService;
         this.bossService = bossService;
         this.equipmentService = equipmentService;
+        this.allianceMissionService = allianceMissionService;
         this.repository.open();
     }
 
@@ -234,6 +242,7 @@ public class UserEquipmentService {
             save(profile.getuserUid(), equipment);
             int newCoinsValue = (int) Math.round(profile.getcoins() - price);
             profileService.updateCoins(profile.getuserUid(), newCoinsValue);
+            allianceMissionService.handleGameEvent(new GameEvent(AllianceMissionService.MissionEventType.BUY_FROM_SHOP,profile.getuserUid()));
             return true;
         }
         return false;
@@ -266,6 +275,35 @@ public class UserEquipmentService {
         }
 
         return equipment.getCoef() * bossReward;
+
+    }
+    public void grantRandomClothingToUser(String userId) {
+
+        List<Equipment> allClothingItems = getByType(EquipmentTypes.CLOTHING);
+
+        if (allClothingItems == null || allClothingItems.isEmpty()) {
+            return;
+        }
+
+        Random random = new Random();
+        Equipment randomClothing = allClothingItems.get(random.nextInt(allClothingItems.size()));
+        if (randomClothing instanceof Clothing) {
+            gainEquipment(userId, (Clothing) randomClothing);
+        }
+
+
+        List<Equipment> allPotionItems = getByType(EquipmentTypes.POTION);
+
+        if (allPotionItems == null || allPotionItems.isEmpty()) {
+            return;
+        }
+
+        Random randomP = new Random();
+        Equipment randomPotion = allPotionItems.get(randomP.nextInt(allPotionItems.size()));
+        if (randomPotion instanceof Potion) {
+            gainEquipment(userId, (Potion) randomPotion);
+        }
+
 
     }
 

@@ -3,6 +3,7 @@ package com.example.myhobitapplication.services;
 import com.example.myhobitapplication.databases.ProfileRepository;
 import com.example.myhobitapplication.databases.UserRepository;
 import com.example.myhobitapplication.models.Profile;
+import com.example.myhobitapplication.models.User;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.auth.AuthResult;
@@ -112,4 +113,7 @@ public class UserService {
     public Task<QuerySnapshot> getUsersInAlliance(String allianceId){
         return repository.getAllUsersInAlliance(allianceId);
     }
+
+    public  Task<List<String>> getAllianceMember(String allianceId) { return repository.getAllianceMembers(allianceId);}
+    public  Task<List<User>> getAllAllianceMember(String allianceId) { return repository.getAllAllianceMembers(allianceId);}
 }

@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel;
 import com.example.myhobitapplication.dto.UserInfoDTO;
 import com.example.myhobitapplication.models.Profile;
 import com.example.myhobitapplication.models.User;
+import com.example.myhobitapplication.services.AllianceMissionService;
 import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.UserService;
 import com.google.firebase.auth.FirebaseAuth;
@@ -22,6 +23,7 @@ public class FriendsViewModel extends ViewModel {
 
     private final ProfileService profileService;
     private final UserService userService;
+
 
     private final MutableLiveData<List<User>> allUsers = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<List<UserInfoDTO>> friends = new MutableLiveData<>(new ArrayList<>());
@@ -38,7 +40,6 @@ public class FriendsViewModel extends ViewModel {
         this.profileService = ProfileService.getInstance();
         this.userService = new UserService();
     }
-
 
     public MutableLiveData<List<User>> getAllUsers() {
         return allUsers;
@@ -71,6 +72,8 @@ public class FriendsViewModel extends ViewModel {
     public MutableLiveData<Boolean> getLoadSuccess() {
         return loadSuccess;
     }
+
+
 
     public void addFriend(String userId, String friendId){
         userService.addFriend(userId, friendId);

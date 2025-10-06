@@ -28,9 +28,11 @@ import com.example.myhobitapplication.databinding.ActivityProfileBinding;
 import com.example.myhobitapplication.dto.UserInfoDTO;
 import com.example.myhobitapplication.enums.Title;
 import com.example.myhobitapplication.models.Avatar;
+import com.example.myhobitapplication.models.Badge;
 import com.example.myhobitapplication.models.Boss;
 import com.example.myhobitapplication.models.Equipment;
 import com.example.myhobitapplication.models.Profile;
+import com.example.myhobitapplication.services.AllianceMissionService;
 import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.EquipmentService;
 import com.example.myhobitapplication.services.ProfileService;
@@ -83,12 +85,13 @@ public class ProfileActivity extends Fragment {
         ProfileService profileService = ProfileService.getInstance();
         BossService bossService = new BossService(bossRepository);
         EquipmentService equipmentService = new EquipmentService(equipmentRepository);
+        AllianceMissionService allianceMissionService = new AllianceMissionService(profileService);
         viewModel = new ViewModelProvider(requireActivity()).get(ProfileViewModel.class);
         userEquipmentViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @NonNull
             @Override
             public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-                return (T) new UserEquipmentViewModel(requireContext(), bossService, equipmentService, profileService);
+                return (T) new UserEquipmentViewModel(requireContext(), bossService, equipmentService, profileService, allianceMissionService);
             }
         }).get(UserEquipmentViewModel.class);
 
@@ -187,6 +190,8 @@ public class ProfileActivity extends Fragment {
                 imageView2.setLayoutParams(params);
                 binding.imgLayout2.addView(imageView2);
             }
+
+            displayBadges(profile.getbadges());
         });
 
 
@@ -211,6 +216,9 @@ public class ProfileActivity extends Fragment {
                 Toast.makeText(getContext(), "Failed to change password!", Toast.LENGTH_SHORT).show();
             }
         });
+
+
+
     }
 
     private Bitmap generateQRCode(String content) throws WriterException {
@@ -278,4 +286,66 @@ public class ProfileActivity extends Fragment {
         }
 
     }
+
+    private void displayBadges(List<Badge> badges) {
+
+        LinearLayout badgesLayout = binding.imgLayout1;
+
+
+        badgesLayout.removeAllViews();
+
+        if (badges == null || badges.isEmpty()) {
+            return;
+        }
+
+        for (Badge badge : badges) {
+            ImageView badgeImageView = new ImageView(getContext());
+
+            int imageResource;
+            if(badge.getType()!=null){
+                switch (badge.getType()) {
+                    case "GOLD":
+                        imageResource = R.drawable.gold_badge_removebg_previewc;
+                        break;
+                    case "SILVER":
+                        imageResource = R.drawable.silver_badge_removebg_previewc;
+                        break;
+                    default:
+                        imageResource = R.drawable.bronze_badge_removebg_previewc;
+                        break;
+                }
+                badgeImageView.setImageResource(imageResource);
+                // Definiraj širinu u dp
+                int widthInDp = 100;
+
+                // Izračunaj širinu u pikselima na temelju gustoće ekrana
+                float scale = getResources().getDisplayMetrics().density;
+                int widthInPx = (int) (widthInDp * scale + 0.5f);
+
+                // Kreiraj LayoutParams s izračunatom širinom i MATCH_PARENT visinom
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                        widthInPx,
+                        LinearLayout.LayoutParams.MATCH_PARENT
+                );
+
+                // Dodaj desnu marginu da se bedževi ne lijepe jedan za drugog
+                int marginInDp = 8;
+                int marginInPx = (int) (marginInDp * scale + 0.5f);
+                params.setMarginEnd(marginInPx);
+
+                // Primijeni parametre na ImageView
+                badgeImageView.setLayoutParams(params);
+
+                // Postavi ScaleType da se slika lijepo rastegne
+                badgeImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                badgeImageView.setPadding(0, 8, 0, 8); // Dodaj malo vertikalnog paddinga
+
+                // Dodaj kreirani ImageView u LinearLayout
+                badgesLayout.addView(badgeImageView);
+            }
+
+        }
+    }
+
+
 }

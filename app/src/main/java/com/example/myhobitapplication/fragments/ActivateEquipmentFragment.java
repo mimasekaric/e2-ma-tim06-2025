@@ -20,6 +20,7 @@ import com.example.myhobitapplication.databinding.ActivateEquipmentBinding;
 import com.example.myhobitapplication.dto.UserEquipmentDTO;
 import com.example.myhobitapplication.models.Boss;
 import com.example.myhobitapplication.models.Profile;
+import com.example.myhobitapplication.services.AllianceMissionService;
 import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.EquipmentService;
 import com.example.myhobitapplication.services.ProfileService;
@@ -57,11 +58,12 @@ public class ActivateEquipmentFragment extends Fragment {
         ProfileService profileService = ProfileService.getInstance();
         BossService bossService = new BossService(bossRepository);
         EquipmentService equipmentService = new EquipmentService(equipmentRepository);
+        AllianceMissionService allianceMissionService = new AllianceMissionService(profileService);
         viewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @NonNull
             @Override
             public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-                return (T) new UserEquipmentViewModel(requireContext(), bossService,equipmentService,profileService );
+                return (T) new UserEquipmentViewModel(requireContext(), bossService,equipmentService,profileService,allianceMissionService);
             }
         }).get(UserEquipmentViewModel.class);
 

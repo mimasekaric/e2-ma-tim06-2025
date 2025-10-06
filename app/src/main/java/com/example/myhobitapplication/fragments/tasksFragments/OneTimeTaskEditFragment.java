@@ -23,10 +23,12 @@ import com.example.myhobitapplication.adapters.ImportanceSpinnerAdapter;
 import com.example.myhobitapplication.databases.BossRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.FragmentOnetimeTaskEditBinding;
+import com.example.myhobitapplication.services.AllianceMissionService;
 import com.example.myhobitapplication.services.BattleService;
 import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.TaskService;
+import com.example.myhobitapplication.services.UserService;
 import com.example.myhobitapplication.viewModels.taskViewModels.OneTimeTaskEditViewModel;
 
 import java.time.LocalTime;
@@ -72,7 +74,8 @@ public class OneTimeTaskEditFragment extends Fragment {
         BossRepository bossRepository = new BossRepository(getContext());
         BossService bossService = new BossService(bossRepository);
         BattleService battleService = new BattleService(bossService, profileService);
-        taskService =  TaskService.getInstance(taskRepository, profileService, battleService);
+        AllianceMissionService missionService = new AllianceMissionService(profileService);
+        taskService =  TaskService.getInstance(taskRepository, profileService, battleService, missionService);
 
         taskEditViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @NonNull

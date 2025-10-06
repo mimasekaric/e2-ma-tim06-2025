@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -14,6 +15,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.work.WorkManager;
 
 import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.databases.BossRepository;
@@ -23,6 +25,7 @@ import com.example.myhobitapplication.activities.ProfileActivity;
 import com.example.myhobitapplication.fragments.ActivateEquipmentFragment;
 import com.example.myhobitapplication.fragments.FriendsFragment;
 import com.example.myhobitapplication.fragments.ShopFragment;
+import com.example.myhobitapplication.fragments.UserProgressFragment;
 import com.example.myhobitapplication.models.Profile;
 import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.EquipmentService;
@@ -215,9 +218,19 @@ public class HomeActivity extends AppCompatActivity {
                 }
 
 
+
                 drawerLayout.closeDrawer(GravityCompat.START);
                 return true;
             }
+        });
+
+        Button btnCancelWorkers = findViewById(R.id.btn_cancel_all_workers);
+        btnCancelWorkers.setOnClickListener(v -> {
+            // Poziv koji otkazuje SVE zakazane poslove za vašu aplikaciju
+            WorkManager.getInstance(getApplicationContext()).cancelAllWork();
+
+            // Obavijest da je operacija izvršena
+            Toast.makeText(HomeActivity.this, "All scheduled workers have been cancelled!", Toast.LENGTH_LONG).show();
         });
     }
 

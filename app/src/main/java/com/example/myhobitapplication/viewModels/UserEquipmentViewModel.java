@@ -18,6 +18,7 @@ import com.example.myhobitapplication.enums.EquipmentTypes;
 import com.example.myhobitapplication.models.Boss;
 import com.example.myhobitapplication.models.Equipment;
 import com.example.myhobitapplication.models.Profile;
+import com.example.myhobitapplication.services.AllianceMissionService;
 import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.EquipmentService;
 import com.example.myhobitapplication.services.ProfileService;
@@ -35,8 +36,8 @@ public class UserEquipmentViewModel extends ViewModel {
     private final MutableLiveData<List<Equipment>> notActivatedEquipment = new MutableLiveData<>();
 
     private  String userId = "";
-    public   UserEquipmentViewModel(Context context , BossService bossService, EquipmentService equipmentService, ProfileService profileService){
-        this.service = new UserEquipmentService(context, profileService,  bossService, equipmentService);
+    public   UserEquipmentViewModel(Context context , BossService bossService, EquipmentService equipmentService, ProfileService profileService, AllianceMissionService allianceMissionService){
+        this.service = new UserEquipmentService(context, profileService,  bossService, equipmentService, allianceMissionService);
     }
 
     public List<Equipment> getEquipmentByType(EquipmentTypes type){ return service.getByType(type);}

@@ -38,6 +38,7 @@ import com.example.myhobitapplication.dto.UserEquipmentDTO;
 import com.example.myhobitapplication.models.Avatar;
 import com.example.myhobitapplication.models.Boss;
 import com.example.myhobitapplication.models.Equipment;
+import com.example.myhobitapplication.services.AllianceMissionService;
 import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.EquipmentService;
 import com.example.myhobitapplication.services.ProfileService;
@@ -89,11 +90,12 @@ public class BossActivity extends AppCompatActivity {
         //bossRepository.insertBoss(boss);
         BossService bossService = new BossService(bossRepository);
         EquipmentService equipmentService = new EquipmentService(equipmentRepository);
+        AllianceMissionService allianceMissionService = new AllianceMissionService(profileService);
         battleViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @NonNull
             @Override
             public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-                return (T) new BattleViewModel(taskRepository, bossRepository, profileService, new UserEquipmentService(getApplicationContext(), profileService, bossService, equipmentService));
+                return (T) new BattleViewModel(taskRepository, bossRepository, profileService, new UserEquipmentService(getApplicationContext(), profileService, bossService, equipmentService,allianceMissionService));
             }
         }).get(BattleViewModel.class);
 

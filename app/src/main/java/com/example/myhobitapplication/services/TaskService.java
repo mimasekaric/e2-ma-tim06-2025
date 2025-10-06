@@ -9,12 +9,16 @@ import com.example.myhobitapplication.enums.OneTimeTaskStatus;
 import com.example.myhobitapplication.enums.RecurrenceUnit;
 import com.example.myhobitapplication.enums.RecurringTaskStatus;
 import com.example.myhobitapplication.enums.TaskQuote;
+import com.example.myhobitapplication.events.GameEvent;
+import com.example.myhobitapplication.events.GameEventBus;
 import com.example.myhobitapplication.exceptions.ValidationException;
 import com.example.myhobitapplication.interfaces.LevelUpListener;
 import com.example.myhobitapplication.models.OneTimeTask;
 import com.example.myhobitapplication.models.Profile;
 import com.example.myhobitapplication.models.RecurringTask;
 import com.example.myhobitapplication.models.Task;
+import com.example.myhobitapplication.models.User;
+import com.google.android.gms.tasks.Tasks;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -35,18 +39,20 @@ public class TaskService implements LevelUpListener {
     private RecurringTask task;
     private static TaskService instance;
     private final Map<LocalDate, List<RecurringTask>> scheduledTasks;
+    private final AllianceMissionService allianceMissionService;
 
-    public static synchronized TaskService getInstance(TaskRepository repository, ProfileService profileService, BattleService battleService) {
+    public static synchronized TaskService getInstance(TaskRepository repository, ProfileService profileService, BattleService battleService, AllianceMissionService allianceMissionService) {
         if (instance == null) {
-            instance = new TaskService(repository, profileService, battleService);
+            instance = new TaskService(repository, profileService, battleService, allianceMissionService);
         }
         return instance;
     }
-    private  TaskService(TaskRepository repository, ProfileService profileService, BattleService battleService){
+    private  TaskService(TaskRepository repository, ProfileService profileService, BattleService battleService, AllianceMissionService allianceMissionService){
         this.repository = repository;
         this.profileService = profileService;
         this.battleService = battleService;
-       // this.profileService.setLevelUpListener(this);
+        this.allianceMissionService = allianceMissionService;
+        // this.profileService.setLevelUpListener(this);
         this.profileService.addLevelUpListener(this);
         scheduledTasks = new HashMap<>();
 
@@ -565,6 +571,8 @@ public class TaskService implements LevelUpListener {
                             Log.d("Firestore", "Level check nije uspjesan!");
                         });
 
+                        getSpecialMissionPoints(userId,oneTimeTask.getDifficulty(),oneTimeTask.getImportance());
+
                     })
                     .addOnFailureListener(e -> {
                         Log.e("Firestore", "Greška pri ažuriranju XP-a", e);
@@ -688,6 +696,55 @@ public class TaskService implements LevelUpListener {
             difficultyBoostOneTime(task2);
            importanceBoostOneTime(task2);
         });
+    }
+
+    public void getSpecialMissionPoints(String userId, int difficulty, int importance){
+
+
+
+                        AllianceMissionService.MissionEventType eventType;
+
+                        boolean isEasyTask = false;
+                        boolean isVeryEasyTask = false;
+                        boolean isHardTask = false;
+                        if((difficulty == 3 || difficulty == 1) || (importance == 1 || importance == 3 )){
+                            isEasyTask = true;
+                            isVeryEasyTask = false;
+                            if(difficulty == 1 && importance == 1){
+                                isVeryEasyTask = true;
+                                isEasyTask = false;
+                            }
+
+                        }else if((difficulty == 7 || difficulty == 20) || (importance == 10 || importance == 100 )){
+                            isHardTask = true;
+                        }
+
+                        if (isEasyTask) {
+                            eventType = AllianceMissionService.MissionEventType.EASY_TASK_COMPLETED;
+                        }
+                        else if(isVeryEasyTask){
+                            eventType = AllianceMissionService.MissionEventType.VERY_EASY_TASK_COMPLETED;
+                        }
+                        else if(isHardTask){
+                            eventType = AllianceMissionService.MissionEventType.HARD_TASK_COMPLETED;
+                        } else{
+                            return;
+                        }
+
+                        allianceMissionService.handleGameEvent(new GameEvent(eventType, userId));
+
+//                        profileService.getUserData(userId).onSuccessTask(documentReference -> {
+//                            return documentReference.get();
+//                        }).addOnSuccessListener(documentSnapshot -> {
+//                            if (documentSnapshot.exists()) {
+//                                User user = documentSnapshot.toObject(User.class);
+//                                if (user != null && user.getAllianceId() != null) {
+//                                    allianceMissionService.trackProgress(userId, user.getAllianceId(), eventType);
+//
+//                                }
+//                            }
+//                        });
+
     }
 
 

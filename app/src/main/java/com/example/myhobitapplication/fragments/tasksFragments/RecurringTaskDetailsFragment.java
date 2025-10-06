@@ -33,12 +33,14 @@ import com.example.myhobitapplication.databases.EquipmentRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.FragmentTaskDetailsBinding;
 import com.example.myhobitapplication.enums.RecurringTaskStatus;
+import com.example.myhobitapplication.services.AllianceMissionService;
 import com.example.myhobitapplication.services.BattleService;
 import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.CategoryService;
 import com.example.myhobitapplication.services.EquipmentService;
 import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.TaskService;
+import com.example.myhobitapplication.services.UserService;
 import com.example.myhobitapplication.viewModels.ProfileViewModel;
 import com.example.myhobitapplication.viewModels.taskViewModels.RecurringTaskDetailsViewModel;
 
@@ -98,7 +100,8 @@ public class RecurringTaskDetailsFragment extends Fragment {
         BossRepository bossRepository = new BossRepository(getContext());
         BossService bossService = new BossService(bossRepository);
         BattleService battleService = new BattleService(bossService, profileService);
-        taskService =  TaskService.getInstance(taskRepository, profileService, battleService);
+        AllianceMissionService missionService = new AllianceMissionService(profileService);
+        taskService =  TaskService.getInstance(taskRepository, profileService, battleService, missionService);
 
 
         taskDetailsViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {

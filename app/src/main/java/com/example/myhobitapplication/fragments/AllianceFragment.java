@@ -1,9 +1,11 @@
 package com.example.myhobitapplication.fragments;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
@@ -73,7 +75,24 @@ public class AllianceFragment extends Fragment {
             isMembersViewActive = !isMembersViewActive;
         });
 
+        binding.buttonn55.setOnClickListener(v->{
+            if(alliance.getId()!=null){
+                allianceViewModel.activateMission(alliance.getId(), getContext());
+            }
+        });
 
+        binding.missionProgress.setOnClickListener(v->{
+            Alliance currentAlliance = allianceViewModel.getUserAlliance().getValue();
+            if (currentAlliance != null && currentAlliance.getId() != null) {
+                String allianceId = currentAlliance.getId();
+
+                UserProgressFragment progressFragment = UserProgressFragment.newInstance(allianceId);
+                requireActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, progressFragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
         return  binding.getRoot();
     }
 
@@ -83,6 +102,7 @@ public class AllianceFragment extends Fragment {
                 alliance = alliance1;
                 binding.allianceName.setText(alliance1.getName());
                 allianceViewModel.getUsersInAlliance();
+                allianceViewModel.checkUserActiveMissionStatus(FirebaseAuth.getInstance().getCurrentUser().getUid());
             }
         });
         allianceViewModel.getOwner().observe(getViewLifecycleOwner(),owner->{
@@ -130,6 +150,55 @@ public class AllianceFragment extends Fragment {
                 friendView.findViewById(R.id.button_layoutt).setVisibility(View.INVISIBLE);
 
                 binding.imgLayout2.addView(friendView);
+            }
+        });
+
+        allianceViewModel.getHasUserActiveMission().observe(getViewLifecycleOwner(), hasActiveMission -> {
+            if (hasActiveMission == null) {
+
+                binding.button55Layout.setVisibility(View.GONE);
+
+                return;
+            }
+            String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            Alliance alliance = allianceViewModel.getUserAlliance().getValue();
+            boolean isUserLeader = alliance != null && currentUserId.equals(alliance.getLeaderId());
+
+            if (hasActiveMission) {
+
+                binding.button55Layout.setVisibility(View.GONE);
+
+                binding.missionProgress.setVisibility(View.VISIBLE);
+
+            } else {
+
+                binding.missionProgress.setVisibility(View.GONE);
+
+
+                if (isUserLeader) {
+                    binding.button55Layout.setVisibility(View.VISIBLE);
+                } else {
+                    binding.button55Layout.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        allianceViewModel.getMissionActivationResponse().observe(getViewLifecycleOwner(), response -> {
+            if (response != null && !response.isEmpty()) {
+
+                showErrorDialog(response);
+
+            }
+        });
+
+        allianceViewModel.getMissionActivationSuccess().observe(getViewLifecycleOwner(), isSuccess -> {
+            if (isSuccess != null) {
+                binding.button55Layout.setEnabled(true);
+
+                if (isSuccess) {
+                    String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    allianceViewModel.checkUserActiveMissionStatus(currentUserId);
+                }
             }
         });
     }
@@ -187,6 +256,27 @@ public class AllianceFragment extends Fragment {
                 });
             }
         });
+    }
+
+    private void showErrorDialog(String message) {
+        if (getContext() == null) return;
+
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(requireContext(), R.style.AlertDialogWhiteText);
+        dialogBuilder.setTitle("Activation Failed")
+                .setMessage(message)
+                .setPositiveButton("OK", (dialog, which) -> {
+
+                    dialog.dismiss();
+                })
+                .setCancelable(false);
+
+        AlertDialog alert = dialogBuilder.create();
+
+        if (alert.getWindow() != null) {
+            alert.getWindow().setBackgroundDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.logincard));
+        }
+
+        alert.show();
     }
 
 

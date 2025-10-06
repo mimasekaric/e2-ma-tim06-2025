@@ -20,14 +20,14 @@ public class Profile {
 
     // private Bitmap QRCode;
     private Integer numberOgBadges;
-    private List<String> badges;
+    private List<Badge> badges;
 
     private int xpRequired;
 
     private Date previousLevelDate;
     private Date currentLevelDate;
 
-    public Profile(String userUid, Integer coins, Integer xp, Integer level, Integer numberOfbadges, List<String> badges, int xpRequired, String title, Integer pp, Date lastLevelDate, Date currentLevelDate) {
+    public Profile(String userUid, Integer coins, Integer xp, Integer level, Integer numberOfbadges, List<Badge> badges, int xpRequired, String title, Integer pp, Date lastLevelDate, Date currentLevelDate) {
         this.userUid = userUid;
         this.coins = coins;
         this.xp = xp;
@@ -107,11 +107,11 @@ public class Profile {
         this.numberOgBadges = numberOfbadges;
     }
 
-    public List<String> getbadges() {
+    public List<Badge> getbadges() {
         return badges;
     }
 
-    public void setbadges(List<String> badges) {
+    public void setbadges(List<Badge> badges) {
         this.badges = badges;
     }
 
