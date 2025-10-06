@@ -79,6 +79,16 @@ public class CategoryService {
         return categoryDTO;
     }
 
+    public CategoryDTO getByColour(String colour) {
+        Category category =  repository.getCategoryByColour(colour);
+
+        CategoryDTO categoryDTO = new CategoryDTO();
+        categoryDTO.setName(category.getName());
+        categoryDTO.setColour(category.getColour());
+        categoryDTO.setId(category.getId());
+        return categoryDTO;
+    }
+
     public long updateCategory(CategoryDTO categoryDTO) throws ValidationException {
 
         Category category = new Category();

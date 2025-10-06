@@ -44,7 +44,10 @@
             android:icon="@mipmap/ic_launcher_witch"
             android:title="Friends" />
 
-
+        <item
+            android:id="@+id/nav_statistics"
+            android:icon="@mipmap/ic_launcher_witch"
+            android:title="Statistics" />
 
     </group>
 

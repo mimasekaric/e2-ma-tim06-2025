@@ -25,6 +25,7 @@ import com.example.myhobitapplication.activities.ProfileActivity;
 import com.example.myhobitapplication.fragments.ActivateEquipmentFragment;
 import com.example.myhobitapplication.fragments.FriendsFragment;
 import com.example.myhobitapplication.fragments.ShopFragment;
+import com.example.myhobitapplication.fragments.StatisticsFragment;
 import com.example.myhobitapplication.fragments.UserProgressFragment;
 import com.example.myhobitapplication.models.Profile;
 import com.example.myhobitapplication.services.BossService;
@@ -191,6 +192,13 @@ public class HomeActivity extends AppCompatActivity {
                     ShopFragment shopFragment = new ShopFragment();
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_container, shopFragment)
+                            .addToBackStack(null)
+                            .commit();
+                }
+                else if(id == R.id.nav_statistics) {
+                    StatisticsFragment statisticsFragment = new StatisticsFragment();
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, statisticsFragment)
                             .addToBackStack(null)
                             .commit();
                 }
