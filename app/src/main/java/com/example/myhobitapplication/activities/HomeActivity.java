@@ -224,14 +224,14 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        Button btnCancelWorkers = findViewById(R.id.btn_cancel_all_workers);
-        btnCancelWorkers.setOnClickListener(v -> {
-            // Poziv koji otkazuje SVE zakazane poslove za vašu aplikaciju
-            WorkManager.getInstance(getApplicationContext()).cancelAllWork();
-
-            // Obavijest da je operacija izvršena
-            Toast.makeText(HomeActivity.this, "All scheduled workers have been cancelled!", Toast.LENGTH_LONG).show();
-        });
+//        Button btnCancelWorkers = findViewById(R.id.btn_cancel_all_workers);
+//        btnCancelWorkers.setOnClickListener(v -> {
+//            // Poziv koji otkazuje SVE zakazane poslove za vašu aplikaciju
+//            WorkManager.getInstance(getApplicationContext()).cancelAllWork();
+//
+//            // Obavijest da je operacija izvršena
+//            Toast.makeText(HomeActivity.this, "All scheduled workers have been cancelled!", Toast.LENGTH_LONG).show();
+//        });
     }
 
 
