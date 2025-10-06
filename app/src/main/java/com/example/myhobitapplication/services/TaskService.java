@@ -439,163 +439,328 @@ public class TaskService implements LevelUpListener {
         }
     }
 
-    public void markRecurringTaskAsDone(int taskId, String userId) {
+//    public void markRecurringTaskAsDone(int taskId, String userId) {
+//
+//        RecurringTask task = repository.getTaskById(taskId);
+//        if (task == null || task.getStatus() != RecurringTaskStatus.ACTIVE) {
+//            return;
+//        }
+//
+//        TaskQuote quote = task.getQuotaCategory();
+//        if (quote == TaskQuote.NO_QUOTA) {
+//
+//            //int xpGained = task.getDifficulty() + task.getImportance();
+//            int xpGained=task.getTotalXp();
+//            task.setAwarded(true);
+//            task.setStatus(RecurringTaskStatus.COMPLETED);
+//            repository.updateRecurringTask(task);
+//            profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
+//                        Log.d("Firestore", "XP azuriran!");
+//                        profileService.checkForLevelUpdates(userId).addOnSuccessListener(v->{
+//                            Log.d("Firestore", "Level chek uspjesan!");
+//                            if(v!=null){
+//                                battleService.generateBossForUser(userId,v);
+//                                battleService.resetAttemptForUndefeatedBosses(userId);
+//                            }
+//                        }).addOnFailureListener(v->{
+//                            Log.d("Firestore", "Level check nije uspjesan!");
+//                        });
+//
+//                    })
+//                    .addOnFailureListener(e -> {
+//                        Log.e("Firestore", "Greška pri ažuriranju XP-a", e);
+//                    });
+//            return;
+//        }
+//
+//        LocalDate today = task.getFinishedDate();
+//        LocalDate startDate = getStartDateForQuota(quote, today);
+//        LocalDate endDate = getEndDateForQuota(quote, today);
+//        int limit = getLimitForCategory(quote);
+//
+//        int completedCountRecurringTasks = repository.countCompletedRecurringTasksWithXpInCategory(quote, startDate, endDate, userId);
+//        int completedCountOneTimeTasks = repository.countCompletedOneTimeTasksWithXpInCategory(quote, startDate, endDate, userId);
+//        int completedCount = completedCountOneTimeTasks + completedCountRecurringTasks;
+//
+//        boolean shouldAwardXp = completedCount < limit;
+//        int xpGained = 0;
+//        /// TODO: ne treba true pred odbranu ovdje i u sledecoj metodi vec shouldAwardXp
+//        if (true) {
+//            task.setAwarded(true);
+//            xpGained = task.getDifficulty() + task.getImportance();
+//            profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
+//                        Log.d("Firestore", "XP azuriran!");
+//                        profileService.checkForLevelUpdates(userId).addOnSuccessListener(v->{
+//                            Log.d("Firestore", "Level chek uspjesan!");
+//                            if(v!=null){
+//                                battleService.generateBossForUser(userId,v);
+//                                battleService.resetAttemptForUndefeatedBosses(userId);
+//                            }
+//                        }).addOnFailureListener(v->{
+//                            Log.d("Firestore", "Level check nije uspjesan!");
+//                        });
+//
+//                    })
+//                    .addOnFailureListener(e -> {
+//                        Log.e("Firestore", "Greška pri ažuriranju XP-a", e);
+//                    });
+//        }
+//
+//        task.setStatus(RecurringTaskStatus.COMPLETED);
+//        repository.updateRecurringTask(task);
+//    }
+public void markRecurringTaskAsDone(int taskId, String userId) {
 
-        RecurringTask task = repository.getTaskById(taskId);
-        if (task == null || task.getStatus() != RecurringTaskStatus.ACTIVE) {
-            return;
-        }
-
-        TaskQuote quote = task.getQuotaCategory();
-        if (quote == TaskQuote.NO_QUOTA) {
-
-            //int xpGained = task.getDifficulty() + task.getImportance();
-            int xpGained=task.getTotalXp();
-            task.setAwarded(true);
-            task.setStatus(RecurringTaskStatus.COMPLETED);
-            repository.updateRecurringTask(task);
-            profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
-                        Log.d("Firestore", "XP azuriran!");
-                        profileService.checkForLevelUpdates(userId).addOnSuccessListener(v->{
-                            Log.d("Firestore", "Level chek uspjesan!");
-                            if(v!=null){
-                                battleService.generateBossForUser(userId,v);
-                                battleService.resetAttemptForUndefeatedBosses(userId);
-                            }
-                        }).addOnFailureListener(v->{
-                            Log.d("Firestore", "Level check nije uspjesan!");
-                        });
-
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e("Firestore", "Greška pri ažuriranju XP-a", e);
-                    });
-            return;
-        }
-
-        LocalDate today = task.getFinishedDate();
-        LocalDate startDate = getStartDateForQuota(quote, today);
-        LocalDate endDate = getEndDateForQuota(quote, today);
-        int limit = getLimitForCategory(quote);
-
-        int completedCountRecurringTasks = repository.countCompletedRecurringTasksWithXpInCategory(quote, startDate, endDate, userId);
-        int completedCountOneTimeTasks = repository.countCompletedOneTimeTasksWithXpInCategory(quote, startDate, endDate, userId);
-        int completedCount = completedCountOneTimeTasks + completedCountRecurringTasks;
-
-        boolean shouldAwardXp = completedCount < limit;
-        int xpGained = 0;
-        /// TODO: ne treba true pred odbranu ovdje i u sledecoj metodi vec shouldAwardXp
-        if (true) {
-            task.setAwarded(true);
-            xpGained = task.getDifficulty() + task.getImportance();
-            profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
-                        Log.d("Firestore", "XP azuriran!");
-                        profileService.checkForLevelUpdates(userId).addOnSuccessListener(v->{
-                            Log.d("Firestore", "Level chek uspjesan!");
-                            if(v!=null){
-                                battleService.generateBossForUser(userId,v);
-                                battleService.resetAttemptForUndefeatedBosses(userId);
-                            }
-                        }).addOnFailureListener(v->{
-                            Log.d("Firestore", "Level check nije uspjesan!");
-                        });
-
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e("Firestore", "Greška pri ažuriranju XP-a", e);
-                    });
-        }
-
-        task.setStatus(RecurringTaskStatus.COMPLETED);
-        repository.updateRecurringTask(task);
+    RecurringTask task = repository.getTaskById(taskId);
+    if (task == null || task.getStatus() != RecurringTaskStatus.ACTIVE) {
+        return;
     }
 
-    public void markOneTimeTaskAsDone(int taskId, String userId) {
+    TaskQuote quoteDifficulty = task.getDifficultyQuota();
+    TaskQuote quoteImportance = task.getImportanceQuota();
 
-        OneTimeTask oneTimeTask = repository.getOneTimeTaskById(taskId);
-        if (oneTimeTask == null || oneTimeTask.getStatus() != OneTimeTaskStatus.ACTIVE) {
-            return;
-        }
 
-        TaskQuote quote = oneTimeTask.getQuotaCategory();
-        if (quote == TaskQuote.NO_QUOTA) {
+    LocalDate today = task.getFinishedDate();
+    LocalDate startDateDifficulty = getStartDateForQuota(quoteDifficulty, today);
+    LocalDate endDateDifficulty = getEndDateForQuota(quoteDifficulty, today);
 
-            //int xpGained = oneTimeTask.getDifficulty() + task.getImportance();
-            int xpGained=oneTimeTask.getTotalXp();
-            oneTimeTask.setAwarded(true);
-            oneTimeTask.setStatus(OneTimeTaskStatus.COMPLETED);
-            repository.updateOneTimeTask(oneTimeTask);
-            profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
-                        Log.d("Firestore", "XP azuriran!");
-                        profileService.checkForLevelUpdates(userId).addOnSuccessListener(v->{
-                            Log.d("Firestore", "Level chek uspjesan!");
-                            if(v!=null){
-                                battleService.generateBossForUser(userId,v);
-                                battleService.resetAttemptForUndefeatedBosses(userId);
-                            }
-                        }).addOnFailureListener(v->{
-                            Log.d("Firestore", "Level check nije uspjesan!");
-                        });
+    LocalDate startDateImportance = getStartDateForQuota(quoteImportance, today);
+    LocalDate endDateImportance = getEndDateForQuota(quoteImportance, today);
 
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e("Firestore", "Greška pri ažuriranju XP-a", e);
-                    });
-            return;
-        }
+    int limitDifficulty = getLimitForDifficulty(quoteDifficulty);
+    int limitImportance = getLimitForImportance(quoteImportance);
 
-        LocalDate today = oneTimeTask.getFinishedDate();
-        LocalDate startDate = getStartDateForQuota(quote, today);
-        LocalDate endDate = getEndDateForQuota(quote, today);
-        int limit = getLimitForCategory(quote);
+    int completedCountRecurringTasksDifficulty = repository.countCompletedRecurringTasksWithDifficultyXpInCategory(quoteDifficulty, startDateDifficulty, endDateDifficulty, userId);
+    int completedCountRecurringTasksImportance = repository.countCompletedRecurringTasksWithImportanceXpInCategory(quoteImportance, startDateImportance, endDateImportance, userId);
+    int completedCountOneTimeTasksDifficulty = repository.countCompletedOneTimeTasksWithDifficultyXpInCategory(quoteDifficulty, startDateDifficulty, endDateDifficulty, userId);
+    int completedCountOneTimeTasksImportance = repository.countCompletedOneTimeTasksWithImportanceXpInCategory(quoteImportance, startDateImportance, endDateImportance, userId);
+    int completedCountDiff = completedCountRecurringTasksDifficulty + completedCountOneTimeTasksDifficulty;
+    int completedCountImp = completedCountRecurringTasksImportance + completedCountOneTimeTasksImportance;
 
-        int completedCountRecurringTasks = repository.countCompletedRecurringTasksWithXpInCategory(quote, startDate, endDate, userId);
-        int completedCountOneTimeTasks = repository.countCompletedOneTimeTasksWithXpInCategory(quote, startDate, endDate, userId);
-        int completedCount = completedCountOneTimeTasks + completedCountRecurringTasks;
-
-        boolean shouldAwardXp = completedCount < limit;
-        int xpGained = 0;
-
-        if (true) {
-            oneTimeTask.setAwarded(true);
-            xpGained = oneTimeTask.getDifficulty() + oneTimeTask.getImportance();
-            profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
-                        Log.d("Firestore", "XP azuriran!");
-                        profileService.checkForLevelUpdates(userId).addOnSuccessListener(v->{
-                            Log.d("Firestore", "Level chek uspjesan!");
-                            if(v!=null){
-                                battleService.generateBossForUser(userId,v);
-                                battleService.resetAttemptForUndefeatedBosses(userId);
-                            }
-                        }).addOnFailureListener(v->{
-                            Log.d("Firestore", "Level check nije uspjesan!");
-                        });
-
-                        getSpecialMissionPoints(userId,oneTimeTask.getDifficulty(),oneTimeTask.getImportance());
-
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e("Firestore", "Greška pri ažuriranju XP-a", e);
-                    });
-        }
-
-        oneTimeTask.setStatus(OneTimeTaskStatus.COMPLETED);
-        repository.updateOneTimeTask(oneTimeTask);
+    boolean shouldAwardDifficultyXp = completedCountDiff < limitDifficulty;
+    boolean shouldAwardImportanceXp = completedCountImp < limitImportance;
+    if(!shouldAwardDifficultyXp){
+        task.setDifficulty(0);
     }
+    if(!shouldAwardImportanceXp){
+        task.setImportance(0);
+    }
+    boolean shouldAward = shouldAwardDifficultyXp || shouldAwardImportanceXp;
+    int xpGained = 0;
+    /// TODO: ne treba true pred odbranu ovdje i u sledecoj metodi vec shouldAwardXp
+    if (shouldAward) {
+        task.setAwarded(true);
+        xpGained = task.getDifficulty() + task.getImportance();
+        profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
+                    Log.d("Firestore", "XP azuriran!");
+                    profileService.checkForLevelUpdates(userId).addOnSuccessListener(v->{
+                        Log.d("Firestore", "Level chek uspjesan!");
+                        if(v!=null){
+                            battleService.generateBossForUser(userId,v);
+                            battleService.resetAttemptForUndefeatedBosses(userId);
+                        }
+                    }).addOnFailureListener(v->{
+                        Log.d("Firestore", "Level check nije uspjesan!");
+                    });
+
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Greška pri ažuriranju XP-a", e);
+                });
+    }
+
+    task.setStatus(RecurringTaskStatus.COMPLETED);
+    repository.updateRecurringTask(task);
+}
+
+//    public void markOneTimeTaskAsDone(int taskId, String userId) {
+//
+//        OneTimeTask oneTimeTask = repository.getOneTimeTaskById(taskId);
+//        if (oneTimeTask == null || oneTimeTask.getStatus() != OneTimeTaskStatus.ACTIVE) {
+//            return;
+//        }
+//
+//        TaskQuote quote = oneTimeTask.getDifficultyQuota();
+//        if (quote == TaskQuote.NO_QUOTA) {
+//
+//            //int xpGained = oneTimeTask.getDifficulty() + task.getImportance();
+//            int xpGained=oneTimeTask.getTotalXp();
+//            oneTimeTask.setAwarded(true);
+//            oneTimeTask.setStatus(OneTimeTaskStatus.COMPLETED);
+//            repository.updateOneTimeTask(oneTimeTask);
+//            profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
+//                        Log.d("Firestore", "XP azuriran!");
+//                        profileService.checkForLevelUpdates(userId).addOnSuccessListener(v->{
+//                            Log.d("Firestore", "Level chek uspjesan!");
+//                            if(v!=null){
+//                                battleService.generateBossForUser(userId,v);
+//                                battleService.resetAttemptForUndefeatedBosses(userId);
+//                            }
+//                        }).addOnFailureListener(v->{
+//                            Log.d("Firestore", "Level check nije uspjesan!");
+//                        });
+//
+//                    })
+//                    .addOnFailureListener(e -> {
+//                        Log.e("Firestore", "Greška pri ažuriranju XP-a", e);
+//                    });
+//            return;
+//        }
+//
+//        LocalDate today = oneTimeTask.getFinishedDate();
+//        LocalDate startDate = getStartDateForQuota(quote, today);
+//        LocalDate endDate = getEndDateForQuota(quote, today);
+//        int limit = getLimitForCategory(quote);
+//
+//       // int completedCountRecurringTasks = repository.countCompletedRecurringTasksWithXpInCategory(quote, startDate, endDate, userId);
+//        int completedCountOneTimeTasks = repository.countCompletedOneTimeTasksWithXpInCategory(quote, startDate, endDate, userId);
+//       // int completedCount = completedCountOneTimeTasks + completedCountRecurringTasks;
+//
+//        boolean shouldAwardXp = 1 < limit;
+//        int xpGained = 0;
+//
+//        if (true) {
+//            oneTimeTask.setAwarded(true);
+//            xpGained = oneTimeTask.getDifficulty() + oneTimeTask.getImportance();
+//            profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
+//                        Log.d("Firestore", "XP azuriran!");
+//                        profileService.checkForLevelUpdates(userId).addOnSuccessListener(v->{
+//                            Log.d("Firestore", "Level chek uspjesan!");
+//                            if(v!=null){
+//                                battleService.generateBossForUser(userId,v);
+//                                battleService.resetAttemptForUndefeatedBosses(userId);
+//                            }
+//                        }).addOnFailureListener(v->{
+//                            Log.d("Firestore", "Level check nije uspjesan!");
+//                        });
+//
+//                        getSpecialMissionPoints(userId,oneTimeTask.getDifficultyQuota(),oneTimeTask.getImportanceQuota());
+//
+//                    })
+//                    .addOnFailureListener(e -> {
+//                        Log.e("Firestore", "Greška pri ažuriranju XP-a", e);
+//                    });
+//        }
+//
+//        oneTimeTask.setStatus(OneTimeTaskStatus.COMPLETED);
+//        repository.updateOneTimeTask(oneTimeTask);
+//    }
+public void markOneTimeTaskAsDone(int taskId, String userId) {
+
+    OneTimeTask oneTimeTask = repository.getOneTimeTaskById(taskId);
+    if (oneTimeTask == null || oneTimeTask.getStatus() != OneTimeTaskStatus.ACTIVE) {
+        return;
+    }
+
+    TaskQuote quoteDifficulty = oneTimeTask.getDifficultyQuota();
+    TaskQuote quoteImportance = oneTimeTask.getImportanceQuota();
+
+
+    LocalDate today = oneTimeTask.getFinishedDate();
+    LocalDate startDateDifficulty = getStartDateForQuota(quoteDifficulty, today);
+    LocalDate endDateDifficulty = getEndDateForQuota(quoteDifficulty, today);
+
+    LocalDate startDateImportance = getStartDateForQuota(quoteImportance, today);
+    LocalDate endDateImportance = getEndDateForQuota(quoteImportance, today);
+
+    int limitDifficulty = getLimitForDifficulty(quoteDifficulty);
+    int limitImportance = getLimitForImportance(quoteImportance);
+
+    int completedCountRecurringTasksDifficulty = repository.countCompletedRecurringTasksWithDifficultyXpInCategory(quoteDifficulty, startDateDifficulty, endDateDifficulty, userId);
+    int completedCountRecurringTasksImportance = repository.countCompletedRecurringTasksWithImportanceXpInCategory(quoteImportance, startDateImportance, endDateImportance, userId);
+    int completedCountOneTimeTasksDifficulty = repository.countCompletedOneTimeTasksWithDifficultyXpInCategory(quoteDifficulty, startDateDifficulty, endDateDifficulty, userId);
+    int completedCountOneTimeTasksImportance = repository.countCompletedOneTimeTasksWithImportanceXpInCategory(quoteImportance, startDateImportance, endDateImportance, userId);
+    int completedCountDiff = completedCountRecurringTasksDifficulty + completedCountOneTimeTasksDifficulty;
+    int completedCountImp = completedCountRecurringTasksImportance + completedCountOneTimeTasksImportance;
+
+    boolean shouldAwardDifficultyXp = completedCountDiff < limitDifficulty;
+    boolean shouldAwardImportanceXp = completedCountImp < limitImportance;
+    if(!shouldAwardDifficultyXp){
+        oneTimeTask.setDifficulty(0);
+    }
+    if(!shouldAwardImportanceXp){
+        oneTimeTask.setImportance(0);
+    }
+    boolean shouldAward = shouldAwardDifficultyXp || shouldAwardImportanceXp;
+    int xpGained = 0;
+
+    if (true) {
+        oneTimeTask.setAwarded(true);
+        xpGained = oneTimeTask.getDifficulty() + oneTimeTask.getImportance();
+        profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
+                    Log.d("Firestore", "XP azuriran!");
+                    profileService.checkForLevelUpdates(userId).addOnSuccessListener(v->{
+                        Log.d("Firestore", "Level chek uspjesan!");
+                        if(v!=null){
+                            battleService.generateBossForUser(userId,v);
+                            battleService.resetAttemptForUndefeatedBosses(userId);
+                        }
+                    }).addOnFailureListener(v->{
+                        Log.d("Firestore", "Level check nije uspjesan!");
+                    });
+
+                    getSpecialMissionPoints(userId,oneTimeTask.getDifficultyQuota(),oneTimeTask.getImportanceQuota());
+
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Greška pri ažuriranju XP-a", e);
+                });
+    }
+
+    oneTimeTask.setStatus(OneTimeTaskStatus.COMPLETED);
+    repository.updateOneTimeTask(oneTimeTask);
+}
 
     private int getLimitForCategory(TaskQuote quote) {
 
         switch (quote) {
-            case EASY_NORMAL:
-            case EASY_IMPORTANT:
+            case VERY_EASY:
+            case EASY:
+            case NORMAL:
 
                 return 5;
 
-            case HARD_EXTREME:
+            case HARD:
                 return 2;
 
             case EXTREMELY_HARD:
                 return 1;
+
+            case SPECIAL:
+                return 1;
+
+            case NO_QUOTA:
+            default:
+                return Integer.MAX_VALUE;
+        }
+    }
+    private int getLimitForDifficulty(TaskQuote quote){
+        switch (quote) {
+            case VERY_EASY:
+            case EASY:
+
+                return 5;
+
+            case HARD:
+                return 2;
+
+            case EXTREMELY_HARD:
+                return 1;
+
+            case NO_QUOTA:
+            default:
+                return Integer.MAX_VALUE;
+        }
+    }
+    private int getLimitForImportance(TaskQuote quote){
+        switch (quote) {
+            case NORMAL:
+            case IMPORTANT:
+
+                return 5;
+
+            case EXTREMELY_IMPORTANT:
+                return 2;
 
             case SPECIAL:
                 return 1;
@@ -618,10 +783,12 @@ public class TaskService implements LevelUpListener {
             case SPECIAL:
                 return taskDate.withDayOfMonth(1);
 
-            case EASY_NORMAL:
-            case EASY_IMPORTANT:
-            case HARD_EXTREME:
-            case NO_QUOTA:
+            case VERY_EASY:
+            case NORMAL:
+            case EASY:
+            case IMPORTANT:
+            case HARD:
+            case EXTREMELY_IMPORTANT:
             default:
                 return taskDate;
         }
@@ -639,10 +806,12 @@ public class TaskService implements LevelUpListener {
             case SPECIAL:
                 return taskDate.withDayOfMonth(taskDate.lengthOfMonth());
 
-            case EASY_NORMAL:
-            case EASY_IMPORTANT:
-            case HARD_EXTREME:
-            case NO_QUOTA:
+            case VERY_EASY:
+            case NORMAL:
+            case EASY:
+            case IMPORTANT:
+            case HARD:
+            case EXTREMELY_IMPORTANT:
             default:
                 return taskDate;
         }
@@ -698,7 +867,7 @@ public class TaskService implements LevelUpListener {
         });
     }
 
-    public void getSpecialMissionPoints(String userId, int difficulty, int importance){
+    public void getSpecialMissionPoints(String userId, TaskQuote difficulty, TaskQuote importance){
 
 
 
@@ -707,15 +876,15 @@ public class TaskService implements LevelUpListener {
                         boolean isEasyTask = false;
                         boolean isVeryEasyTask = false;
                         boolean isHardTask = false;
-                        if((difficulty == 3 || difficulty == 1) || (importance == 1 || importance == 3 )){
+                        if((difficulty.equals(TaskQuote.EASY) || difficulty.equals(TaskQuote.VERY_EASY)) || (importance.equals(TaskQuote.NORMAL) || importance.equals(TaskQuote.IMPORTANT) )){
                             isEasyTask = true;
                             isVeryEasyTask = false;
-                            if(difficulty == 1 && importance == 1){
+                            if(difficulty.equals(TaskQuote.VERY_EASY) && (importance.equals(TaskQuote.NORMAL))){
                                 isVeryEasyTask = true;
                                 isEasyTask = false;
                             }
 
-                        }else if((difficulty == 7 || difficulty == 20) || (importance == 10 || importance == 100 )){
+                        }else if(((difficulty.equals(TaskQuote.HARD) || difficulty.equals(TaskQuote.EXTREMELY_HARD)) || (importance.equals(TaskQuote.EXTREMELY_IMPORTANT) || importance.equals(TaskQuote.SPECIAL)))){
                             isHardTask = true;
                         }
 

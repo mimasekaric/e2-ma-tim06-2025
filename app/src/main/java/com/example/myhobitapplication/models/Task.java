@@ -33,6 +33,8 @@ public abstract class Task {
     private String userUid;
 
     private boolean isAwarded = false;
+    private TaskQuote importanceType;
+    private TaskQuote difficultyType;
 
 
     public Task(){}
@@ -197,31 +199,59 @@ public abstract class Task {
         this.finishDate = finishDate;
     }
 
-    public TaskQuote getQuotaCategory() {
+//    public TaskQuote getDifficultyQuota() {
+//
+//        if (this.Difficulty == null || this.Importance == null) {
+//            return TaskQuote.NO_QUOTA;
+//        }
+//
+//        if (this.Difficulty == 1) {
+//            return TaskQuote.VERY_EASY;
+//        }
+//        if (this.Difficulty == 3) {
+//            return TaskQuote.EASY;
+//        }
+//        if (this.Difficulty == 7) {
+//            return TaskQuote.HARD;
+//        }
+//        if (this.Difficulty == 20) {
+//            return TaskQuote.EXTREMELY_HARD;
+//        }
+//        return TaskQuote.NO_QUOTA;
+//    }
+//    public TaskQuote getImportanceQuota(){
+//        if (this.Importance == null ) {
+//            return TaskQuote.NO_QUOTA;
+//        }
+//
+//        if (this.Importance == 1) {
+//            return TaskQuote.NORMAL;
+//        }
+//        if (this.Importance == 3) {
+//            return TaskQuote.IMPORTANT;
+//        }
+//        if (this.Difficulty == 10) {
+//            return TaskQuote.EXTREMELY_IMPORTANT;
+//        }
+//        if (this.Difficulty == 100) {
+//            return TaskQuote.SPECIAL;
+//        }
+//        return TaskQuote.NO_QUOTA;
+//    }
 
-        if (this.Difficulty == null || this.Importance == null) {
-            return TaskQuote.NO_QUOTA;
-        }
-
-        if (this.Difficulty == 1 && this.Importance == 1) {
-            return TaskQuote.EASY_NORMAL;
-        }
-        if (this.Difficulty == 3 && this.Importance == 3) {
-            return TaskQuote.EASY_IMPORTANT;
-        }
-        if (this.Difficulty == 7 && this.Importance == 10) {
-            return TaskQuote.HARD_EXTREME;
-        }
-        if (this.Difficulty == 20) {
-            return TaskQuote.EXTREMELY_HARD;
-        }
-        if (this.Importance == 100) {
-            return TaskQuote.SPECIAL;
-        }
-
-        return TaskQuote.NO_QUOTA;
+    public TaskQuote getImportanceQuota() {
+        return importanceType;
+    }
+    public TaskQuote getDifficultyQuota(){
+        return  difficultyType;
     }
 
+    public void setImportanceQuota(TaskQuote importanceType) {
+        this.importanceType = importanceType;
+    }
+    public void setDifficultyQuota(TaskQuote difficultyType){
+        this.difficultyType = difficultyType;
+    }
     public int getTotalXp() {
         int difficultyXp = (this.Difficulty != null) ? this.Difficulty : 0;
         int importanceXp = (this.Importance != null) ? this.Importance : 0;
