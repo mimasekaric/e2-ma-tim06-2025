@@ -23,12 +23,20 @@ public class BossService {
                 .stream()
                 .min(Comparator.comparingInt(Boss::getBossLevel))
                 .orElse(null);
-        if(boss==null){
-            BossDTO bossDTO = new BossDTO(new Boss(13,10,userId,10,false,1,200,0.2,false));
-            return bossDTO;
-        }
-        BossDTO bossDTO = new BossDTO(boss);
-        return  bossDTO;
+//        if(boss==null){
+//            BossDTO bossDTO = new BossDTO(new Boss(13,10,userId,10,false,1,200,0.2,false));
+//            return bossDTO;
+//        }
+
+//        BossDTO bossDTO = new BossDTO();
+//        if(boss!=null){
+//            bossDTO = new BossDTO(boss);
+//        }
+
+       if(boss == null){
+           return null;
+       }
+       return new BossDTO(boss);
     }
 
     public BossDTO getLastDefeatedBossForUser(String userId) {

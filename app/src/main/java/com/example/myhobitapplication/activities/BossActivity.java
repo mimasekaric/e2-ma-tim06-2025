@@ -109,7 +109,7 @@ public class BossActivity extends AppCompatActivity {
         binding = ActivityBossBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         chestContainer = binding.chestOverlayContainer;
-        rewardsAnimationLayout = binding.rewardsAnimationLayout;
+        //rewardsAnimationLayout = binding.rewardsAnimationLayout;
         //rewardsAnimationLayout.transitionToEnd();
 
 
@@ -240,16 +240,36 @@ public class BossActivity extends AppCompatActivity {
                     binding.bossBattleGroup.setVisibility(View.VISIBLE);
                     binding.noBoss.setVisibility(View.GONE);
                     binding.sleepingBoss.clearAnimation();
+                    startRewardsFloatingAnimation();
+                    registerShakeDetector();
                     break;
                 case NO_BOSS_FOUND:
                     binding.bossBattleGroup.setVisibility(View.GONE);
                     binding.noBoss.setVisibility(View.VISIBLE);
+                    binding.rewardsP.clearAnimation();
                     startFloatingAnimation();
                     break;
                 case LOADING:
                     binding.bossBattleGroup.setVisibility(View.GONE);
                     binding.noBoss.setVisibility(View.GONE);
                     break;
+            }
+        });
+        battleViewModel.getPotentialCoinReward().observe(this, coinReward -> {
+            if (coinReward != null) {
+
+                binding.potentialCoinsText.setText(String.valueOf(coinReward));
+                binding.potentialCoinsLayout.setVisibility(View.VISIBLE);
+            } else {
+                binding.potentialCoinsLayout.setVisibility(View.GONE);
+            }
+        });
+        battleViewModel.getHitChanceLiveData().observe(this, hitChance -> {
+            if (hitChance != null) {
+                int percentage = (int) (hitChance * 100);
+                String hitChanceText = percentage + "%";
+
+                binding.hitChanceText.setText(hitChanceText);
             }
         });
 
@@ -259,6 +279,11 @@ public class BossActivity extends AppCompatActivity {
 
         Animation floatingAnimation = AnimationUtils.loadAnimation(this, R.anim.dragon_up_down);
         ImageView sleepingBossImage = binding.sleepingBoss;
+        sleepingBossImage.startAnimation(floatingAnimation);
+    }
+    private void startRewardsFloatingAnimation(){
+        Animation floatingAnimation = AnimationUtils.loadAnimation(this, R.anim.rewards_up_down);
+        ImageView sleepingBossImage = binding.rewardsP;
         sleepingBossImage.startAnimation(floatingAnimation);
     }
 
@@ -388,15 +413,27 @@ public class BossActivity extends AppCompatActivity {
         }
     }
 
-    // --- NOVE, ODVOJENE METODE ZA OBRADU SHAKE-a ---
 
     private void handleAttackShake() {
-        // Logika za napad (tvoj postojeći kod)
-        if (binding.attackButton.isEnabled()) {
-            Toast.makeText(this, "Napad protresanjem!", Toast.LENGTH_SHORT).show();
+
+        Integer attacksLeft = battleViewModel.getRemainingAttacks().getValue();
+        Boolean isBattleOver = battleViewModel.isBattleOver().getValue();
+
+        if (attacksLeft == null || isBattleOver == null) {
+            return;
+        }
+
+        if (attacksLeft > 0 && !isBattleOver) {
+
+            if (!binding.attackButton.isEnabled()) {
+                return;
+            }
+
+            Toast.makeText(this, "Shake attack!", Toast.LENGTH_SHORT).show();
             battleViewModel.performAttack();
         }
     }
+
 
     private void handleChestShake() {
         profileViewModel.loadProfile(userUid);//dodala ovdje da bi mi se azurirao profil nakon zavrsene borbe
@@ -514,37 +551,37 @@ public class BossActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        // Pokrećemo animaciju kada se aktivnost prikaže
-        startRewardsAnimation();
+//        // Pokrećemo animaciju kada se aktivnost prikaže
+//        startRewardsAnimation();
     }
 
-    private void startRewardsAnimation() {
-        // Dohvatimo MotionLayout preko binding objekta
-        MotionLayout rewardsAnimationLayout = binding.rewardsAnimationLayout;
-
-        // Postavljamo listener koji će restartati animaciju kada završi, stvarajući beskonačnu petlju
-        rewardsAnimationLayout.setTransitionListener(new MotionLayout.TransitionListener() {
-            @Override
-            public void onTransitionStarted(MotionLayout motionLayout, int startId, int endId) {}
-
-            @Override
-            public void onTransitionChange(MotionLayout motionLayout, int startId, int endId, float progress) {}
-
-            @Override
-            public void onTransitionCompleted(MotionLayout motionLayout, int currentId) {
-                // Kada animacija dođe do kraja, odmah je pokreni ponovo
-                if (currentId == R.id.end) {
-                    motionLayout.transitionToStart(); // Vrati na početak bez animacije
-                    motionLayout.transitionToEnd();   // Pokreni animaciju ponovo
-                }
-            }
-
-            @Override
-            public void onTransitionTrigger(MotionLayout motionLayout, int triggerId, boolean positive, float progress) {}
-        });
-
-        // Pokreni animaciju prvi put
-        rewardsAnimationLayout.transitionToEnd();
-
-    }
+//    private void startRewardsAnimation() {
+//        // Dohvatimo MotionLayout preko binding objekta
+//        MotionLayout rewardsAnimationLayout = binding.rewardsAnimationLayout;
+//
+//        // Postavljamo listener koji će restartati animaciju kada završi, stvarajući beskonačnu petlju
+//        rewardsAnimationLayout.setTransitionListener(new MotionLayout.TransitionListener() {
+//            @Override
+//            public void onTransitionStarted(MotionLayout motionLayout, int startId, int endId) {}
+//
+//            @Override
+//            public void onTransitionChange(MotionLayout motionLayout, int startId, int endId, float progress) {}
+//
+//            @Override
+//            public void onTransitionCompleted(MotionLayout motionLayout, int currentId) {
+//                // Kada animacija dođe do kraja, odmah je pokreni ponovo
+//                if (currentId == R.id.end) {
+//                    motionLayout.transitionToStart(); // Vrati na početak bez animacije
+//                    motionLayout.transitionToEnd();   // Pokreni animaciju ponovo
+//                }
+//            }
+//
+//            @Override
+//            public void onTransitionTrigger(MotionLayout motionLayout, int triggerId, boolean positive, float progress) {}
+//        });
+//
+//        // Pokreni animaciju prvi put
+//        rewardsAnimationLayout.transitionToEnd();
+//
+//    }
 }

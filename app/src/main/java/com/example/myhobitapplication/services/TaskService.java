@@ -300,7 +300,9 @@ public class TaskService implements LevelUpListener {
 
         int rCount =  repository.countRecurringTasksByDateRange(previousLevelDate,currentLevelDate, userUid);
         int oCount =  repository.countOneTimeTasksByDateRange(previousLevelDate,currentLevelDate, userUid);
-        return rCount + oCount;
+        int crCount = repository.countRecurringTasksCreatedBeforeThisLevel(previousLevelDate,currentLevelDate, userUid);
+        int coCount = repository.countOneTimeTasksCreatedBeforeThisLevel(previousLevelDate,currentLevelDate, userUid);
+        return rCount + oCount + crCount + coCount;
     }
 
     public int countFinishedTasksForDateRange(LocalDate previousLevelDate, LocalDate currentLevelDate, String userUid){
@@ -539,16 +541,16 @@ public void markRecurringTaskAsDone(int taskId, String userId) {
 
     boolean shouldAwardDifficultyXp = completedCountDiff < limitDifficulty;
     boolean shouldAwardImportanceXp = completedCountImp < limitImportance;
-    if(!shouldAwardDifficultyXp){
-        task.setDifficulty(0);
-    }
-    if(!shouldAwardImportanceXp){
-        task.setImportance(0);
-    }
-    boolean shouldAward = shouldAwardDifficultyXp || shouldAwardImportanceXp;
+//    if(!shouldAwardDifficultyXp){
+//        task.setDifficulty(0);
+//    }
+//    if(!shouldAwardImportanceXp){
+//        task.setImportance(0);
+//    }
+//    boolean shouldAward = shouldAwardDifficultyXp || shouldAwardImportanceXp;
     int xpGained = 0;
     /// TODO: ne treba true pred odbranu ovdje i u sledecoj metodi vec shouldAwardXp
-    if (shouldAward) {
+    if (true) {
         task.setAwarded(true);
         xpGained = task.getDifficulty() + task.getImportance();
         profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
@@ -675,13 +677,13 @@ public void markOneTimeTaskAsDone(int taskId, String userId) {
 
     boolean shouldAwardDifficultyXp = completedCountDiff < limitDifficulty;
     boolean shouldAwardImportanceXp = completedCountImp < limitImportance;
-    if(!shouldAwardDifficultyXp){
-        oneTimeTask.setDifficulty(0);
-    }
-    if(!shouldAwardImportanceXp){
-        oneTimeTask.setImportance(0);
-    }
-    boolean shouldAward = shouldAwardDifficultyXp || shouldAwardImportanceXp;
+//    if(!shouldAwardDifficultyXp){
+//        oneTimeTask.setDifficulty(0);
+//    }
+//    if(!shouldAwardImportanceXp){
+//        oneTimeTask.setImportance(0);
+//    }
+//    boolean shouldAward = shouldAwardDifficultyXp || shouldAwardImportanceXp;
     int xpGained = 0;
 
     if (true) {
