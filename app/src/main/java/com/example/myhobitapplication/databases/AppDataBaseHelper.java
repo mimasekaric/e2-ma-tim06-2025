@@ -34,6 +34,8 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
 
     public static final String COLUMN_EXECUTION_TIME = "execution_time";
     public static final String COLUMN_STATUS = "status";
+    public static final String COLUMN_DIFFICULTY_TYPE = "difficulty_type";
+    public static final String COLUMN_IMPORTANCE_TYPE = "importance_type";
 
 
 
@@ -125,6 +127,8 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
                 + COLUMN_END_DATE + " TEXT,"
                 + COLUMN_FINISH_DATE + " TEXT,"
                 + COLUMN_REMAINING_TIME + " TEXT,"
+                + COLUMN_DIFFICULTY_TYPE + " TEXT,"
+                + COLUMN_IMPORTANCE_TYPE + " TEXT,"
                 + COLUMN_IS_AWARDED + " TEXT" + ")";
         db.execSQL(CREATE_RECURRING_TASKS_TABLE);
 
@@ -143,6 +147,8 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
                 + COLUMN_FINISHED_DATE + " TEXT,"
                 + COLUMN_FINISH_DATE + " TEXT,"
                 + COLUMN_REMAINING_TIME + " TEXT,"
+                + COLUMN_DIFFICULTY_TYPE + " TEXT,"
+                + COLUMN_IMPORTANCE_TYPE + " TEXT,"
                 + COLUMN_IS_AWARDED + " TEXT" + ")";
         db.execSQL(CREATE_ONE_TIME_TASK_TABLE);
 

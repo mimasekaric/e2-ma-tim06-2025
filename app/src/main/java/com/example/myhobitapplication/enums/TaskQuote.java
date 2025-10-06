@@ -2,9 +2,12 @@ package com.example.myhobitapplication.enums;
 
 public enum TaskQuote {
     NO_QUOTA,
-    EASY_NORMAL,
-    EASY_IMPORTANT,
-    HARD_EXTREME,
+    VERY_EASY,
+    EASY,
+    NORMAL,
+    IMPORTANT,
+    HARD,
+    EXTREMELY_IMPORTANT,
     EXTREMELY_HARD,
     SPECIAL
 }

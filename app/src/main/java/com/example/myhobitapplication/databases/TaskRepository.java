@@ -91,6 +91,10 @@ public class TaskRepository {
         values.put(AppDataBaseHelper.COLUMN_FIRST_REC_TASK_ID, recurringTask.getFirstRecurringTaskId().toString());
         values.put(AppDataBaseHelper.COLUMN_USER_ID, recurringTask.getUserUid());
         values.put(AppDataBaseHelper.COLUMN_IS_AWARDED, recurringTask.isAwarded());
+        TaskQuote difficultyType = getDifficultyType(recurringTask.getDifficulty());
+        TaskQuote importanceType = getImportanceType(recurringTask.getImportance());
+        values.put(AppDataBaseHelper.COLUMN_DIFFICULTY_TYPE, difficultyType.toString());
+        values.put(AppDataBaseHelper.COLUMN_IMPORTANCE_TYPE, importanceType.toString());
 
         long newRowId = database.insert(AppDataBaseHelper.TABLE_RECURRING_TASKS, null, values);
         dbHelper.close();
@@ -223,6 +227,12 @@ public class TaskRepository {
                     String isAwarded = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IS_AWARDED));
                     task.setAwarded(Boolean.parseBoolean(isAwarded));
 
+                    String difficultyType = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DIFFICULTY_TYPE));
+                    task.setDifficultyQuota(TaskQuote.valueOf(difficultyType));
+
+                    String importanceType = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IMPORTANCE_TYPE));
+                    task.setImportanceQuota(TaskQuote.valueOf(importanceType));
+
                     taskList.add(task);
 
                 } while (cursor.moveToNext());
@@ -297,6 +307,12 @@ public class TaskRepository {
             String isAwarded = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IS_AWARDED));
             task.setAwarded(Boolean.parseBoolean(isAwarded));
 
+            String difficultyType = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DIFFICULTY_TYPE));
+            task.setDifficultyQuota(TaskQuote.valueOf(difficultyType));
+
+            String importanceType = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IMPORTANCE_TYPE));
+            task.setImportanceQuota(TaskQuote.valueOf(importanceType));
+
             cursor.close();
         }
         db.close();
@@ -368,7 +384,12 @@ public class TaskRepository {
                 values.put(AppDataBaseHelper.COLUMN_FIRST_REC_TASK_ID, recurringTask.getFirstRecurringTaskId().toString());
                 values.put(AppDataBaseHelper.COLUMN_USER_ID, recurringTask.getUserUid());
                 values.put(AppDataBaseHelper.COLUMN_IS_AWARDED, recurringTask.isAwarded());
+                TaskQuote difficultyType = getDifficultyType(recurringTask.getDifficulty());
+                TaskQuote importanceType = getImportanceType(recurringTask.getImportance());
+                values.put(AppDataBaseHelper.COLUMN_DIFFICULTY_TYPE, difficultyType.toString());
+                values.put(AppDataBaseHelper.COLUMN_IMPORTANCE_TYPE, importanceType.toString());
                 database.insert(AppDataBaseHelper.TABLE_RECURRING_TASKS, null, values);
+
             }
             database.setTransactionSuccessful();
         } finally {
@@ -639,6 +660,10 @@ public class TaskRepository {
         values.put(AppDataBaseHelper.COLUMN_START_DATE, oneTimeTask.getStartDate().toString());
         values.put(AppDataBaseHelper.COLUMN_USER_ID, oneTimeTask.getUserUid());
         values.put(AppDataBaseHelper.COLUMN_IS_AWARDED, oneTimeTask.isAwarded());
+        TaskQuote difficultyType = getDifficultyType(oneTimeTask.getDifficulty());
+        TaskQuote importanceType = getImportanceType(oneTimeTask.getImportance());
+        values.put(AppDataBaseHelper.COLUMN_DIFFICULTY_TYPE, difficultyType.toString());
+        values.put(AppDataBaseHelper.COLUMN_IMPORTANCE_TYPE, importanceType.toString());
 
 
         long newRowId = database.insert(AppDataBaseHelper.TABLE_ONE_TIME_TASKS, null, values);
@@ -746,6 +771,12 @@ public class TaskRepository {
 
                     String isAwarded = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IS_AWARDED));
                     task.setAwarded(Boolean.parseBoolean(isAwarded));
+
+                    String difficultyType = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DIFFICULTY_TYPE));
+                    task.setDifficultyQuota(TaskQuote.valueOf(difficultyType));
+
+                    String importanceType = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IMPORTANCE_TYPE));
+                    task.setImportanceQuota(TaskQuote.valueOf(importanceType));
 
                     taskList.add(task);
                 } while (cursor.moveToNext());
@@ -856,6 +887,12 @@ public class TaskRepository {
             String isAwarded = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IS_AWARDED));
             task.setAwarded(Boolean.parseBoolean(isAwarded));
 
+            String difficultyType = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DIFFICULTY_TYPE));
+            task.setDifficultyQuota(TaskQuote.valueOf(difficultyType));
+
+            String importanceType = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IMPORTANCE_TYPE));
+            task.setImportanceQuota(TaskQuote.valueOf(importanceType));
+
             cursor.close();
         }
         db.close();
@@ -875,7 +912,7 @@ public class TaskRepository {
         return deletedRows;
     }
 
-    public int countCompletedRecurringTasksWithXpInCategory(TaskQuote quote, LocalDate startDate, LocalDate endDate, String userUid) {
+    public int countCompletedRecurringTasksWithDifficultyXpInCategory(TaskQuote quote, LocalDate startDate, LocalDate endDate, String userUid) {
 
         if (quote == null || startDate == null || endDate == null || userUid == null) {
             return 0;
@@ -956,8 +993,119 @@ public class TaskRepository {
                     String isAwarded = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IS_AWARDED));
                     task.setAwarded(Boolean.parseBoolean(isAwarded));
 
+                    String difficultyType = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DIFFICULTY_TYPE));
+                    task.setDifficultyQuota(TaskQuote.valueOf(difficultyType));
 
-                    if (task.getQuotaCategory() == quote) {
+                    String importanceType = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IMPORTANCE_TYPE));
+                    task.setImportanceQuota(TaskQuote.valueOf(importanceType));
+
+
+                    if (task.getDifficultyQuota() == quote) {
+                        count++;
+                    }
+                } while (cursor.moveToNext());
+            }
+
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db != null && db.isOpen()) {
+                db.close();
+            }
+        }
+
+        return count;
+    }
+    public int countCompletedRecurringTasksWithImportanceXpInCategory(TaskQuote quote, LocalDate startDate, LocalDate endDate, String userUid) {
+
+        if (quote == null || startDate == null || endDate == null || userUid == null) {
+            return 0;
+        }
+
+        int count = 0;
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+
+        try {
+            db = dbHelper.getReadableDatabase();
+
+
+            String selection = AppDataBaseHelper.COLUMN_USER_ID + " = ? AND " +
+                    AppDataBaseHelper.COLUMN_STATUS + " = ? AND " +
+                    AppDataBaseHelper.COLUMN_IS_AWARDED + " = 1 AND " +
+                    AppDataBaseHelper.COLUMN_FINISHED_DATE + " BETWEEN ? AND ?";
+
+            String[] selectionArgs = {
+                    userUid,
+                    RecurringTaskStatus.COMPLETED.name(),
+                    startDate.toString(),
+                    endDate.toString()
+            };
+
+            cursor = db.query(
+                    AppDataBaseHelper.TABLE_RECURRING_TASKS,
+                    null,
+                    selection,
+                    selectionArgs,
+                    null, null, null
+            );
+
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+
+                    RecurringTask task = new RecurringTask();
+
+                    task.setId(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_RECURRING_TASK_ID)));
+                    task.setName(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_TITLE)));
+                    task.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DESCRIPTION)));
+                    task.setDifficulty(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DIFFICULTY_XP)));
+                    task.setImportance(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IMPORTANCE_XP)));
+                    task.setCategoryColour(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CTG_ID)));
+                    task.setFirstRecurringTaskId(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_FIRST_REC_TASK_ID)));
+                    task.setRecurrenceInterval(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_RECURRENCE_INTERVAL)));
+
+                    String recurrenceUnitString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_RECURRENCE_UNIT));
+                    task.setRecurrenceUnit(RecurrenceUnit.valueOf(recurrenceUnitString));
+
+                    String executionTimeString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_EXECUTION_TIME));
+                    task.setExecutionTime(LocalTime.parse(executionTimeString));
+
+                    String startDateString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_START_DATE));
+                    task.setStartDate(LocalDate.parse(startDateString));
+
+                    String endDateString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_END_DATE));
+                    task.setEndDate(LocalDate.parse(endDateString));
+
+                    String creationDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CREATION_DATE));
+                    task.setCreationDate(LocalDate.parse(creationDate));
+
+                    String finishedDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_FINISHED_DATE));
+                    task.setFinishedDate(LocalDate.parse(finishedDate));
+
+
+                    String finishDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_FINISH_DATE));
+                    task.setFinishDate(LocalDateTime.parse(finishDate));
+
+                    String remainingTime = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_REMAINING_TIME));
+                    task.setRemainingTime(Duration.parse(remainingTime));
+
+                    String status = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_STATUS));
+                    task.setStatus(RecurringTaskStatus.valueOf(status));
+
+                    task.setUserUid(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_USER_ID)));
+
+                    String isAwarded = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IS_AWARDED));
+                    task.setAwarded(Boolean.parseBoolean(isAwarded));
+
+                    String difficultyType = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DIFFICULTY_TYPE));
+                    task.setDifficultyQuota(TaskQuote.valueOf(difficultyType));
+
+                    String importanceType = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IMPORTANCE_TYPE));
+                    task.setImportanceQuota(TaskQuote.valueOf(importanceType));
+
+
+                    if (task.getImportanceQuota() == quote) {
                         count++;
                     }
                 } while (cursor.moveToNext());
@@ -975,7 +1123,7 @@ public class TaskRepository {
         return count;
     }
 
-    public int countCompletedOneTimeTasksWithXpInCategory(TaskQuote quote, LocalDate startDate, LocalDate endDate, String userUid) {
+    public int countCompletedOneTimeTasksWithDifficultyXpInCategory(TaskQuote quote, LocalDate startDate, LocalDate endDate, String userUid) {
 
         if (quote == null || startDate == null || endDate == null || userUid == null) {
             return 0;
@@ -1047,8 +1195,108 @@ public class TaskRepository {
                     String isAwarded = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IS_AWARDED));
                     task.setAwarded(Boolean.parseBoolean(isAwarded));
 
+                    String difficultyType = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DIFFICULTY_TYPE));
+                    task.setDifficultyQuota(TaskQuote.valueOf(difficultyType));
 
-                    if (task.getQuotaCategory() == quote) {
+                    String importanceType = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IMPORTANCE_TYPE));
+                    task.setImportanceQuota(TaskQuote.valueOf(importanceType));
+
+
+                    if (task.getImportanceQuota() == quote) {
+                        count++;
+                    }
+                } while (cursor.moveToNext());
+            }
+
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db != null && db.isOpen()) {
+                db.close();
+            }
+        }
+        return count;
+    }
+    public int countCompletedOneTimeTasksWithImportanceXpInCategory(TaskQuote quote, LocalDate startDate, LocalDate endDate, String userUid) {
+
+        if (quote == null || startDate == null || endDate == null || userUid == null) {
+            return 0;
+        }
+
+        int count = 0;
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+
+        try {
+            db = dbHelper.getReadableDatabase();
+
+
+            String selection = AppDataBaseHelper.COLUMN_USER_ID + " = ? AND " +
+                    AppDataBaseHelper.COLUMN_STATUS + " = ? AND " +
+                    AppDataBaseHelper.COLUMN_IS_AWARDED + " = 1 AND " +
+                    AppDataBaseHelper.COLUMN_FINISHED_DATE + " BETWEEN ? AND ?";
+
+            String[] selectionArgs = {
+                    userUid,
+                    RecurringTaskStatus.COMPLETED.name(),
+                    startDate.toString(),
+                    endDate.toString()
+            };
+
+            cursor = db.query(
+                    AppDataBaseHelper.TABLE_ONE_TIME_TASKS,
+                    null,
+                    selection,
+                    selectionArgs,
+                    null, null, null
+            );
+
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+
+                    OneTimeTask task = new OneTimeTask();
+
+                    task.setId(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_RECURRING_TASK_ID)));
+                    task.setName(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_TITLE)));
+                    task.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DESCRIPTION)));
+                    task.setDifficulty(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DIFFICULTY_XP)));
+                    task.setImportance(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IMPORTANCE_XP)));
+                    task.setCategoryColour(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CTG_ID)));
+
+                    // String recurrenceUnitString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_RECURRENCE_UNIT));
+
+
+                    String executionTimeString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_EXECUTION_TIME));
+                    task.setExecutionTime(LocalTime.parse(executionTimeString));
+
+                    String startDateString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_START_DATE));
+                    task.setStartDate(LocalDate.parse(startDateString));
+
+                    // String endDateString = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_END_DATE));
+
+                    String creationDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CREATION_DATE));
+                    task.setCreationDate(LocalDate.parse(creationDate));
+
+                    String finishedDate = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_FINISHED_DATE));
+                    task.setFinishedDate(LocalDate.parse(finishedDate));
+
+
+                    String status = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_STATUS));
+                    task.setStatus(OneTimeTaskStatus.valueOf(status));
+
+                    task.setUserUid(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_USER_ID)));
+
+                    String isAwarded = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IS_AWARDED));
+                    task.setAwarded(Boolean.parseBoolean(isAwarded));
+
+                    String difficultyType = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DIFFICULTY_TYPE));
+                    task.setDifficultyQuota(TaskQuote.valueOf(difficultyType));
+
+                    String importanceType = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IMPORTANCE_TYPE));
+                    task.setImportanceQuota(TaskQuote.valueOf(importanceType));
+
+                    if (task.getImportanceQuota() == quote) {
                         count++;
                     }
                 } while (cursor.moveToNext());
@@ -1075,6 +1323,39 @@ public class TaskRepository {
         db.update(AppDataBaseHelper.TABLE_RECURRING_TASKS, values, whereClause, whereArgs);
 
         db.update(AppDataBaseHelper.TABLE_ONE_TIME_TASKS, values, whereClause, whereArgs);
+    }
+
+    public TaskQuote getDifficultyType(int difficulty){
+
+       if (difficulty == 1) {
+            return TaskQuote.VERY_EASY;
+       }
+        if (difficulty == 3) {
+            return TaskQuote.EASY;
+        }
+       if (difficulty == 7) {
+            return TaskQuote.HARD;
+       }
+        if (difficulty == 20) {
+            return TaskQuote.EXTREMELY_HARD;
+        }
+        return TaskQuote.NO_QUOTA;
+    }
+    public TaskQuote getImportanceType(int importance){
+
+        if (importance == 1) {
+            return TaskQuote.NORMAL;
+        }
+        if (importance == 3) {
+            return TaskQuote.IMPORTANT;
+        }
+        if (importance == 10) {
+           return TaskQuote.EXTREMELY_IMPORTANT;
+        }
+        if (importance == 100) {
+            return TaskQuote.SPECIAL;
+        }
+        return TaskQuote.NO_QUOTA;
     }
 
 }
