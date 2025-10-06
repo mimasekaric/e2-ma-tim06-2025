@@ -41,6 +41,7 @@ public class AllianceViewModel extends ViewModel {
     private final MutableLiveData<Boolean> missionActivationSuccess = new MutableLiveData<>();
     private final MutableLiveData<Boolean> hasUserActiveMission = new MutableLiveData<>();
 
+
     public MutableLiveData<String> getMissionActivationResponse() {
         return missionActivationResponse;
     }

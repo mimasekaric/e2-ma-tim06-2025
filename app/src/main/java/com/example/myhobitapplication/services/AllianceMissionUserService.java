@@ -30,9 +30,12 @@ public class AllianceMissionUserService {
     private final BattleService battleService;
     private final ProfileService profileService;
 
-    public AllianceMissionUserService(UserService userService, BattleService battleService) {
+    private final UserEquipmentService userEquipmentService;
+
+    public AllianceMissionUserService(UserService userService, BattleService battleService, UserEquipmentService userEquipmentService) {
         this.userService = userService;
         this.battleService = battleService;
+        this.userEquipmentService = userEquipmentService;
         this.profileService = ProfileService.getInstance();
     }
 
@@ -236,7 +239,7 @@ public class AllianceMissionUserService {
                                             int missionCoinReward = nextBossReward / 2;
                                             batch.update(profileDoc.getReference(), "coins", FieldValue.increment(missionCoinReward));
 
-                                            // Ovdje ide logika za napitak i odjeću...
+                                           userEquipmentService.grantRandomClothingToUser(profile.getuserUid());
                                         }
 
                                         // 6. Ažuriraj status misije i izvrši sve

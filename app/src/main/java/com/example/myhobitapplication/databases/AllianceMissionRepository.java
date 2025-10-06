@@ -1,5 +1,6 @@
 package com.example.myhobitapplication.databases;
 
+import com.example.myhobitapplication.enums.MissionStatus;
 import com.example.myhobitapplication.models.AllianceMission;
 import com.example.myhobitapplication.models.UserMission;
 import com.google.android.gms.tasks.Task;
@@ -26,7 +27,7 @@ public class AllianceMissionRepository {
     public Task<QuerySnapshot> getActiveMissionForAlliance(String allianceId) {
         return allianceMissionsRef
                 .whereEqualTo("allianceId", allianceId)
-                .whereEqualTo("status", "ACTIVE")
+                .whereEqualTo("status", MissionStatus.ACTIVE)
                 .limit(1)
                 .get();
     }

@@ -1,9 +1,11 @@
 package com.example.myhobitapplication.fragments;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
@@ -180,6 +182,25 @@ public class AllianceFragment extends Fragment {
                 }
             }
         });
+
+        allianceViewModel.getMissionActivationResponse().observe(getViewLifecycleOwner(), response -> {
+            if (response != null && !response.isEmpty()) {
+
+                showErrorDialog(response);
+
+            }
+        });
+
+        allianceViewModel.getMissionActivationSuccess().observe(getViewLifecycleOwner(), isSuccess -> {
+            if (isSuccess != null) {
+                binding.button55Layout.setEnabled(true);
+
+                if (isSuccess) {
+                    String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    allianceViewModel.checkUserActiveMissionStatus(currentUserId);
+                }
+            }
+        });
     }
 
    public void  observeFriends(){
@@ -235,6 +256,27 @@ public class AllianceFragment extends Fragment {
                 });
             }
         });
+    }
+
+    private void showErrorDialog(String message) {
+        if (getContext() == null) return;
+
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(requireContext(), R.style.AlertDialogWhiteText);
+        dialogBuilder.setTitle("Activation Failed")
+                .setMessage(message)
+                .setPositiveButton("OK", (dialog, which) -> {
+
+                    dialog.dismiss();
+                })
+                .setCancelable(false);
+
+        AlertDialog alert = dialogBuilder.create();
+
+        if (alert.getWindow() != null) {
+            alert.getWindow().setBackgroundDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.logincard));
+        }
+
+        alert.show();
     }
 
 

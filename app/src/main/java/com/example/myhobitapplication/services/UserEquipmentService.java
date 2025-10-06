@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+
 /// /vidi mozda ako vec ima aktiviran clothes istog tipa al da nije counterfight 0 i effect 0 ... p=mozda i tu treba sabirati ucinak?
 /// PROVJERI RADI LI ZA STIT
 ///kad gainuje isto oruyje povecava s evjerovatnocaa
@@ -273,6 +275,35 @@ public class UserEquipmentService {
         }
 
         return equipment.getCoef() * bossReward;
+
+    }
+    public void grantRandomClothingToUser(String userId) {
+
+        List<Equipment> allClothingItems = getByType(EquipmentTypes.CLOTHING);
+
+        if (allClothingItems == null || allClothingItems.isEmpty()) {
+            return;
+        }
+
+        Random random = new Random();
+        Equipment randomClothing = allClothingItems.get(random.nextInt(allClothingItems.size()));
+        if (randomClothing instanceof Clothing) {
+            gainEquipment(userId, (Clothing) randomClothing);
+        }
+
+
+        List<Equipment> allPotionItems = getByType(EquipmentTypes.POTION);
+
+        if (allPotionItems == null || allPotionItems.isEmpty()) {
+            return;
+        }
+
+        Random randomP = new Random();
+        Equipment randomPotion = allPotionItems.get(randomP.nextInt(allPotionItems.size()));
+        if (randomPotion instanceof Potion) {
+            gainEquipment(userId, (Potion) randomPotion);
+        }
+
 
     }
 

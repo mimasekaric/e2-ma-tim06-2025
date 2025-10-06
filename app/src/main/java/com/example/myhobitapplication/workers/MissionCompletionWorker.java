@@ -1,6 +1,7 @@
 package com.example.myhobitapplication.workers;
 
 import android.content.Context;
+import android.telephony.euicc.EuiccInfo;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -8,15 +9,19 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.example.myhobitapplication.databases.BossRepository;
+import com.example.myhobitapplication.databases.EquipmentRepository;
 import com.example.myhobitapplication.databases.TaskRepository;
+import com.example.myhobitapplication.databases.UserEquipmentRepository;
 import com.example.myhobitapplication.models.AllianceMission;
 import com.example.myhobitapplication.services.AllianceMissionService;
 import com.example.myhobitapplication.services.AllianceMissionUserService;
 import com.example.myhobitapplication.services.AllianceService;
 import com.example.myhobitapplication.services.BattleService;
 import com.example.myhobitapplication.services.BossService;
+import com.example.myhobitapplication.services.EquipmentService;
 import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.services.TaskService;
+import com.example.myhobitapplication.services.UserEquipmentService;
 import com.example.myhobitapplication.services.UserService;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -35,12 +40,14 @@ public class MissionCompletionWorker extends Worker {
     private AllianceMissionService allianceMissionService;
     private TaskService taskService;
     private Context context;
+    private UserEquipmentService userEquipmentService;
 
     public MissionCompletionWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
         this.context = context;
 
     }
+    /*UserEquipmentRepository repository, ProfileService profileService, BossService bossService, EquipmentService equipmentService, AllianceMissionService allianceMissionService*/
 
     @NonNull
     @Override
@@ -53,6 +60,10 @@ public class MissionCompletionWorker extends Worker {
         battleService = new BattleService(bossService,profileService);
         taskRepository = new TaskRepository(context);
         allianceMissionService = new AllianceMissionService(profileService);
+        UserEquipmentRepository userEquipmentRepository = new UserEquipmentRepository(context);
+        EquipmentRepository equipmentRepository = new EquipmentRepository(context);
+        EquipmentService equipmentService = new EquipmentService(equipmentRepository);
+        userEquipmentService = new UserEquipmentService(userEquipmentRepository,profileService,bossService,equipmentService,allianceMissionService);
         taskService =  TaskService.getInstance(taskRepository,profileService,battleService,allianceMissionService);
 
         String missionId = getInputData().getString(KEY_MISSION_ID);
@@ -65,7 +76,7 @@ public class MissionCompletionWorker extends Worker {
         Log.d("MissionWorker", "Starting check for mission: " + missionId);
 
 
-        AllianceMissionUserService userMissionService = new AllianceMissionUserService(userService,battleService);
+        AllianceMissionUserService userMissionService = new AllianceMissionUserService(userService,battleService,userEquipmentService);
 
         try {
 
