@@ -12,6 +12,7 @@ import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.firestore.DocumentReference;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -60,8 +61,8 @@ public class ProfileService {
         return profileRepository.insert(profile);
     }
 
-    public Task<Void> updateLevel( String uid,int newLevel, int newxp, int newPP, String newTitle){
-        return  profileRepository.updateLevel(uid, newLevel, newxp, newPP, newTitle);
+    public Task<Void> updateLevel( String uid,int newLevel, int newxp, int newPP, String newTitle, Date currentLevelDate){
+        return  profileRepository.updateLevel(uid, newLevel, newxp, newPP, newTitle, currentLevelDate);
     }
 
 
@@ -84,7 +85,7 @@ public class ProfileService {
                     newPP =Math.round( profile.getPp() +  ((float) 3 / 4) * profile.getPp());
                     newTitle="Specialist " + newLevel;
                 }
-                updateLevel(profile.getuserUid(), newLevel, newXpRequired,newPP, newTitle)
+                updateLevel(profile.getuserUid(), newLevel, newXpRequired,newPP, newTitle, profile.getCurrentLevelDate())
                         .addOnSuccessListener(v ->{
                         /*    if (levelUpListener != null) {
                             levelUpListener.onLevelUp(profile.getuserUid(), newLevel);

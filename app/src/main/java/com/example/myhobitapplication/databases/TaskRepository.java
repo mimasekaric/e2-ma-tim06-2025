@@ -351,6 +351,11 @@ public class TaskRepository {
         values.put(AppDataBaseHelper.COLUMN_USER_ID, task.getUserUid());
         values.put(AppDataBaseHelper.COLUMN_IS_AWARDED, task.isAwarded());
 
+        TaskQuote difficultyType = getDifficultyType(task.getDifficulty());
+        TaskQuote importanceType = getImportanceType(task.getImportance());
+        values.put(AppDataBaseHelper.COLUMN_DIFFICULTY_TYPE, difficultyType.toString());
+        values.put(AppDataBaseHelper.COLUMN_IMPORTANCE_TYPE, importanceType.toString());
+
         String selection = AppDataBaseHelper.COLUMN_RECURRING_TASK_ID + " = ?";
         String[] selectionArgs = { String.valueOf(task.getId()) };
 
@@ -505,7 +510,7 @@ public class TaskRepository {
         String selection = AppDataBaseHelper.COLUMN_USER_ID + " = ? AND " +
                 AppDataBaseHelper.COLUMN_STATUS + " = ? AND " +
                 AppDataBaseHelper.COLUMN_IS_AWARDED + " = ? AND " +
-                AppDataBaseHelper.COLUMN_START_DATE + " BETWEEN ? AND ?";
+                AppDataBaseHelper.COLUMN_FINISHED_DATE + " BETWEEN ? AND ?";
 
 
         String[] selectionArgs = {
@@ -542,7 +547,6 @@ public class TaskRepository {
         String selection = AppDataBaseHelper.COLUMN_USER_ID + " = ? AND " +
                 AppDataBaseHelper.COLUMN_STATUS + " != ? AND " +
                 AppDataBaseHelper.COLUMN_STATUS + " != ? AND " +
-                AppDataBaseHelper.COLUMN_IS_AWARDED + " = ? AND " +
                 AppDataBaseHelper.COLUMN_CREATION_DATE + " BETWEEN ? AND ?";
 
 
@@ -551,7 +555,44 @@ public class TaskRepository {
                 userUid,
                 statusOne.name(),
                 statusTwo.name(),
+                startDate.toString(),
+                endDate.toString()
+        };
+
+        String countQuery = "SELECT COUNT(*) FROM " + AppDataBaseHelper.TABLE_RECURRING_TASKS +
+                " WHERE " + selection;
+
+        Cursor cursor = db.rawQuery(countQuery, selectionArgs);
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(0);
+            }
+            cursor.close();
+        }
+        db.close();
+
+        return count;
+    }
+    public int countRecurringTasksCreatedBeforeThisLevel(LocalDate startDate, LocalDate endDate, String userUid) {
+
+        int count = 0;
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        RecurringTaskStatus statusOne = RecurringTaskStatus.COMPLETED;
+
+        String selection = AppDataBaseHelper.COLUMN_USER_ID + " = ? AND " +
+                AppDataBaseHelper.COLUMN_STATUS + " = ? AND " +
+                AppDataBaseHelper.COLUMN_IS_AWARDED + " = ? AND " +
+                AppDataBaseHelper.COLUMN_CREATION_DATE + " < ? AND "  +
+                AppDataBaseHelper.COLUMN_FINISHED_DATE + " BETWEEN ? AND ?";
+
+
+
+        String[] selectionArgs = {
+                userUid,
+                statusOne.name(),
                 "1",
+                startDate.toString(),
                 startDate.toString(),
                 endDate.toString()
         };
@@ -581,7 +622,7 @@ public class TaskRepository {
         String selection = AppDataBaseHelper.COLUMN_USER_ID + " = ? AND " +
                 AppDataBaseHelper.COLUMN_STATUS + " = ? AND " +
                 AppDataBaseHelper.COLUMN_IS_AWARDED + " = ? AND " +
-                AppDataBaseHelper.COLUMN_START_DATE + " BETWEEN ? AND ?";
+                AppDataBaseHelper.COLUMN_FINISHED_DATE + " BETWEEN ? AND ?";
 
 
         String[] selectionArgs = {
@@ -592,7 +633,7 @@ public class TaskRepository {
                 endDate.toString()
         };
 
-        String countQuery = "SELECT COUNT(*) FROM " + AppDataBaseHelper.TABLE_RECURRING_TASKS +
+        String countQuery = "SELECT COUNT(*) FROM " + AppDataBaseHelper.TABLE_ONE_TIME_TASKS +
                 " WHERE " + selection;
 
         Cursor cursor = db.rawQuery(countQuery, selectionArgs);
@@ -612,13 +653,12 @@ public class TaskRepository {
 
         int count = 0;
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        RecurringTaskStatus statusOne = RecurringTaskStatus.CANCELED;
-        RecurringTaskStatus statusTwo = RecurringTaskStatus.PAUSED;
+        OneTimeTaskStatus statusOne = OneTimeTaskStatus.CANCELED;
+        OneTimeTaskStatus statusTwo = OneTimeTaskStatus.PAUSED;
 
         String selection = AppDataBaseHelper.COLUMN_USER_ID + " = ? AND " +
                 AppDataBaseHelper.COLUMN_STATUS + " != ? AND " +
                 AppDataBaseHelper.COLUMN_STATUS + " != ? AND " +
-                AppDataBaseHelper.COLUMN_IS_AWARDED + " = ? AND " +
                 AppDataBaseHelper.COLUMN_CREATION_DATE + " BETWEEN ? AND ?";
 
 
@@ -627,12 +667,49 @@ public class TaskRepository {
                 userUid,
                 statusOne.name(),
                 statusTwo.name(),
-                "1",
                 startDate.toString(),
                 endDate.toString()
         };
 
-        String countQuery = "SELECT COUNT(*) FROM " + AppDataBaseHelper.TABLE_RECURRING_TASKS +
+        String countQuery = "SELECT COUNT(*) FROM " + AppDataBaseHelper.TABLE_ONE_TIME_TASKS +
+                " WHERE " + selection;
+
+        Cursor cursor = db.rawQuery(countQuery, selectionArgs);
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(0);
+            }
+            cursor.close();
+        }
+        db.close();
+
+        return count;
+    }
+    public int countOneTimeTasksCreatedBeforeThisLevel(LocalDate startDate, LocalDate endDate, String userUid) {
+
+        int count = 0;
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        OneTimeTaskStatus statusOne = OneTimeTaskStatus.COMPLETED;
+
+        String selection = AppDataBaseHelper.COLUMN_USER_ID + " = ? AND " +
+                AppDataBaseHelper.COLUMN_STATUS + " = ? AND " +
+                AppDataBaseHelper.COLUMN_IS_AWARDED + " = ? AND " +
+                AppDataBaseHelper.COLUMN_CREATION_DATE + " < ? AND "  +
+                AppDataBaseHelper.COLUMN_FINISHED_DATE + " BETWEEN ? AND ?";
+
+
+
+        String[] selectionArgs = {
+                userUid,
+                statusOne.name(),
+                "1",
+                startDate.toString(),
+                startDate.toString(),
+                endDate.toString()
+        };
+
+        String countQuery = "SELECT COUNT(*) FROM " + AppDataBaseHelper.TABLE_ONE_TIME_TASKS +
                 " WHERE " + selection;
 
         Cursor cursor = db.rawQuery(countQuery, selectionArgs);
@@ -696,6 +773,10 @@ public class TaskRepository {
         values.put(AppDataBaseHelper.COLUMN_START_DATE, task.getStartDate().toString());
         values.put(AppDataBaseHelper.COLUMN_USER_ID, task.getUserUid());
         values.put(AppDataBaseHelper.COLUMN_IS_AWARDED, task.isAwarded());
+        TaskQuote difficultyType = getDifficultyType(task.getDifficulty());
+        TaskQuote importanceType = getImportanceType(task.getImportance());
+        values.put(AppDataBaseHelper.COLUMN_DIFFICULTY_TYPE, difficultyType.toString());
+        values.put(AppDataBaseHelper.COLUMN_IMPORTANCE_TYPE, importanceType.toString());
 
         String selection = AppDataBaseHelper.COLUMN_ONE_TIME_TASK_ID + " = ?";
         String[] selectionArgs = { String.valueOf(task.getId()) };

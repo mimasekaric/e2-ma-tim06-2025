@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -286,23 +287,27 @@ public class ProfileActivity extends Fragment {
         }
 
     }
-
     private void displayBadges(List<Badge> badges) {
-
         LinearLayout badgesLayout = binding.imgLayout1;
-
-
         badgesLayout.removeAllViews();
 
         if (badges == null || badges.isEmpty()) {
             return;
         }
 
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+
         for (Badge badge : badges) {
-            ImageView badgeImageView = new ImageView(getContext());
+
+            View badgeView = inflater.inflate(R.layout.item_badge, badgesLayout, false);
+
+            ImageView badgeImageView = badgeView.findViewById(R.id.badge_image);
+            TextView badgeCountTextView = badgeView.findViewById(R.id.badge_count_text);
+
+            badgeCountTextView.setText(String.valueOf(badge.getDamage()));
 
             int imageResource;
-            if(badge.getType()!=null){
+            if (badge.getType() != null) {
                 switch (badge.getType()) {
                     case "GOLD":
                         imageResource = R.drawable.gold_badge_removebg_previewc;
@@ -315,37 +320,66 @@ public class ProfileActivity extends Fragment {
                         break;
                 }
                 badgeImageView.setImageResource(imageResource);
-                // Definiraj širinu u dp
-                int widthInDp = 100;
-
-                // Izračunaj širinu u pikselima na temelju gustoće ekrana
-                float scale = getResources().getDisplayMetrics().density;
-                int widthInPx = (int) (widthInDp * scale + 0.5f);
-
-                // Kreiraj LayoutParams s izračunatom širinom i MATCH_PARENT visinom
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                        widthInPx,
-                        LinearLayout.LayoutParams.MATCH_PARENT
-                );
-
-                // Dodaj desnu marginu da se bedževi ne lijepe jedan za drugog
-                int marginInDp = 8;
-                int marginInPx = (int) (marginInDp * scale + 0.5f);
-                params.setMarginEnd(marginInPx);
-
-                // Primijeni parametre na ImageView
-                badgeImageView.setLayoutParams(params);
-
-                // Postavi ScaleType da se slika lijepo rastegne
-                badgeImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                badgeImageView.setPadding(0, 8, 0, 8); // Dodaj malo vertikalnog paddinga
-
-                // Dodaj kreirani ImageView u LinearLayout
-                badgesLayout.addView(badgeImageView);
             }
 
+            badgesLayout.addView(badgeView);
         }
     }
+
+//    private void displayBadges(List<Badge> badges) {
+//
+//        LinearLayout badgesLayout = binding.imgLayout1;
+//
+//
+//        badgesLayout.removeAllViews();
+//
+//        if (badges == null || badges.isEmpty()) {
+//            return;
+//        }
+//
+//        for (Badge badge : badges) {
+//            ImageView badgeImageView = new ImageView(getContext());
+//
+//            int imageResource;
+//            if(badge.getType()!=null){
+//                switch (badge.getType()) {
+//                    case "GOLD":
+//                        imageResource = R.drawable.gold_badge_removebg_previewc;
+//                        break;
+//                    case "SILVER":
+//                        imageResource = R.drawable.silver_badge_removebg_previewc;
+//                        break;
+//                    default:
+//                        imageResource = R.drawable.bronze_badge_removebg_previewc;
+//                        break;
+//                }
+//                badgeImageView.setImageResource(imageResource);
+//
+//                int widthInDp = 100;
+//
+//
+//                float scale = getResources().getDisplayMetrics().density;
+//                int widthInPx = (int) (widthInDp * scale + 0.5f);
+//
+//                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+//                        widthInPx,
+//                        LinearLayout.LayoutParams.MATCH_PARENT
+//                );
+//
+//                int marginInDp = 8;
+//                int marginInPx = (int) (marginInDp * scale + 0.5f);
+//                params.setMarginEnd(marginInPx);
+//
+//                badgeImageView.setLayoutParams(params);
+//
+//                badgeImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+//                badgeImageView.setPadding(0, 8, 0, 8);
+//
+//                badgesLayout.addView(badgeImageView);
+//            }
+//
+//        }
+//    }
 
 
 }

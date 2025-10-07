@@ -54,32 +54,32 @@ public class AllianceMissionUserService {
 
             if (mission.getCurrentBossHp() <= 0) {
                 Log.d("MissionCompletion", "Misija uspješna! Pripremam nagrade i bedževe.");
-                mission.setStatus(MissionStatus.FINISHED_SUCCESS); // Koristimo String
+                mission.setStatus(MissionStatus.FINISHED_SUCCESS);
 
-                // 1. Dohvati listu User objekata (članova)
+
                 return userService.getAllAllianceMember(mission.getAllianceId())
                         .onSuccessTask(members -> {
 
-                            // 1. Kreiraj zajedničku listu za SVE Task-ove
+
                             List<Task<?>> allTasks = new ArrayList<>();
 
-                            // 2. Kreiraj i dodaj sve Task-ove za dohvaćanje profila
+
                             List<Task<Profile>> profileTasks = new ArrayList<>();
                             for (User member : members) {
                                 Task<Profile> profileTask = profileService.getProfileById(member.getUid());
                                 profileTasks.add(profileTask);
-                                allTasks.add(profileTask); // Dodaj u zajedničku listu
+                                allTasks.add(profileTask);
                             }
 
-                            // 3. Kreiraj i dodaj Task za dohvaćanje SVIH UserMission progressa
-                            Task<QuerySnapshot> progressTask = missionRef.collection("userProgress").get();
-                            allTasks.add(progressTask); // Dodaj u zajedničku listu
 
-                            // 4. Sada pozovi whenAllComplete s tom JEDNOM, zajedničkom listom
+                            Task<QuerySnapshot> progressTask = missionRef.collection("userProgress").get();
+                            allTasks.add(progressTask);
+
+
                             return Tasks.whenAllComplete(allTasks)
                                     .onSuccessTask(tasks -> {
 
-                                        // 5. Obradi rezultate: Kreiraj mapu napretka
+
                                         QuerySnapshot progressSnapshots = (QuerySnapshot) progressTask.getResult();
                                         Map<String, UserMission> progressMap = new HashMap<>();
                                         for (DocumentSnapshot doc : progressSnapshots) {
@@ -87,9 +87,9 @@ public class AllianceMissionUserService {
                                         }
 
                                         WriteBatch batch = db.batch();
-                                        Date dateEarned = mission.getEndDate(); // Datum kada je misija završila
+                                        Date dateEarned = mission.getEndDate();
 
-                                        // 6. Sada prolazimo kroz dohvaćene profile
+
                                         for (Task<Profile> profileTask : profileTasks) {
                                             Profile profile = profileTask.getResult();
                                             if (profile == null) continue;
@@ -97,13 +97,8 @@ public class AllianceMissionUserService {
                                             UserMission progress = progressMap.get(profile.getuserUid());
                                             if (progress == null) continue;
 
-                                            // --- POČETAK LOGIKE ZA BEDŽEVE ---
-
-                                            // a) Izračunaj ukupan broj akcija iz UserMission objekta
                                             int totalActions = Math.abs(progress.getTotalDamage());
-                                            // ... Ovdje dodajte i ostale brojače ako ih imate ...
 
-                                            // b) Odredi tip bedža
                                             String badgeType;
                                             if (totalActions >= 25) {
                                                 badgeType = "GOLD";
@@ -112,36 +107,34 @@ public class AllianceMissionUserService {
                                             } else if (totalActions > 0) {
                                                 badgeType = "BRONZE";
                                             } else {
-                                                badgeType = null; // Korisnik nije ništa uradio, ne dobiva bedž
+                                                badgeType = null;
                                             }
 
-                                            // c) Ako je korisnik zaslužio bedž, dodaj ga u batch
+
                                             if (badgeType != null) {
                                                 Badge newBadge = new Badge(badgeType, totalActions, dateEarned, missionId);
                                                 DocumentReference profileRefForBadge = db.collection("profiles").document(profile.getuserUid());
                                                 batch.update(profileRefForBadge, "badges", FieldValue.arrayUnion(newBadge));
                                             }
 
-                                            // --- KRAJ LOGIKE ZA BEDŽEVE ---
 
-                                            // --- LOGIKA ZA OSTALE NAGRADE (ostaje ista) ---
                                             int nextBossReward = battleService.calculateCoinsRewardForBoss(profile.getlevel() + 1, profile.getuserUid());
                                             int missionCoinReward = nextBossReward / 2;
 
                                             DocumentReference profileRefForCoins = db.collection("profiles").document(profile.getuserUid());
                                             batch.update(profileRefForCoins, "coins", FieldValue.increment(missionCoinReward));
 
-                                            // Ovdje ide logika za napitak i odjeću...
+
                                         }
 
-                                        // 7. Ažuriraj status misije i izvrši sve operacije
+
                                         batch.update(missionRef, "status", mission.getStatus());
                                         return batch.commit();
                                     });
                         });
 
             } else {
-                // NEUSPJEH
+
                 Log.d("MissionCompletion", "Misija neuspješna.");
                 mission.setStatus(MissionStatus.FINISHED_FAILURE);
                 return missionRef.update("status", mission.getStatus());
@@ -158,13 +151,13 @@ public class AllianceMissionUserService {
 
             AllianceMission mission = documentSnapshot.toObject(AllianceMission.class);
 
-            // Koristite `if(true)` samo za testiranje.
-            // U produkciji, koristite: if (mission != null && mission.getCurrentBossHp() <= 0)
+
+            // ne zaboravi promijeniti na if (mission != null && mission.getCurrentBossHp() <= 0)
             if (true) {
                 Log.d("MissionCompletion", "Misija uspješna! Pripremam nagrade i bedževe.");
-                mission.setStatus(MissionStatus.FINISHED_SUCCESS); // Koristi se vaš ENUM
+                mission.setStatus(MissionStatus.FINISHED_SUCCESS);
 
-                // 1. Dohvati listu User objekata (članova)
+
                 return userService.getAllAllianceMember(mission.getAllianceId())
                         .onSuccessTask(members -> {
                             if (members == null || members.isEmpty()) {
@@ -172,13 +165,13 @@ public class AllianceMissionUserService {
                                 return missionRef.update("status", mission.getStatus());
                             }
 
-                            // 2. Pripremi liste Task-ova za paralelno dohvaćanje
+
                             List<Task<?>> allTasks = new ArrayList<>();
                             List<Task<QuerySnapshot>> profileQueryTasks = new ArrayList<>();
 
                             for (User member : members) {
                                 Task<QuerySnapshot> queryTask = db.collection("profiles")
-                                        .whereEqualTo("userUid", member.getUid()) // Pretraga po polju
+                                        .whereEqualTo("userUid", member.getUid())
                                         .limit(1)
                                         .get();
                                 profileQueryTasks.add(queryTask);
@@ -188,11 +181,10 @@ public class AllianceMissionUserService {
                             Task<QuerySnapshot> progressTask = missionRef.collection("userProgress").get();
                             allTasks.add(progressTask);
 
-                            // 3. Pričekaj da se završe SVI upiti
                             return Tasks.whenAllComplete(allTasks)
                                     .onSuccessTask(tasks -> {
 
-                                        // 4. Obradi rezultate napretka (progress)
+
                                         Map<String, UserMission> progressMap = new HashMap<>();
                                         QuerySnapshot progressSnapshots = progressTask.getResult();
                                         if (progressSnapshots != null) {
@@ -204,7 +196,6 @@ public class AllianceMissionUserService {
                                         WriteBatch batch = db.batch();
                                         Date dateEarned = mission.getEndDate();
 
-                                        // 5. Obradi rezultate profila i pripremi batch
                                         for (Task<QuerySnapshot> profileQueryTask : profileQueryTasks) {
                                             if (!profileQueryTask.isSuccessful() || profileQueryTask.getResult() == null || profileQueryTask.getResult().isEmpty()) {
                                                 Log.w("MissionCompletion", "Profil za jednog člana nije pronađen.");
@@ -217,24 +208,23 @@ public class AllianceMissionUserService {
                                             UserMission progress = progressMap.get(profile.getuserUid());
                                             if (progress == null) continue;
 
-                                            // --- Logika za bedževe ---
-                                            int totalActions = progress.getPurchaseCount() + progress.getSuccessfulAttackCount() + progress.getEasyTaskCompleteCount() + progress.getHardTaskCompleteCount();
+
+                                            int completedTaskCategories = calculateCompletedSpecialTasks(progress);
 
                                             String badgeType = null;
-                                            if (totalActions >= 25) {
+                                            if (completedTaskCategories >= 5) { // Npr. 5-6 završenih kategorija
                                                 badgeType = "GOLD";
-                                            } else if (totalActions >= 10) {
+                                            } else if (completedTaskCategories >= 3) { // Npr. 3-4 završenih kategorija
                                                 badgeType = "SILVER";
-                                            } else if (totalActions >= 0) {
+                                            } else if (completedTaskCategories > 0) { // 1-2 završene kategorije
                                                 badgeType = "BRONZE";
                                             }
 
                                             if (badgeType != null) {
-                                                Badge newBadge = new Badge(badgeType, totalActions, dateEarned, missionId);
+                                                Badge newBadge = new Badge(badgeType, completedTaskCategories, dateEarned, missionId);
                                                 batch.update(profileDoc.getReference(), "badges", FieldValue.arrayUnion(newBadge));
                                             }
 
-                                            // --- Logika za novčiće ---
                                             int nextBossReward = battleService.calculateCoinsRewardForBoss(profile.getlevel() + 1, profile.getuserUid());
                                             int missionCoinReward = nextBossReward / 2;
                                             batch.update(profileDoc.getReference(), "coins", FieldValue.increment(missionCoinReward));
@@ -242,18 +232,70 @@ public class AllianceMissionUserService {
                                            userEquipmentService.grantRandomClothingToUser(profile.getuserUid());
                                         }
 
-                                        // 6. Ažuriraj status misije i izvrši sve
+
                                         batch.update(missionRef, "status", mission.getStatus());
                                         return batch.commit();
                                     });
                         });
 
             } else {
-                // NEUSPJEH
+
                 Log.d("MissionCompletion", "Misija neuspješna.");
-                mission.setStatus(MissionStatus.FINISHED_FAILURE); // Koristi se vaš ENUM
+                mission.setStatus(MissionStatus.FINISHED_FAILURE);
                 return missionRef.update("status", mission.getStatus());
             }
         });
+    }
+
+
+    private int calculateCompletedSpecialTasks(UserMission progress) {
+        if (progress == null) {
+            return 0;
+        }
+
+        int completedCategories = 0;
+
+        // Definicija limita za svaku kategoriju
+        final int SHOP_LIMIT = 5;
+        final int BOSS_HIT_LIMIT = 10;
+        final int EASY_TASK_LIMIT = 10;
+        final int HARD_TASK_LIMIT = 6;
+        // Misija traje 14 dana, pa je limit za poruke 14
+        final int MESSAGE_LIMIT = 14;
+
+        // Provjera za svaku kategoriju
+
+        // 1. Kupovina u prodavnici
+        if (progress.getPurchaseCount() >= SHOP_LIMIT) {
+            completedCategories++;
+        }
+
+        // 2. Uspješan udarac u regularnoj borbi
+        if (progress.getSuccessfulAttackCount() >= BOSS_HIT_LIMIT) {
+            completedCategories++;
+        }
+
+        // 3. Rešavanje lakih/normalnih/važnih zadataka
+        if (progress.getEasyTaskCompleteCount() >= EASY_TASK_LIMIT) {
+            completedCategories++;
+        }
+
+        // 4. Rešavanje ostalih (teških) zadataka
+        if (progress.getHardTaskCompleteCount() >= HARD_TASK_LIMIT) {
+            completedCategories++;
+        }
+
+        // 5. Poslata poruka u savezu (svaki dan)
+        // Pretpostavljam da imate polje 'daysWithMessageSent' koje broji dane
+//        if (progress.getDaysWithMessageSent() >= MESSAGE_LIMIT) {
+//            completedCategories++;
+//        }
+
+        // 6. Bez nerešenih zadataka
+        if (progress.getUncompletedTasksCount() == 0) {
+            completedCategories++;
+        }
+
+        return completedCategories;
     }
 }

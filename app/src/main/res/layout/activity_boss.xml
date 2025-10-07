@@ -17,7 +17,7 @@
             android:id="@+id/bossBattleGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="hpProgressBar,hpTextView,attackAttemptsImage,myAnimatedImage,attackButton,userInfo,avatarImageView,ppProgressBar,ppTextView,rewardsAnimationLayout,activatedEqScroll"
+            app:constraint_referenced_ids="hpProgressBar,hpTextView,attackAttemptsImage,myAnimatedImage,attackButton,userInfo,avatarImageView,ppProgressBar,ppTextView,activatedEqScroll,rewardsP,potential_coins_layout,hit_chance_layout"
             android:visibility="gone"
             tools:visibility="visible" />
 
@@ -49,6 +49,38 @@
             app:layout_constraintStart_toStartOf="@id/hpProgressBar"
             app:layout_constraintTop_toTopOf="@id/hpProgressBar"
             tools:text="850 / 1000" />
+        <LinearLayout
+            android:id="@+id/hit_chance_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:elevation="2dp"
+
+        app:layout_constraintTop_toTopOf="@+id/rewardsP"
+        app:layout_constraintEnd_toStartOf="@+id/rewardsP"
+        app:layout_constraintStart_toEndOf="@+id/attackAttemptsImage"
+        app:layout_constraintBottom_toBottomOf="@+id/rewardsP">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hit Chance"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:fontFamily="@font/educursivebold" />
+
+        <TextView
+            android:id="@+id/hit_chance_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFC107"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/educursivebold"
+            tools:text="100%" />
+
+    </LinearLayout>
 
 
         <ImageView
@@ -241,49 +273,44 @@
                 android:fontFamily="@font/educursivebold"/>
 
         </LinearLayout>
-
-
-
-        <androidx.constraintlayout.motion.widget.MotionLayout
-            android:id="@+id/rewardsAnimationLayout"
+        <ImageView
+            android:id="@+id/rewardsP"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            android:layout_marginEnd="16dp"
-            android:background="#80FF0000"
+            android:background="@mipmap/ic_launcher_potencial_rewards"
             app:layoutDescription="@xml/circular_motion_rewards"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/hpProgressBar" >
-        <ImageView
-            android:id="@+id/boots"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@mipmap/ic_launcher_boot" />
+            app:layout_constraintTop_toBottomOf="@+id/hpProgressBar"/>
+
+        <LinearLayout
+            android:id="@+id/potential_coins_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:elevation="2dp"
+        app:layout_constraintTop_toBottomOf="@+id/rewardsP"
+        app:layout_constraintStart_toStartOf="@+id/rewardsP"
+        app:layout_constraintEnd_toEndOf="@+id/rewardsP">
 
         <ImageView
-            android:id="@+id/gloves"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@mipmap/ic_launcher_shield" />
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="4dp"
+            app:srcCompat="@mipmap/ic_launcher_coins" />
 
-<!--        <ImageView-->
-<!--            android:id="@+id/shield"-->
-<!--            android:layout_width="30dp"-->
-<!--            android:layout_height="30dp"-->
-<!--            android:src="@mipmap/ic_launcher_gloves" />-->
+        <TextView
+            android:id="@+id/potential_coins_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/educursivebold"
+            tools:text="200" />
 
-<!--        <ImageView-->
-<!--            android:id="@+id/sword"-->
-<!--            android:layout_width="30dp"-->
-<!--            android:layout_height="30dp"-->
-<!--            android:src="@mipmap/ic_launcher_sword" />-->
+    </LinearLayout>
 
-        <ImageView
-            android:id="@+id/arrow"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@mipmap/ic_launcher_bow_and_arrow" />
-
-    </androidx.constraintlayout.motion.widget.MotionLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

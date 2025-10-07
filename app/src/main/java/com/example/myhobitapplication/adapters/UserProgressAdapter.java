@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.dto.UserProgressDTO;
@@ -25,6 +26,8 @@ public class UserProgressAdapter extends RecyclerView.Adapter<UserProgressAdapte
         TextView memberUsername;
         TextView memberTotalDamageText;
         TextView purchaseCountText, bossHitCountText, easyTaskCountText, hardTaskCountText;
+        ImageView messageStatusIcon;
+        TextView messageStatusText;
 
         public ProgressViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -36,6 +39,8 @@ public class UserProgressAdapter extends RecyclerView.Adapter<UserProgressAdapte
             bossHitCountText = itemView.findViewById(R.id.boss_hit_count_text);
             easyTaskCountText = itemView.findViewById(R.id.easy_task_count_text);
             hardTaskCountText = itemView.findViewById(R.id.hard_task_count_text);
+            messageStatusIcon = itemView.findViewById(R.id.message_status_icon);
+            messageStatusText = itemView.findViewById(R.id.message_status_text);
         }
     }
 
@@ -66,6 +71,13 @@ public class UserProgressAdapter extends RecyclerView.Adapter<UserProgressAdapte
         holder.bossHitCountText.setText(currentProgress.getSuccessfulAttackCount() + "/10");
         holder.easyTaskCountText.setText(currentProgress.getEasyTaskCompleteCount() + "/10");
         holder.hardTaskCountText.setText(currentProgress.getHardTaskCompleteCount() + "/6");
+
+        if (currentProgress.isMessageSentToday()) {
+            holder.messageStatusText.setText("Sent");
+        } else {
+
+            holder.messageStatusText.setText("Pending");
+        }
 
     }
 

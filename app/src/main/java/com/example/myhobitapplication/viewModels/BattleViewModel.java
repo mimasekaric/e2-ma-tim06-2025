@@ -76,7 +76,6 @@ public class BattleViewModel extends ViewModel {
     public void setImageResource(Integer src) { _rewardEquipmentImage.setValue(src);}
     public MutableLiveData<List<UserEquipmentDTO>> getActivatedEquipment() { return activatedEquipmentList;}
     public void setActivatedEquipment(List<UserEquipmentDTO> activatedEquipmentsdata) { activatedEquipmentList.setValue(activatedEquipmentsdata);}
-    public double getHitChance() {return hitChance;}
     public int getStartAttackNumber() {return startAttackNumber;}
     public void setStartAttackNumber(int number) {startAttackNumber = number;}
     public LiveData<Boolean> getAttackMissedEvent() { return _attackMissedEvent; }
@@ -123,6 +122,17 @@ public class BattleViewModel extends ViewModel {
     public LiveData<Boolean> isBattleOver() {
         return _isBattleOver;
     }
+    private final MutableLiveData<Integer> _potentialCoinReward = new MutableLiveData<>();
+    public LiveData<Integer> getPotentialCoinReward() {
+        return _potentialCoinReward;
+    }
+    private final MutableLiveData<Double> _hitChanceLiveData = new MutableLiveData<>(1.0);
+    public LiveData<Double> getHitChanceLiveData() {
+        return _hitChanceLiveData;
+    }
+    public double getHitChance() {
+        return _hitChanceLiveData.getValue();
+    }
 
     private Profile loadedProfile;
     private BossDTO currentBoss;
@@ -138,7 +148,12 @@ public class BattleViewModel extends ViewModel {
     }
     public void loadBattleState(String userId){
 
+
         currentBoss = bossService.getLowestLevelBossForUser(userId);
+        if(currentBoss==null){
+            _screenState.setValue(BattleScreenState.NO_BOSS_FOUND);
+            return;
+        }
         if(currentBoss.isAttemptedThisLevel()){
             currentBoss = null;
             _screenState.setValue(BattleScreenState.NO_BOSS_FOUND);
@@ -153,10 +168,12 @@ public class BattleViewModel extends ViewModel {
 
         _bossCurrentHp.setValue(currentBoss.getHP());
         _bossMaxHp.setValue(currentBoss.getHP());
+        _potentialCoinReward.setValue(currentBoss.getCoinsReward());
 
-        this.hitChance = 1.0;
-        // this.hitChance = battleService.calculateChanceForAttack(profile);
-        //todo: moracu u bosu pamtiti koliko je ostalo pokusaja ubuduce?
+        //this.hitChance = 1.0;
+
+
+
         int remainingAttacks=5;
         _remainingAttacks.setValue(remainingAttacks);
         setStartAttackNumber(remainingAttacks);
@@ -165,6 +182,7 @@ public class BattleViewModel extends ViewModel {
             _userPP.setValue(profile.getPp());
             userEquipmentService.activatedEquipmentEffect(profile);
             _userProfile.setValue(profile);
+
             List<UserEquipmentDTO> ueList= userEquipmentService.getUserActivatedEquipment(profile.getuserUid());
             setActivatedEquipment(ueList);
             for(UserEquipmentDTO u :  ueList){
@@ -174,6 +192,7 @@ public class BattleViewModel extends ViewModel {
                         if(userEquipment.getEffect()==0) {
                             double effect =hitChance * ((Clothing) u.getEquipment()).getpowerPercentage() / 100;
                             hitChance =hitChance + effect;
+                            _hitChanceLiveData.setValue(this.hitChance);
                             userEquipment.setEffect(effect);
                             userEquipmentService.updateUserEquipment(userEquipment);
                         }else if(userEquipment.getFightsCounter() >1){
@@ -200,6 +219,14 @@ public class BattleViewModel extends ViewModel {
                 }
             }
 
+            _bossCurrentHp.postValue(_bossCurrentHp.getValue());
+            _bossMaxHp.postValue(_bossMaxHp.getValue());
+            _userPP.postValue(_userPP.getValue());
+            _remainingAttacks.postValue(_remainingAttacks.getValue());
+            _potentialCoinReward.postValue( _potentialCoinReward.getValue());
+            this.hitChance = 1;
+            //this.hitChance = taskService.calculateChanceForAttack(profile);
+            _hitChanceLiveData.setValue(this.hitChance);
 
         }).addOnFailureListener(e -> {
         });
@@ -212,10 +239,12 @@ public class BattleViewModel extends ViewModel {
             if (u.getEquipment().getequipmentType().equals(EquipmentTypes.CLOTHING)){
                 if(((Clothing)u.getEquipment()).getType().equals(ClothingTypes.SHIELD) && userEquipmentService.getById(u.getUserEquipmentId()).getFightsCounter()>0){
                     hitChance = hitChance - userEquipment.getEffect();
+                    _hitChanceLiveData.setValue(this.hitChance);
                     userEquipmentService.delete(userEquipment);
                 }
                 if(((Clothing)u.getEquipment()).getType().equals(ClothingTypes.BOOTS)  && userEquipmentService.getById(u.getUserEquipmentId()).getEffect()==0){
                     hitChance = hitChance - userEquipment.getEffect();
+                    _hitChanceLiveData.setValue(this.hitChance);
                     userEquipmentService.delete(userEquipment);
                 }
             }
@@ -233,6 +262,7 @@ public class BattleViewModel extends ViewModel {
         }
 
         _remainingAttacks.setValue(attacksLeft - 1);
+        currentBoss.setAttemptedThisLevel(true);
 
         boolean isHitSuccessful = Math.random() <= this.hitChance;
 
@@ -269,7 +299,9 @@ public class BattleViewModel extends ViewModel {
 
             _hitAnimationEvent.setValue(true);
         } else {
+
             _attackMissedEvent.setValue(true);
+            battleService.updateBoss(currentBoss);
         }
 
 
