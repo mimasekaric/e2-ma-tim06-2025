@@ -1492,4 +1492,66 @@ public class TaskRepository {
         return dates;
     }
 
+    public int countOverdueOneTimeTasks(String userId) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String[] columns = {"COUNT(*)"};
+
+        String selection = AppDataBaseHelper.COLUMN_USER_ID + " = ? AND (" +
+                AppDataBaseHelper.COLUMN_STATUS + " = ? OR " +
+                AppDataBaseHelper.COLUMN_STATUS + " = ?) AND " +
+                AppDataBaseHelper.COLUMN_FINISHED_DATE + " < ?";
+
+        String today = LocalDate.now().toString();
+
+        String[] selectionArgs = {
+                userId,
+                OneTimeTaskStatus.ACTIVE.name(),
+                OneTimeTaskStatus.PAUSED.name(),
+                today
+        };
+
+        Cursor cursor = db.query(AppDataBaseHelper.TABLE_ONE_TIME_TASKS, columns, selection, selectionArgs, null, null, null);
+
+        int count = 0;
+        if (cursor != null && cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+            cursor.close();
+        }
+        db.close();
+
+        return count;
+    }
+
+    public int countOverdueRecurringTasks(String userId) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String[] columns = {"COUNT(*)"};
+
+        String selection = AppDataBaseHelper.COLUMN_USER_ID + " = ? AND (" +
+                AppDataBaseHelper.COLUMN_STATUS + " = ? OR " +
+                AppDataBaseHelper.COLUMN_STATUS + " = ?) AND " +
+                AppDataBaseHelper.COLUMN_FINISHED_DATE + " < ?";
+
+        String today = LocalDate.now().toString();
+
+        String[] selectionArgs = {
+                userId,
+                RecurringTaskStatus.ACTIVE.name(),
+                RecurringTaskStatus.PAUSED.name(),
+                today
+        };
+
+        Cursor cursor = db.query(AppDataBaseHelper.TABLE_RECURRING_TASKS, columns, selection, selectionArgs, null, null, null);
+
+        int count = 0;
+        if (cursor != null && cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+            cursor.close();
+        }
+        db.close();
+
+        return count;
+    }
+
 }

@@ -146,7 +146,7 @@ public class AllianceMissionService {
                     List<UserMission> initialProgressList = new ArrayList<>();
                     for (String memberId : memberIds) {
 
-                        UserMission progress = new UserMission(memberId, allianceId, 0, 0, 0, 0, 0, 0, null, false);
+                        UserMission progress = new UserMission(memberId, allianceId, 0, 0, 0, 0, 0, 0, null, false,0);
                         initialProgressList.add(progress);
                     }
 
@@ -161,6 +161,7 @@ public class AllianceMissionService {
                                 if (delayInMillis < 0) {
                                     delayInMillis = 0;
                                 }
+                                long delayInMinutes = 2;
 
                                 Data inputData = new Data.Builder()
                                         .putString(MissionCompletionWorker.KEY_MISSION_ID, newMission.getId())
@@ -168,7 +169,7 @@ public class AllianceMissionService {
 
                                 OneTimeWorkRequest completionWorkRequest =
                                         new OneTimeWorkRequest.Builder(MissionCompletionWorker.class)
-                                                .setInitialDelay(delayInMillis, TimeUnit.MILLISECONDS)
+                                                .setInitialDelay(delayInMinutes, TimeUnit.MINUTES)
                                                 .setInputData(inputData)
                                                 .build();
 
@@ -417,6 +418,7 @@ public class AllianceMissionService {
 
                             transaction.update(userProgressRef, "messageSent", true);
                             transaction.update(userProgressRef, "todayDate", now);
+                            transaction.update(userProgressRef, "messageCount",FieldValue.increment(1));
 
                         } else if (isSameDay(lastCheckedDate, now) && !userProgress.isMessageSent()) {
 

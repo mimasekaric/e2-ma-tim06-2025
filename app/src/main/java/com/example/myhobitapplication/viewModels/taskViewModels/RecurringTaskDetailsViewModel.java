@@ -16,12 +16,16 @@ import com.example.myhobitapplication.services.TaskService;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class RecurringTaskDetailsViewModel extends ViewModel {
 
     private final TaskService taskService;
     private final CategoryService categoryService;
     private final MutableLiveData<RecurringTaskDTO> taskDetails = new MutableLiveData<>();
+
+    private final MutableLiveData<String> _errorMessage = new MutableLiveData<>();
+    public LiveData<String> getErrorMessage() { return _errorMessage; }
 
 
     private final MutableLiveData<Boolean> _taskDeletedEvent = new MutableLiveData<>();
@@ -86,6 +90,22 @@ public class RecurringTaskDetailsViewModel extends ViewModel {
     public void markTaskAsDone() {
 
         RecurringTaskDTO currentTaskDto = taskDetails.getValue();
+
+        LocalDate taskDate = currentTaskDto.getStartDate();
+        LocalTime taskTime = currentTaskDto.getExecutionTime();
+        LocalDateTime scheduledDateTime = LocalDateTime.of(taskDate, taskTime);
+
+        LocalDateTime now = LocalDateTime.now();
+
+        if (now.isBefore(scheduledDateTime)) {
+
+            _errorMessage.setValue("This task is not scheduled for today!");
+
+            return;
+        }
+
+
+
 
         if(currentTaskDto.getStatus().equals(RecurringTaskStatus.ACTIVE) ){
 

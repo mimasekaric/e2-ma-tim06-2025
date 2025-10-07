@@ -17,6 +17,7 @@ import com.example.myhobitapplication.services.TaskService;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class OneTimeTaskDetailsViewModel extends ViewModel {
 
@@ -33,6 +34,8 @@ public class OneTimeTaskDetailsViewModel extends ViewModel {
     public void onTaskStatusUpdatedEventHandled() {
         _taskStatusUpdatedEvent.setValue(false);
     }
+    private final MutableLiveData<String> _errorMessage = new MutableLiveData<>();
+    public LiveData<String> getErrorMessage() { return _errorMessage; }
 
     public LiveData<Boolean> getTaskDeletedEvent() {
         return _taskDeletedEvent;
@@ -68,6 +71,22 @@ public class OneTimeTaskDetailsViewModel extends ViewModel {
     public void markTaskAsDone() {
 
         OneTimeTaskDTO currentTaskDto = taskDetails.getValue();
+
+        LocalDate taskDate = currentTaskDto.getStartDate();
+        LocalTime taskTime = currentTaskDto.getExecutionTime();
+        LocalDateTime scheduledDateTime = LocalDateTime.of(taskDate, taskTime);
+
+        LocalDateTime now = LocalDateTime.now();
+
+        if (now.isBefore(scheduledDateTime)) {
+
+            _errorMessage.setValue("This task is not scheduled for today!");
+
+            return;
+        }
+
+
+
 
         if(currentTaskDto.getStatus().equals(OneTimeTaskStatus.ACTIVE) ){
 

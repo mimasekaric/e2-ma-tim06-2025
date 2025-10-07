@@ -290,6 +290,11 @@ public class OneTimeTaskDetailsFragment extends Fragment {
                 taskDetailsViewModel.onTaskStatusUpdatedEventHandled();
             }
         });
+        taskDetailsViewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
+            if (error != null && !error.isEmpty()) {
+                Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+            }
+        });
 
 
     }

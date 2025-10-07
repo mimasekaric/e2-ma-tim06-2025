@@ -130,6 +130,8 @@ public class RecurringTaskDetailsFragment extends Fragment {
         );
 
 
+
+
     }
 
     @Nullable
@@ -290,6 +292,11 @@ public class RecurringTaskDetailsFragment extends Fragment {
                     getActivity().finish();
                 }
                 taskDetailsViewModel.onTaskDeletedEventHandled();
+            }
+        });
+        taskDetailsViewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
+            if (error != null && !error.isEmpty()) {
+                Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
             }
         });
     }
