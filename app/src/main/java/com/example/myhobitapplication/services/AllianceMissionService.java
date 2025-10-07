@@ -58,20 +58,20 @@ public class AllianceMissionService {
 
     public Task<Void> startMissionForAlliance(String allianceId, List<String> memberIds, Context context) {
 
-        // Koristimo ID trenutno ulogiranog korisnika (koji je vođa i pokreće misiju) za provjeru.
+
         String leaderId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        // 1. Prvo provjeri da li savez već ima aktivnu misiju.
+
         return this.checkIfUserHasActiveAlliance(leaderId)
                 .onSuccessTask(hasActiveMission -> {
 
-                    // 2. Ako 'hasActiveMission' je 'true', baci iznimku i prekini izvršavanje.
+
                     if (hasActiveMission != null && hasActiveMission) {
                         Log.w("MissionStart", "Pokušaj pokretanja misije za savez " + allianceId + " koji već ima aktivnu misiju.");
                         return Tasks.forException(new Exception("An active mission for this alliance already exists."));
                     }
 
-                    // 3. Ako misija ne postoji, nastavi s kreiranjem.
+
                     Log.d("MissionStart", "Nema aktivne misije. Započinjem kreiranje nove.");
 
                     int memberCount = memberIds.size();
@@ -89,22 +89,21 @@ public class AllianceMissionService {
                     newMission.setAllianceId(allianceId);
                     newMission.setTotalBossHp(totalHp);
                     newMission.setCurrentBossHp(totalHp);
-                    newMission.setStatus(MissionStatus.ACTIVE); // Koristi se vaš ENUM
+                    newMission.setStatus(MissionStatus.ACTIVE);
                     newMission.setStartDate(startDate);
                     newMission.setEndDate(endDate);
-                    // newMission.setBossId("generic_alliance_boss_v1"); // Postavite ID bosa
+
 
                     List<UserMission> initialProgressList = new ArrayList<>();
                     for (String memberId : memberIds) {
-                        // Pretpostavka za konstruktor: (userId, allianceId, purchase, attack, easy, hard, totalDmg, uncompleted, date, msgSent)
+
                         UserMission progress = new UserMission(memberId, allianceId, 0, 0, 0, 0, 0, 0, null, false);
                         initialProgressList.add(progress);
                     }
 
-                    // 4. Pozovi repozitorij da upiše sve u bazu
                     return missionRepository.createMission(newMission, initialProgressList)
                             .onSuccessTask(aVoid -> {
-                                // 5. Ako je upis u bazu bio uspješan, zakaži Workera za kraj misije.
+
 
                                 long nowMillis = System.currentTimeMillis();
                                 long endDateMillis = newMission.getEndDate().getTime();
@@ -323,18 +322,17 @@ public class AllianceMissionService {
 
         Log.d("MissionService", "Ručno pokrećem workera za misiju: " + missionId);
 
-        // 1. Kreiraj Data objekt koji će proslijediti ID misije Workeru
+
         Data inputData = new Data.Builder()
                 .putString(MissionCompletionWorker.KEY_MISSION_ID, missionId)
                 .build();
 
-        // 2. Kreiraj zahtjev za posao bez ikakve odgode
         OneTimeWorkRequest completionWorkRequest =
                 new OneTimeWorkRequest.Builder(MissionCompletionWorker.class)
                         .setInputData(inputData)
                         .build();
 
-        // 3. Zakaži posao da se izvrši odmah (ili što je prije moguće)
+
         WorkManager.getInstance(context.getApplicationContext())
                 .enqueue(completionWorkRequest);
     }
@@ -354,26 +352,21 @@ public class AllianceMissionService {
                         if (userProgress == null) return null;
 
                         Date lastCheckedDate = userProgress.getTodayDate();
-                        Date now = new Date(); // Trenutni datum
+                        Date now = new Date();
 
-                        // --- KLJUČNA LOGIKA ---
 
-                        // SCENARIJ 1: Datum u bazi NIJE današnji dan.
-                        // To znači da je ovo prva akcija danas. Resetiraj zastavicu i nastavi.
-                        // Provjera je li datum null ILI ako dan NIJE isti
                         if (lastCheckedDate == null || !isSameDay(lastCheckedDate, now)) {
 
-                            // OVO JE PRVA PORUKA DANAS!
+
                             int damage = 4;
 
-                            // Ažuriraj globalni HP bosa
+
                             transaction.update(missionRef, "currentBossHp", FieldValue.increment(-damage));
 
-                            // Ažuriraj ukupan damage korisnika
-                            transaction.update(userProgressRef, "totalDamage", FieldValue.increment(damage));
+                            transaction.update(userProgressRef, "totalDamage", FieldValue.increment(-damage));
 
 
-                            transaction.update(userProgressRef, "isMessageSent", true);
+                            transaction.update(userProgressRef, "messageSent", true);
                             transaction.update(userProgressRef, "todayDate", now);
 
                         } else if (isSameDay(lastCheckedDate, now) && !userProgress.isMessageSent()) {
@@ -381,7 +374,7 @@ public class AllianceMissionService {
                             int damage = 4;
 
                             transaction.update(missionRef, "currentBossHp", FieldValue.increment(-damage));
-                            transaction.update(userProgressRef, "totalDamage", FieldValue.increment(damage));
+                            transaction.update(userProgressRef, "totalDamage", FieldValue.increment(-damage));
 
 
                             transaction.update(userProgressRef, "messageSent", true);

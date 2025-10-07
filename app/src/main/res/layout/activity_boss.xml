@@ -17,7 +17,7 @@
             android:id="@+id/bossBattleGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="hpProgressBar,hpTextView,attackAttemptsImage,myAnimatedImage,attackButton,userInfo,avatarImageView,ppProgressBar,ppTextView,activatedEqScroll,rewardsP,potential_coins_layout"
+            app:constraint_referenced_ids="hpProgressBar,hpTextView,attackAttemptsImage,myAnimatedImage,attackButton,userInfo,avatarImageView,ppProgressBar,ppTextView,activatedEqScroll,rewardsP,potential_coins_layout,hit_chance_layout"
             android:visibility="gone"
             tools:visibility="visible" />
 

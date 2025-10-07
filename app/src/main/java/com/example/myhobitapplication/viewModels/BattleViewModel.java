@@ -224,8 +224,8 @@ public class BattleViewModel extends ViewModel {
             _userPP.postValue(_userPP.getValue());
             _remainingAttacks.postValue(_remainingAttacks.getValue());
             _potentialCoinReward.postValue( _potentialCoinReward.getValue());
-            //this.hitChance = 0;
-            this.hitChance = taskService.calculateChanceForAttack(profile);
+            this.hitChance = 1;
+            //this.hitChance = taskService.calculateChanceForAttack(profile);
             _hitChanceLiveData.setValue(this.hitChance);
 
         }).addOnFailureListener(e -> {

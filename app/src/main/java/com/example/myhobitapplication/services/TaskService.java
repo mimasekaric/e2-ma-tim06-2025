@@ -564,6 +564,7 @@ public void markRecurringTaskAsDone(int taskId, String userId) {
                     }).addOnFailureListener(v->{
                         Log.d("Firestore", "Level check nije uspjesan!");
                     });
+                    getSpecialMissionPoints(userId,task.getDifficultyQuota(),task.getImportanceQuota());
 
                 })
                 .addOnFailureListener(e -> {

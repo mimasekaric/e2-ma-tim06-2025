@@ -199,6 +199,11 @@ public class BossActivity extends AppCompatActivity {
                         profileViewModel.loadProfile(userUid);//dodala ovdje da bi mi se azurirao profil nakon zavrsene borbe
                         Toast.makeText(this, "U LOST!", Toast.LENGTH_LONG).show();
 
+                        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                            displayRewards();
+
+                        }, 1500);
+
                     }
 
                 }, 1000);

@@ -51,12 +51,12 @@ public class BossService {
     /// TODO: Mima baci oko drugo
     public Boss getPreviousBossForUser(String userId, int userLevel){
         Boss boss =  bossRepository.getPreviousBossForUser(userId,userLevel-2);
-        if (boss == null) {
-            Log.e("BossService", "Nema prethodnog bossa za usera: " + userId);
-            Boss b= new Boss(userLevel+2,10,userId,10,false,userLevel-2,200,0.2,false);
-            b.setId(userLevel+2);
-            return b;
-        }
+//        if (boss == null) {
+//            Log.e("BossService", "Nema prethodnog bossa za usera: " + userId);
+//            Boss b= new Boss(userLevel+2,10,userId,10,false,userLevel-2,200,0.2,false);
+//            b.setId(userLevel+2);
+//            return b;
+//        }
         return boss;
     }
     public long updateBoss(BossDTO bossDTO){
@@ -97,10 +97,13 @@ public class BossService {
     /// TODO: Mima baci oko opet ono prvo jer nemas trece
     public BossDTO getPrevioussBossForUser(String userId, int previousBossLevel){
         Boss boss = bossRepository.getPreviousBossForUser(userId, previousBossLevel);
-        if (boss == null) {
-            Log.e("BossService", "Nema prethodnog bossa za usera: " + userId);
-            boss= new Boss(previousBossLevel+2,10,userId,10,false,previousBossLevel,200,0.2,false);
-            return new BossDTO(boss);
+//        if (boss == null) {
+//            Log.e("BossService", "Nema prethodnog bossa za usera: " + userId);
+//            boss= new Boss(previousBossLevel+2,10,userId,10,false,previousBossLevel,200,0.2,false);
+//            return new BossDTO(boss);
+//        }
+        if(boss == null){
+            return null;
         }
         return new BossDTO(boss);
     }
