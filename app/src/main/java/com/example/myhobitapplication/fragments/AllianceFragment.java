@@ -40,6 +40,7 @@ public class AllianceFragment extends Fragment {
     }
     private FriendsViewModel friendsViewModel;
     private AllianceViewModel allianceViewModel;
+
     private FragmentAllianceBinding binding;
     private Alliance alliance;
     private List<User> members;
@@ -81,6 +82,22 @@ public class AllianceFragment extends Fragment {
             }
         });
 
+
+        binding.destroyButton.setOnClickListener(v->{
+            allianceViewModel.deleteAlliance(alliance.getId());
+
+            allianceViewModel.getDeleteAllianceResponse().observe(getViewLifecycleOwner(), message -> {
+                if (message != null && !message.isEmpty()) {
+                    Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+                    FriendsFragment friendsFragment = new FriendsFragment();
+                    requireActivity().getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, friendsFragment)
+                            .addToBackStack(null)
+                            .commit();
+                }
+            });
+        });
+
         binding.missionProgress.setOnClickListener(v->{
             Alliance currentAlliance = allianceViewModel.getUserAlliance().getValue();
             if (currentAlliance != null && currentAlliance.getId() != null) {
@@ -100,6 +117,31 @@ public class AllianceFragment extends Fragment {
         allianceViewModel.getUserAlliance().observe(getViewLifecycleOwner(),alliance1 -> {
             if(alliance1!=null) {
                 alliance = alliance1;
+
+                String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                if (!alliance.getLeaderId().equals(currentUserId)) {
+                    allianceViewModel.checkIfUserHasActiveAlliance(currentUserId)
+                            .addOnSuccessListener(hasActiveMission -> {
+                                if (hasActiveMission) {
+                                    binding.destroyButton.setVisibility(View.INVISIBLE);
+                                    binding.buttonn66.setVisibility(View.INVISIBLE);
+                                } else {
+
+                                    binding.destroyButton.setVisibility(View.INVISIBLE);
+                                    binding.buttonn66.setVisibility(View.INVISIBLE);
+                                }
+                            })
+                            .addOnFailureListener(e -> {
+                                binding.destroyButton.setVisibility(View.INVISIBLE);
+                                binding.buttonn66.setVisibility(View.INVISIBLE);
+                            });
+                }
+
+                /*if(!alliance.getLeaderId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                    binding.destroyButton.setVisibility(View.INVISIBLE);
+                    binding.buttonn66.setVisibility(View.INVISIBLE);
+                }*/
                 binding.allianceName.setText(alliance1.getName());
                 allianceViewModel.getUsersInAlliance();
                 allianceViewModel.checkUserActiveMissionStatus(FirebaseAuth.getInstance().getCurrentUser().getUid());
@@ -233,8 +275,8 @@ public class AllianceFragment extends Fragment {
                     String invitedUserUid = res.getUid();
                     String inviterName = FirebaseAuth.getInstance().getCurrentUser().getEmail();
                     String allianceName = alliance.getName();
-
-                    allianceViewModel.sendInvite(invitedUserUid, inviterName, allianceName);
+                    allianceViewModel.sendInviteNotification(invitedUserUid, inviterName,allianceName, FirebaseAuth.getInstance().getCurrentUser().getUid());
+                   // allianceViewModel.sendInvite(invitedUserUid, inviterName, allianceName);
                     allianceViewModel.getCreatedREsponse().observe(getViewLifecycleOwner(),response->{
                         Toast.makeText(requireContext(),response,Toast.LENGTH_SHORT).show();
                     });
