@@ -104,13 +104,13 @@ public class HomeActivity extends AppCompatActivity {
                /* allianceViewModel.respondToInvite(invitedUserUid, inviterUid, "accept");
                 allianceViewModel.addUserToAlliance(inviterUid, invitedUserUid);*/
 
-                allianceViewModel.getAlliance(inviterUid);
-                allianceViewModel.getUserAlliance().observe(this, alliance -> {
-                    if (alliance != null) {
-                        String targetAllianceId = alliance.getId();
-                        allianceViewModel.handleInviteResponse(invitedUserUid, inviterUid, targetAllianceId, this);
-                    }
-                });
+                //allianceViewModel.getAlliance(inviterUid);
+                //allianceViewModel.getUserAlliance().observe(this, alliance -> {
+                  //  if (alliance != null) {
+                    //    String targetAllianceId = alliance.getId();
+                        allianceViewModel.handleInviteResponse(invitedUserUid, inviterUid, this);
+                    //}
+                //});
             } else if ("decline".equals(actionId)) {
                 allianceViewModel.respondToInvite(invitedUserUid, inviterUid, "decline");
             }

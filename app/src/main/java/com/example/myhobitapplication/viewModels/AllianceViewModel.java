@@ -257,21 +257,16 @@ public class AllianceViewModel extends ViewModel {
             System.err.println("Error fetching alliance for owner: " + e.getMessage());
         });
     }
-    public void handleInviteResponse(String invitedUserUid, String inviterUid, String targetAllianceId, Context context) {
+    public void handleInviteResponse(String invitedUserUid, String inviterUid, Context context) {
         missionService.checkIfUserHasActiveAlliance(invitedUserUid)
                 .addOnSuccessListener(hasActive -> {
                     if (hasActive != null && hasActive) {
                         Toast.makeText(context, "You have another alliance with active mission. New alliance transfer not possible.", Toast.LENGTH_LONG).show();
                     } else {
-                        userService.updateAllianceId(invitedUserUid, targetAllianceId)
-                                .addOnSuccessListener(aVoid -> {
                                     addUserToAlliance(inviterUid, invitedUserUid);
                                     respondToInvite(invitedUserUid, inviterUid, "accept");
                                     createdResponse.setValue("You successfully joined the alliance!");
-                                })
-                                .addOnFailureListener(e -> {
-                                    createdResponse.setValue("Failed to join alliance: " + e.getMessage());
-                                });
+
                     }
                 })
                 .addOnFailureListener(e -> {

@@ -128,8 +128,8 @@ public class AllianceFragment extends Fragment {
                                     binding.buttonn66.setVisibility(View.INVISIBLE);
                                 } else {
 
-                                    binding.destroyButton.setVisibility(View.INVISIBLE);
-                                    binding.buttonn66.setVisibility(View.INVISIBLE);
+                                    binding.destroyButton.setVisibility(View.VISIBLE);
+                                    binding.buttonn66.setVisibility(View.VISIBLE);
                                 }
                             })
                             .addOnFailureListener(e -> {
@@ -275,8 +275,8 @@ public class AllianceFragment extends Fragment {
                     String invitedUserUid = res.getUid();
                     String inviterName = FirebaseAuth.getInstance().getCurrentUser().getEmail();
                     String allianceName = alliance.getName();
-                    allianceViewModel.sendInviteNotification(invitedUserUid, inviterName,allianceName, FirebaseAuth.getInstance().getCurrentUser().getUid());
-                   // allianceViewModel.sendInvite(invitedUserUid, inviterName, allianceName);
+                    //allianceViewModel.sendInviteNotification(invitedUserUid, inviterName,allianceName, FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    allianceViewModel.sendInvite(invitedUserUid, inviterName, allianceName);
                     allianceViewModel.getCreatedREsponse().observe(getViewLifecycleOwner(),response->{
                         Toast.makeText(requireContext(),response,Toast.LENGTH_SHORT).show();
                     });

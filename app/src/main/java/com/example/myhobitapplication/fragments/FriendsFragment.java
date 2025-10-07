@@ -85,6 +85,22 @@ public class FriendsFragment extends Fragment {
             startQrScanner();
         });
 
+        allianceViewModel.checkIfUserHasActiveAlliance(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .addOnSuccessListener(hasActiveMission -> {
+                    if (hasActiveMission) {
+                        binding.buttonn5.setVisibility(View.INVISIBLE);
+                        binding.buttonn5Text.setVisibility(View.INVISIBLE);
+                    } else {
+                        binding.buttonn5.setVisibility(View.VISIBLE);
+                        binding.buttonn5Text.setVisibility(View.VISIBLE);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    binding.buttonn5.setVisibility(View.INVISIBLE);
+                    binding.buttonn5Text.setVisibility(View.INVISIBLE);
+                });
+
+
         binding.buttonn5.setOnClickListener(v -> {
             showAllianceDialog();
         });
