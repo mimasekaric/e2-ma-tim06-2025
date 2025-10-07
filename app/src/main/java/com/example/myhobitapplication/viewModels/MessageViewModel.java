@@ -103,13 +103,13 @@ public class MessageViewModel extends ViewModel {
                 JSONArray filters = new JSONArray();
                 filters.put(new JSONObject().put("field", "tag").put("key", "alliance_id").put("relation", "=").put("value", allianceId));
                 /// Ako ne radi, skloni narednih 7 linija koda ali ce onda slati notifikaciju i senderu
-              /*  filters.put(new JSONObject().put("operator", "AND"));
+               filters.put(new JSONObject().put("operator", "AND"));
                 filters.put(new JSONObject()
                         .put("field", "tag")
                         .put("key", "user_id")
                         .put("relation", "!=")
                         .put("value", FirebaseAuth.getInstance().getCurrentUser().getUid())
-                );*/
+                );
                 body.put("filters", filters);
 
                 body.put("headings", new JSONObject().put("en", "New Message"));

@@ -152,6 +152,7 @@
                 android:scaleType="fitXY" />
 
             <TextView
+                android:id="@+id/destroyButton"
                 android:layout_width="match_parent"
                 android:foregroundGravity="center_horizontal"
                 android:layout_marginLeft="88dp"

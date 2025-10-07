@@ -138,6 +138,7 @@
                 android:scaleType="fitXY" />
 
             <TextView
+                android:id="@+id/buttonn5Text"
                 android:layout_width="match_parent"
                 android:foregroundGravity="center_horizontal"
                 android:layout_marginLeft="88dp"
@@ -166,6 +167,7 @@
                 android:scaleType="fitXY" />
 
             <TextView
+                android:id="@+id/buttonn6Text"
                 android:layout_width="match_parent"
                 android:foregroundGravity="center_horizontal"
                 android:layout_marginLeft="88dp"

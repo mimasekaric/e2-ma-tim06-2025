@@ -225,7 +225,13 @@ public class TaskRepository {
                     task.setUserUid(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_USER_ID)));
 
                     String isAwarded = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IS_AWARDED));
-                    task.setAwarded(Boolean.parseBoolean(isAwarded));
+
+
+                    if(isAwarded.equals("1")){
+                        task.setAwarded(true);
+                    }else{
+                        task.setAwarded(false);
+                    }
 
                     String difficultyType = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DIFFICULTY_TYPE));
                     task.setDifficultyQuota(TaskQuote.valueOf(difficultyType));
@@ -851,7 +857,13 @@ public class TaskRepository {
                     task.setUserUid(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_USER_ID)));
 
                     String isAwarded = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_IS_AWARDED));
-                    task.setAwarded(Boolean.parseBoolean(isAwarded));
+
+
+                    if (isAwarded.equals("1")){
+                        task.setAwarded(true);
+                    }else{
+                        task.setAwarded(false);
+                    }
 
                     String difficultyType = cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_DIFFICULTY_TYPE));
                     task.setDifficultyQuota(TaskQuote.valueOf(difficultyType));

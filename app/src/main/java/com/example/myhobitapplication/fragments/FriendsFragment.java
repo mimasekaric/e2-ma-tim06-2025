@@ -66,7 +66,7 @@ public class FriendsFragment extends Fragment {
 
         mViewModel = new FriendsViewModel();
          allianceViewModel = new ViewModelProvider(this).get(AllianceViewModel.class);
-
+        allianceViewModel.getAlliance(FirebaseAuth.getInstance().getCurrentUser().getUid());
         mViewModel.loadFriends(FirebaseAuth.getInstance().getUid());
         mViewModel.getFriends().observe(getViewLifecycleOwner(), list -> {
             mViewModel.loadAllUsers();
@@ -84,8 +84,35 @@ public class FriendsFragment extends Fragment {
         binding.buttonn3.setOnClickListener(v -> {
             startQrScanner();
         });
+
+        allianceViewModel.checkIfUserHasActiveAlliance(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .addOnSuccessListener(hasActiveMission -> {
+                    if (hasActiveMission) {
+                        binding.buttonn5.setVisibility(View.INVISIBLE);
+                        binding.buttonn5Text.setVisibility(View.INVISIBLE);
+                    } else {
+                        binding.buttonn5.setVisibility(View.VISIBLE);
+                        binding.buttonn5Text.setVisibility(View.VISIBLE);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    binding.buttonn5.setVisibility(View.INVISIBLE);
+                    binding.buttonn5Text.setVisibility(View.INVISIBLE);
+                });
+
+
         binding.buttonn5.setOnClickListener(v -> {
             showAllianceDialog();
+        });
+
+        allianceViewModel.getUserAlliance().observe(getViewLifecycleOwner(),al->{
+            if(al==null){
+                binding.buttonn6.setVisibility(View.INVISIBLE);
+                binding.buttonn6Text.setVisibility(View.INVISIBLE);
+            }else{
+                binding.buttonn6.setVisibility(View.VISIBLE);
+                binding.buttonn6Text.setVisibility(View.VISIBLE);
+            }
         });
         binding.buttonn6.setOnClickListener(v->{
             AllianceFragment allianceFragment = new AllianceFragment();
@@ -112,7 +139,20 @@ public class FriendsFragment extends Fragment {
                 Alliance alliance= new Alliance(editName.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getUid(),false,null,null);
                 allianceViewModel.createAlliance(alliance);
                 dialog.hide();
-                Toast.makeText(requireContext(),"Alliance "+editName.getText().toString()+" made succesfully", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(requireContext(),"Alliance "+editName.getText().toString()+" made succesfully", Toast.LENGTH_SHORT).show();
+                allianceViewModel.getCreatedAlliance().observe(getViewLifecycleOwner(), alliancee -> {
+                    if (alliancee != null) {
+                        Toast.makeText(requireContext(), "Alliance created: " + alliancee.getName(), Toast.LENGTH_SHORT).show();
+                        AllianceFragment allianceFragment = new AllianceFragment();
+                        requireActivity().getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.fragment_container, allianceFragment)
+                                .addToBackStack(null)
+                                .commit();
+                    }
+                });
+
+
             });
             dialog.show();
 
@@ -200,7 +240,7 @@ public class FriendsFragment extends Fragment {
         });
 
         mViewModel.getOwner().observe(getViewLifecycleOwner(),owner->{
-            if(owner.getAllianceId().equals("")){
+            if( owner == null || owner.getAllianceId()==null || owner.getAllianceId().equals("")){
                 binding.button6Layout.setVisibility(View.INVISIBLE);
                 binding.buttonn6.setVisibility(View.INVISIBLE);
             }else{

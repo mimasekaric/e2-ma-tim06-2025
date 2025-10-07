@@ -84,6 +84,22 @@ public abstract class Task {
         this.remainingTime = remainingTime;
     }
 
+    public Task(Integer id, String name, String description, Integer difficulty, Integer importance, String categoryColour, LocalTime executionTime, LocalDate finishedDate, LocalDate creationDate, LocalDate startDate, String userUid, LocalDateTime finishDate, Duration remainingTime, boolean isAwarded) {
+        Id = id;
+        Name = name;
+        Description = description;
+        Difficulty = difficulty;
+        Importance = importance;
+        this.isAwarded= isAwarded;
+        CategoryColour = categoryColour;
+        this.executionTime = executionTime;
+        this.finishedDate = finishedDate;
+        this.creationDate = creationDate;
+        this.startDate = startDate;
+        this.userUid = userUid;
+        this.finishDate = finishDate;
+        this.remainingTime = remainingTime;
+    }
 
 
     public Integer getId() {

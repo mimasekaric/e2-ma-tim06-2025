@@ -101,8 +101,16 @@ public class HomeActivity extends AppCompatActivity {
             String invitedUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
             if ("accept".equals(actionId)) {
-                allianceViewModel.respondToInvite(invitedUserUid, inviterUid, "accept");
-                allianceViewModel.addUserToAlliance(inviterUid, invitedUserUid);
+               /* allianceViewModel.respondToInvite(invitedUserUid, inviterUid, "accept");
+                allianceViewModel.addUserToAlliance(inviterUid, invitedUserUid);*/
+
+                //allianceViewModel.getAlliance(inviterUid);
+                //allianceViewModel.getUserAlliance().observe(this, alliance -> {
+                  //  if (alliance != null) {
+                    //    String targetAllianceId = alliance.getId();
+                        allianceViewModel.handleInviteResponse(invitedUserUid, inviterUid, this);
+                    //}
+                //});
             } else if ("decline".equals(actionId)) {
                 allianceViewModel.respondToInvite(invitedUserUid, inviterUid, "decline");
             }
