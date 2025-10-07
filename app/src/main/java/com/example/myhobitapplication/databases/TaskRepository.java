@@ -1439,4 +1439,45 @@ public class TaskRepository {
         return TaskQuote.NO_QUOTA;
     }
 
+
+    public List<LocalDate> getAllActivityDates(String userUid) {
+        List<LocalDate> dates = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = null;
+
+        try {
+            String query = "SELECT " + AppDataBaseHelper.COLUMN_CREATION_DATE + ", " +
+                    AppDataBaseHelper.COLUMN_FINISHED_DATE +
+                    " FROM " + AppDataBaseHelper.TABLE_RECURRING_TASKS +
+                    " WHERE " + AppDataBaseHelper.COLUMN_USER_ID + " = ?" +
+                    " UNION ALL " +
+                    "SELECT " + AppDataBaseHelper.COLUMN_CREATION_DATE + ", " +
+                    AppDataBaseHelper.COLUMN_FINISHED_DATE +
+                    " FROM " + AppDataBaseHelper.TABLE_ONE_TIME_TASKS +
+                    " WHERE " + AppDataBaseHelper.COLUMN_USER_ID + " = ?";
+
+            cursor = db.rawQuery(query, new String[]{userUid, userUid});
+
+            if (cursor.moveToFirst()) {
+                do {
+                    String creationDateStr = cursor.getString(0);
+                    String finishedDateStr = cursor.getString(1);
+
+                    if (creationDateStr != null && !creationDateStr.isEmpty()) {
+                        dates.add(LocalDate.parse(creationDateStr));
+                    }
+                    if (finishedDateStr != null && !finishedDateStr.isEmpty()) {
+                        dates.add(LocalDate.parse(finishedDateStr));
+                    }
+
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            if (cursor != null) cursor.close();
+            db.close();
+        }
+
+        return dates;
+    }
+
 }

@@ -67,6 +67,8 @@ dependencies {
     //za http
     implementation 'com.squareup.okhttp3:okhttp:4.11.0'
 
+    //za charts
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
 
     // Add the dependency for the Firebase Authentication library

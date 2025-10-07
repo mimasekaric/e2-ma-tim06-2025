@@ -106,6 +106,30 @@ public class CategoryRepository {
         return category;
     }
 
+    public Category getCategoryByColour(String colour) {
+        Category category = null;
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query(
+                AppDataBaseHelper.TABLE_CATEGORIES,
+                null,
+                AppDataBaseHelper.COLUMN_COLOUR + "=?",
+                new String[]{colour},
+                null, null, null
+        );
+
+        if (cursor != null && cursor.moveToFirst()) {
+
+            category = new Category();
+
+            category.setId(cursor.getInt(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_CATEGORY_ID)));
+            category.setName(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_NAME)));
+            category.setColour(cursor.getString(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_COLOUR)));
+            cursor.close();
+        }
+        db.close();
+        return category;
+    }
+
     public long updateCategory(Category category) {
 
         database = dbHelper.getWritableDatabase();

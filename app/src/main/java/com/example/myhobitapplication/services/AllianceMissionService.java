@@ -16,6 +16,7 @@ import com.example.myhobitapplication.models.AllianceMission;
 import com.example.myhobitapplication.models.User;
 import com.example.myhobitapplication.models.UserMission;
 import com.example.myhobitapplication.workers.MissionCompletionWorker;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -44,6 +45,54 @@ public class AllianceMissionService {
     public AllianceMissionService(ProfileService profileService) {
         this.profileService = profileService;
         this.missionRepository = new AllianceMissionRepository();
+    }
+
+    //int[0] su zapoceti a [1]zavrseni
+    public Task<int[]> getStartedAndCompletedMissions(String userId) {
+        TaskCompletionSource<int[]> tcs = new TaskCompletionSource<>();
+
+        profileService.getUserData(userId)
+                .onSuccessTask(documentRef -> documentRef.get())
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot == null || !documentSnapshot.exists()) {
+                        tcs.setResult(new int[]{0, 0});
+                        return;
+                    }
+
+                    User user = documentSnapshot.toObject(User.class);
+                    if (user == null || user.getAllianceId() == null) {
+                        tcs.setResult(new int[]{0, 0});
+                        return;
+                    }
+
+                    String allianceId = user.getAllianceId();
+
+                    FirebaseFirestore.getInstance()
+                            .collection("allianceMissions")
+                            .whereEqualTo("allianceId", allianceId)
+                            .get()
+                            .addOnSuccessListener(querySnapshot -> {
+                                int started = 0;
+                                int completed = 0;
+
+                                if (querySnapshot != null) {
+                                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                                        String status = doc.getString("status");
+                                        if (status == null) continue;
+
+                                        if (status.equalsIgnoreCase("ACTIVE")) started++;
+                                        if (status.equalsIgnoreCase("COMPLETED")) completed++;
+                                    }
+                                }
+
+                                tcs.setResult(new int[]{started, completed});
+                            })
+                            .addOnFailureListener(tcs::setException);
+
+                })
+                .addOnFailureListener(tcs::setException);
+
+        return tcs.getTask();
     }
 
     public enum MissionEventType {

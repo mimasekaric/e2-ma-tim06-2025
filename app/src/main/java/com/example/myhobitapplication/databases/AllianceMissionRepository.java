@@ -24,6 +24,7 @@ public class AllianceMissionRepository {
         db = FirebaseFirestore.getInstance();
         allianceMissionsRef = db.collection("allianceMissions");
     }
+
     public Task<QuerySnapshot> getActiveMissionForAlliance(String allianceId) {
         return allianceMissionsRef
                 .whereEqualTo("allianceId", allianceId)

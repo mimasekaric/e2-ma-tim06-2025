@@ -1,0 +1,106 @@
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/baccpng"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Broj dana aktivnog korišćenja -->
+        <TextView
+            android:id="@+id/activeDays"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Active app usage streak: 34 days"
+            android:textColor="@color/white"
+            android:fontFamily="@font/educursivebold"
+            android:textSize="20sp"
+            android:layout_margin="16dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- Najduži niz -->
+        <TextView
+            android:id="@+id/longestStreak"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Longest streak of success: 12 days"
+            android:textColor="@color/white"
+            android:fontFamily="@font/educursivebold"
+            android:textSize="20sp"
+            android:layout_marginStart="16dp"
+            app:layout_constraintTop_toBottomOf="@id/activeDays"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- Donut chart -->
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/tasksPieChart"
+            android:layout_width="0dp"
+            android:layout_height="250dp"
+            android:layout_margin="16dp"
+            app:layout_constraintTop_toBottomOf="@id/longestStreak"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Tekst za ukupan broj zadataka -->
+        <TextView
+            android:id="@+id/totalTasks"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total tasks created: 28"
+            android:textColor="@color/white"
+            android:fontFamily="@font/educursivebold"
+            android:textSize="18sp"
+            app:layout_constraintTop_toBottomOf="@id/tasksPieChart"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_margin="16dp"/>
+
+        <!-- Bar chart: zavrseni zadaci po kategoriji -->
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/categoryBarChart"
+            android:layout_width="0dp"
+            android:layout_height="250dp"
+            android:layout_margin="16dp"
+            app:layout_constraintTop_toBottomOf="@id/totalTasks"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Line chart: prosečna ocena težine -->
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/difficultyLineChart"
+            android:layout_width="0dp"
+            android:layout_height="250dp"
+            android:layout_margin="16dp"
+            app:layout_constraintTop_toBottomOf="@id/categoryBarChart"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Line chart: XP poslednjih 7 dana -->
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/xpLineChart"
+            android:layout_width="0dp"
+            android:layout_height="250dp"
+            android:layout_margin="16dp"
+            app:layout_constraintTop_toBottomOf="@id/difficultyLineChart"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Specijalne misije -->
+        <TextView
+            android:id="@+id/specialMissions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Special missions: 3 started / 2 completed"
+            android:textColor="@color/white"
+            android:fontFamily="@font/educursivebold"
+            android:textSize="18sp"
+            android:layout_margin="16dp"
+            app:layout_constraintTop_toBottomOf="@id/xpLineChart"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
