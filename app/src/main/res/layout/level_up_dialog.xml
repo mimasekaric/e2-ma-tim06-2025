@@ -44,6 +44,16 @@
             android:textColor="@android:color/white"
             android:gravity="center"
             android:layout_marginBottom="24dp"/>
+        <TextView
+            android:id="@+id/textViewLevelMessageBoss"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="You can now fight with boss!"
+            android:textSize="20sp"
+            android:textColor="@android:color/white"
+            android:gravity="center"
+            android:layout_marginBottom="24dp"/>
+
 
         <Button
             android:id="@+id/buttonOK"

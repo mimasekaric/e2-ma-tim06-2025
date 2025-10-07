@@ -12,6 +12,7 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -157,7 +158,7 @@ public class ProfileRepository {
         return tcs.getTask();
     }
 
-            public Task<Void> updateLevel(String uid, int newLevel, int newXpRequired, int newPP, String newTitle) {
+            public Task<Void> updateLevel(String uid, int newLevel, int newXpRequired, int newPP, String newTitle, Date currentLevelDate) {
                 TaskCompletionSource<Void> tcs = new TaskCompletionSource<>();
 
         profileCollection.whereEqualTo("userUid", uid).limit(1).get()
@@ -172,6 +173,8 @@ public class ProfileRepository {
                                 updates.put("xpRequired", newXpRequired);
                                 updates.put("pp", newPP);
                                 updates.put("title", newTitle);
+                                updates.put("previousLevelDate", currentLevelDate);
+                                updates.put("currentLevelDate", new Date());
 
                         document.getReference()
                                 .update(updates)
