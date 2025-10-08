@@ -193,27 +193,20 @@ public class RecurringTaskDetailsViewModel extends ViewModel {
         }
     }
 
-    // --- NOVA METODA ZA BRISANJE ---
+
     public void deleteRecurringTask() {
-        // Uzmi ID iz DTO-a koji je već učitan u ViewModel-u.
-        // Ovo je bolje nego da Fragment šalje ID, jer ViewModel je vlasnik stanja.
+
         if (taskDetails.getValue() != null) {
 
-            // Pozovi servis da obavi stvarni posao brisanja u bazi.
-            // Pretpostavka je da se metoda u servisu zove deleteFutureRecurringTasks.
+
             taskService.deleteRecurringTask(taskDetails.getValue());
 
-            // SADA POŠALJI SIGNAL!
-            // Obavesti sve "posmatrače" (tvoj fragment) da je posao završen.
+
             _taskDeletedEvent.setValue(true);
         }
     }
 
-    /**
-     * Opciono, ali dobra praksa: Metoda za resetovanje event-a da se ne bi
-     * ponovo aktivirao npr. nakon rotacije ekrana.
-     */
     public void onTaskDeletedEventHandled() {
-        _taskDeletedEvent.setValue(null); // Ili false, zavisno od logike
+        _taskDeletedEvent.setValue(null);
     }
 }

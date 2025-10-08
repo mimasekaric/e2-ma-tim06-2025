@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.myhobitapplication.enums.RecurrenceUnit;
+import com.example.myhobitapplication.models.OneTimeTask;
 import com.example.myhobitapplication.models.RecurringTask;
 import com.example.myhobitapplication.models.Task;
 import com.example.myhobitapplication.services.TaskService;
@@ -16,6 +17,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -69,7 +71,28 @@ public class TaskCalendarViewModel extends ViewModel {
 
         return currentTasks.stream()
                 .filter(task -> date.equals(task.getStartDate()))
+                .sorted(Comparator.comparing(Task::getExecutionTime))
                 .collect(Collectors.toList());
+    }
+    public boolean hasTasksForDate(LocalDate date) {
+
+        List<Task> allTasks = _scheduledTasksLiveData.getValue();
+
+        if (allTasks == null || allTasks.isEmpty() || date == null) {
+            return false;
+        }
+
+        return allTasks.stream().anyMatch(task -> {
+
+            if (task instanceof OneTimeTask) {
+                return date.isEqual(task.getStartDate());
+            }
+
+            if (task instanceof RecurringTask) {
+                return date.isEqual(task.getStartDate());
+            }
+            return false;
+        });
     }
 
 }

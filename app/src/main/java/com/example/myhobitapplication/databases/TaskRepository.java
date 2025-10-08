@@ -1554,4 +1554,35 @@ public class TaskRepository {
         return count;
     }
 
+    public boolean isCategoryInUse(String categoryColour) {
+
+        if (categoryColour == null || categoryColour.isEmpty()) {
+            return false;
+        }
+
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+
+        String query = "SELECT " +
+                "  (SELECT COUNT(*) FROM " + AppDataBaseHelper.TABLE_ONE_TIME_TASKS +
+                "   WHERE " + AppDataBaseHelper.COLUMN_CTG_ID + " = ?) " +
+                " + " +
+                "  (SELECT COUNT(*) FROM " + AppDataBaseHelper.TABLE_RECURRING_TASKS +
+                "   WHERE " + AppDataBaseHelper.COLUMN_CTG_ID + " = ?)";
+
+        String[] selectionArgs = { categoryColour, categoryColour };
+
+        Cursor cursor = db.rawQuery(query, selectionArgs);
+
+        int count = 0;
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(0);
+            }
+            cursor.close();
+        }
+        db.close();
+        return count > 0;
+    }
+
 }

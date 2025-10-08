@@ -79,8 +79,16 @@ public class CategoryEditViewModel extends ViewModel {
 
     public void deleteCategory() {
         CategoryDTO categoryDTO = _categoryDetails.getValue();
-        if(categoryDTO!=null){
-            categoryService.deleteCategory(categoryDTO);
+        if (categoryDTO != null) {
+            try {
+
+                categoryService.deleteCategory(categoryDTO);
+                _categoryDeletedEvent.setValue(true);
+
+            } catch (ValidationException e) {
+
+                _submissionError.setValue(e.getMessage());
+            }
         }
     }
 

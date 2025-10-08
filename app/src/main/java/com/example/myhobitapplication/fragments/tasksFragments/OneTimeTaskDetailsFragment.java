@@ -156,6 +156,7 @@ public class OneTimeTaskDetailsFragment extends Fragment {
                 binding.startDateTextView.setText(task.getStartDate().toString());
                 binding.timeTextView.setText(task.getExecutionTime().toString());
                 binding.oStatus.setText(String.valueOf(task.getStatus()));
+                binding.endDateTextView.setText(task.getFinishDate().toString());
 
                 try {
                     int color = Color.parseColor(task.getCategoryColour());
@@ -172,6 +173,7 @@ public class OneTimeTaskDetailsFragment extends Fragment {
                 if(isTaskInThePast){
                     binding.editTaskButton.setVisibility(View.GONE);
                     binding.deleteTaskButton.setVisibility(View.GONE);
+                    binding.btnOtaskUnpause.setVisibility(View.GONE);
                 }
 
                 if (status == OneTimeTaskStatus.COMPLETED ||
@@ -193,6 +195,7 @@ public class OneTimeTaskDetailsFragment extends Fragment {
                     binding.btnOtaskDone.setVisibility(View.VISIBLE);
                     binding.btnOtaskCancel.setVisibility(View.VISIBLE);
                     binding.btnOtaskPause.setVisibility(View.VISIBLE);
+                    binding.btnOtaskUnpause.setVisibility(View.GONE);
                 }
                 else if(!isTaskInThePast && status == OneTimeTaskStatus.PAUSED) {
                     binding.editTaskButton.setVisibility(View.GONE);
