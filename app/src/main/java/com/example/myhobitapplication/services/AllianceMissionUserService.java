@@ -283,8 +283,8 @@ public class AllianceMissionUserService {
 
                                     return missionRef.get().onSuccessTask(updatedMissionSnapshot -> {
                                         AllianceMission finalMission = updatedMissionSnapshot.toObject(AllianceMission.class);
-                                        //finalMission.getCurrentBossHp() <= 0
-                                        if (true) {
+
+                                        if (finalMission.getCurrentBossHp() <= 0) {
                                             Log.d("MissionCompletion", "Finalni HP bosa je <= 0. Misija uspješna.");
                                             return grantRewards(finalMission, members);
                                         } else {

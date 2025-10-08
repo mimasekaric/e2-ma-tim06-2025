@@ -540,16 +540,16 @@ public void markRecurringTaskAsDone(int taskId, String userId) {
 
     boolean shouldAwardDifficultyXp = completedCountDiff < limitDifficulty;
     boolean shouldAwardImportanceXp = completedCountImp < limitImportance;
-//    if(!shouldAwardDifficultyXp){
-//        task.setDifficulty(0);
-//    }
-//    if(!shouldAwardImportanceXp){
-//        task.setImportance(0);
-//    }
-//    boolean shouldAward = shouldAwardDifficultyXp || shouldAwardImportanceXp;
+    if(!shouldAwardDifficultyXp){
+        task.setDifficulty(0);
+    }
+    if(!shouldAwardImportanceXp){
+        task.setImportance(0);
+    }
+    boolean shouldAward = shouldAwardDifficultyXp || shouldAwardImportanceXp;
     int xpGained = 0;
     /// TODO: ne treba true pred odbranu ovdje i u sledecoj metodi vec shouldAwardXp
-    if (true) {
+    if (shouldAward) {
         task.setAwarded(true);
         xpGained = task.getDifficulty() + task.getImportance();
         profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
@@ -677,16 +677,16 @@ public void markOneTimeTaskAsDone(int taskId, String userId) {
 
     boolean shouldAwardDifficultyXp = completedCountDiff < limitDifficulty;
     boolean shouldAwardImportanceXp = completedCountImp < limitImportance;
-//    if(!shouldAwardDifficultyXp){
-//        oneTimeTask.setDifficulty(0);
-//    }
-//    if(!shouldAwardImportanceXp){
-//        oneTimeTask.setImportance(0);
-//    }
-//    boolean shouldAward = shouldAwardDifficultyXp || shouldAwardImportanceXp;
+    if(!shouldAwardDifficultyXp){
+        oneTimeTask.setDifficulty(0);
+    }
+    if(!shouldAwardImportanceXp){
+        oneTimeTask.setImportance(0);
+    }
+    boolean shouldAward = shouldAwardDifficultyXp || shouldAwardImportanceXp;
     int xpGained = 0;
 
-    if (true) {
+    if (shouldAward) {
         oneTimeTask.setAwarded(true);
         xpGained = oneTimeTask.getDifficulty() + oneTimeTask.getImportance();
         profileService.incrementProfileFieldValue(userId, "xp", xpGained) .addOnSuccessListener(aVoid -> {
