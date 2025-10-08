@@ -10,34 +10,16 @@
             android:icon="@mipmap/ic_launcher_xp"
             android:title="Profile" />
         <item
-            android:id="@+id/nav_logout"
+            android:id="@+id/nav_dashboard"
             android:icon="@mipmap/ic_launcher_xp"
-            android:title="LOGOUT" />
+            android:title="DASHBOARD" />
 
-        <item
-            android:id="@+id/nav_tasks"
-            android:icon="@drawable/edit"
-            android:title="Tasks" />
-
-        <item
-            android:id="@+id/nav_shop"
-            android:icon="@mipmap/ic_launcher_coins"
-            android:title="Shop" />
 
         <item
             android:id="@+id/nav_activate"
             android:icon="@mipmap/ic_launcher_potion20"
             android:title="Activate equipment" />
 
-
-        <item
-            android:id="@+id/nav_boss_battle"
-            android:icon="@drawable/idle_dragon_boss_frame_1"
-            android:title="@string/boss" />
-        <item
-            android:id="@+id/nav_category"
-            android:icon="@mipmap/ic_launcher_xp"
-            android:title="@string/category" />
 
         <item
             android:id="@+id/nav_friends"
@@ -48,6 +30,10 @@
             android:id="@+id/nav_statistics"
             android:icon="@mipmap/ic_launcher_witch"
             android:title="Statistics" />
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@mipmap/ic_launcher_xp"
+            android:title="LOGOUT" />
 
     </group>
 

@@ -267,7 +267,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="RELAX FOR NOW, TRAVELER..."
+                android:text="RELAX FOR NOW, TRAVELLER..."
                 android:textColor="#DA9100"
                 android:textSize="22sp"
                 android:fontFamily="@font/educursivebold"/>
