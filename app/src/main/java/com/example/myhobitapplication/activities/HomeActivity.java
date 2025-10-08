@@ -99,16 +99,7 @@ public class HomeActivity extends AppCompatActivity {
             String invitedUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
             if ("accept".equals(actionId)) {
-               /* allianceViewModel.respondToInvite(invitedUserUid, inviterUid, "accept");
-                allianceViewModel.addUserToAlliance(inviterUid, invitedUserUid);*/
-
-                //allianceViewModel.getAlliance(inviterUid);
-                //allianceViewModel.getUserAlliance().observe(this, alliance -> {
-                //  if (alliance != null) {
-                //    String targetAllianceId = alliance.getId();
                 allianceViewModel.handleInviteResponse(invitedUserUid, inviterUid, this);
-                //}
-                //});
             } else if ("decline".equals(actionId)) {
                 allianceViewModel.respondToInvite(invitedUserUid, inviterUid, "decline");
             }
@@ -169,24 +160,17 @@ public class HomeActivity extends AppCompatActivity {
                 int id = item.getItemId();
 
                 if (id == R.id.nav_profile) {
-                    /*Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
-                    intent.putExtra("USER_ID",userId);
-                    startActivity(intent);*/
-
                     ProfileFragment profileFragment = new ProfileFragment();
-
 
                     Bundle args = new Bundle();
                     args.putString("USER_ID", userId);
                     profileFragment.setArguments(args);
-
 
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_container, profileFragment)
                             .addToBackStack(null)
                             .commit();
                 } else if (id == R.id.nav_logout) {
-                    //Toast.makeText(HomeActivity.this, "Logging out...", Toast.LENGTH_SHORT).show();
                     viewModel.logout();
                     Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
                     startActivity(intent);
