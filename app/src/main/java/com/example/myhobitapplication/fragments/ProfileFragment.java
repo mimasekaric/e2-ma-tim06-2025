@@ -50,7 +50,7 @@ public class ProfileFragment extends Fragment {
 
     private LoginViewModel loginViewModel;
     private ProfileViewModel viewModel;
-
+    private TextView textViewBadges;
     private UserEquipmentViewModel userEquipmentViewModel;
     private ActivityProfileBinding binding;
     LottieAnimationView animationView;
@@ -227,6 +227,9 @@ public class ProfileFragment extends Fragment {
 
 
 
+
+
+
     }
 
     private Bitmap generateQRCode(String content) throws WriterException {
@@ -330,6 +333,12 @@ public class ProfileFragment extends Fragment {
             }
 
             badgesLayout.addView(badgeView);
+        }
+        if (profile.getbadges() != null) {
+            binding.putbadges.setText(String.valueOf(profile.getbadges().size()));
+        } else {
+
+            binding.putbadges.setText("0");
         }
     }
 

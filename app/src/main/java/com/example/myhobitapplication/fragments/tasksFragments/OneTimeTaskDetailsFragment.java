@@ -173,7 +173,7 @@ public class OneTimeTaskDetailsFragment extends Fragment {
                 if(isTaskInThePast){
                     binding.editTaskButton.setVisibility(View.GONE);
                     binding.deleteTaskButton.setVisibility(View.GONE);
-                    binding.btnOtaskUnpause.setVisibility(View.GONE);
+
                 }
 
                 if (status == OneTimeTaskStatus.COMPLETED ||
@@ -184,8 +184,6 @@ public class OneTimeTaskDetailsFragment extends Fragment {
                     binding.deleteTaskButton.setVisibility(View.GONE);
                     binding.btnOtaskDone.setVisibility(View.GONE);
                     binding.btnOtaskCancel.setVisibility(View.GONE);
-                    binding.btnOtaskPause.setVisibility(View.GONE);
-                    binding.btnOtaskUnpause.setVisibility(View.GONE);
 
 
                 } else if(!isTaskInThePast && status == OneTimeTaskStatus.ACTIVE ||
@@ -194,16 +192,13 @@ public class OneTimeTaskDetailsFragment extends Fragment {
                     binding.deleteTaskButton.setVisibility(View.VISIBLE);
                     binding.btnOtaskDone.setVisibility(View.VISIBLE);
                     binding.btnOtaskCancel.setVisibility(View.VISIBLE);
-                    binding.btnOtaskPause.setVisibility(View.VISIBLE);
-                    binding.btnOtaskUnpause.setVisibility(View.GONE);
                 }
                 else if(!isTaskInThePast && status == OneTimeTaskStatus.PAUSED) {
                     binding.editTaskButton.setVisibility(View.GONE);
                     binding.deleteTaskButton.setVisibility(View.GONE);
                     binding.btnOtaskDone.setVisibility(View.GONE);
                     binding.btnOtaskCancel.setVisibility(View.GONE);
-                    binding.btnOtaskPause.setVisibility(View.GONE);
-                    binding.btnOtaskUnpause.setVisibility(View.VISIBLE);
+
                 }
             }
         });
@@ -228,20 +223,6 @@ public class OneTimeTaskDetailsFragment extends Fragment {
             taskDetailsViewModel.markTaskAsCanceled();
         });
 
-        binding.btnOtaskPause.setOnClickListener(v -> {
-
-            taskDetailsViewModel.markTaskAsPaused();
-        });
-
-        binding.btnOtaskUnpause.setOnClickListener(v -> {
-
-            taskDetailsViewModel.markTaskAsUnPaused();
-        });
-
-        binding.btnOtaskPause.setOnClickListener(v -> {
-
-            taskDetailsViewModel.markTaskAsPaused();
-        });
 
         binding.deleteTaskButton.setOnClickListener(v -> {
             AlertDialog.Builder dialog = new AlertDialog.Builder(requireContext(), R.style.AlertDialogWhiteText);

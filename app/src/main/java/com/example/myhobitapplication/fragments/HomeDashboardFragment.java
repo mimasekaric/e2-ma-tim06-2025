@@ -56,7 +56,7 @@ public class HomeDashboardFragment extends Fragment {
 
         String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         profileViewModel.loadProfile(currentUserId);
-        profileViewModel.getProfile().observe(requireActivity(), loadedProfile -> {
+        profileViewModel.getProfile().observe(getViewLifecycleOwner(), loadedProfile -> {
             if (loadedProfile != null && loadedProfile.getuserUid()!=null) {
                 this.profile = loadedProfile;
                 if (profile != null) {
