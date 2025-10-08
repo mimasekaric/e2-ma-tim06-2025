@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 
 /// /vidi mozda ako vec ima aktiviran clothes istog tipa al da nije counterfight 0 i effect 0 ... p=mozda i tu treba sabirati ucinak?
@@ -248,9 +249,40 @@ public class UserEquipmentService {
         return false;
     }
 
+    public boolean upgradeEquipment(Profile profile, UserEquipmentDTO  ueq){
+       Equipment equipment = ueq.getEquipment();
+        UserEquipment ue =  repository.getById(ueq.getUserEquipmentId());
+        double price =countPrice(profile, equipment);
+        if(profile.getcoins() >= price) {
+            ue.setEffect(ue.getEffect() + 0.1);
+            repository.updateUserEquipment(ue);
+            int newCoinsValue = (int) Math.round(profile.getcoins() - price);
+            profileService.updateCoins(profile.getuserUid(), newCoinsValue);
+            return true;
+        }
+
+        return false;
+    }
+
+    public UserEquipment getById(long id){
+        return repository.getById(id);
+    }
     public void gainEquipment(String userId, Equipment equipment){
         if(equipment!=null){
-            save(userId, equipment);
+            if(equipment.getequipmentType().equals(EquipmentTypes.WEAPON)){
+                Weapon w = (Weapon) equipment;
+
+                Optional<UserEquipment> existingWeapon = getAllbyUserId(userId).stream()
+                        .filter(eq -> eq.getEquipmentId().equals(w.getId()))
+                        .findFirst();
+
+                if (existingWeapon.isPresent()) {
+                    UserEquipment weaponToModify = existingWeapon.get();
+                    weaponToModify.setEffect(weaponToModify.getEffect()+0.02);
+                }
+            }else {
+                save(userId, equipment);
+            }
         }
     }
 
@@ -274,6 +306,9 @@ public class UserEquipmentService {
             }
         }
 
+        if(equipment.getequipmentType().equals(EquipmentTypes.WEAPON)){
+            return 0.6 * bossReward;
+        }
         return equipment.getCoef() * bossReward;
 
     }

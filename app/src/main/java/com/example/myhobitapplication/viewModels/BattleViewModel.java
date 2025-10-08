@@ -378,12 +378,12 @@ public class BattleViewModel extends ViewModel {
         double randomChanceToGainEquipment = Math.random();
         double randomChanceEquipment = Math.random();
         double randomChanceEquipmentType = Math.random();
-        double chanceToGainEquipment = 0.2;
+        double chanceToGainEquipment = 1; //0.2;
         double weaponChance = 0.05;
         ClothingTypes clothingTypes;
         WeaponTypes weaponTypes;
         //randomChanceToGainEquipment <= chanceToGainEquipment
-
+        modificator = 1;
         if (randomChanceToGainEquipment <= chanceToGainEquipment*modificator) {
             if(randomChanceEquipment <= weaponChance) {
                 if (randomChanceEquipmentType < 0.5) {

@@ -107,7 +107,15 @@
                 app:srcCompat="@mipmap/ic_launcher_coins" />
 
         </LinearLayout>
-
+    <Button
+        android:id="@+id/upgreButton"
+        android:layout_width="match_parent"
+        android:backgroundTint="#D3AF37"
+        android:text="UPGRADE "
+        android:fontFamily="@font/educursivesemibold"
+        android:textColor="@color/black"
+        android:layout_height="wrap_content"
+        />
     </LinearLayout>
 
 
