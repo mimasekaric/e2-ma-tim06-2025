@@ -144,57 +144,6 @@ public class AllianceViewModel extends ViewModel {
 
     }
 
-    public void sendInviteNotification(String invitedUserId, String inviterName, String allianceName, String inviterUid) {
-        new Thread(() -> {
-            try {
-                URL url = new URL("https://onesignal.com/api/v1/notifications");
-                HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                con.setUseCaches(false);
-                con.setDoOutput(true);
-                con.setDoInput(true);
-                con.setRequestMethod("POST");
-                con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-                con.setRequestProperty("Authorization", "Basic os_v2_app_2y2zge5mdjewxpqsa7grrxh2i3ye6vue5whebmn7s7kgc3mti37hshnpce54cqw3zwnkebf3scikm4f2sjsgdgu6i5vyrn4vloqpslq"); // Tvoj REST API ključ
-
-                JSONObject body = new JSONObject();
-                body.put("app_id", "d6359313-ac1a-496b-be12-07cd18dcfa46"); // Tvoj App ID
-
-                // ✅ Ciljaj tačno određenog korisnika po external_user_id
-                JSONArray externalUserIds = new JSONArray();
-                externalUserIds.put(invitedUserId);
-                body.put("include_external_user_ids", externalUserIds);
-
-                // ✅ Naslov i sadržaj poruke
-                body.put("headings", new JSONObject().put("en", "New alliance invite"));
-                body.put("contents", new JSONObject().put("en", inviterName + " invited you to an alliance - '" + allianceName + "'!"));
-
-                // ✅ Dodaj dugmad
-                JSONArray buttons = new JSONArray();
-                buttons.put(new JSONObject().put("id", "accept").put("text", "Accept"));
-                buttons.put(new JSONObject().put("id", "decline").put("text", "Decline"));
-                body.put("buttons", buttons);
-
-                // ✅ Dodaj dodatne podatke ako treba da se prenesu
-                JSONObject data = new JSONObject();
-                data.put("inviterUid", inviterUid);
-                body.put("data", data);
-
-                // ✅ Zadrži notifikaciju dok korisnik ne reaguje
-                body.put("persist_notification", true);
-
-                // ✅ Pošalji sve
-                OutputStreamWriter writer = new OutputStreamWriter(con.getOutputStream());
-                writer.write(body.toString());
-                writer.flush();
-                writer.close();
-
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
-    }
-
 
     public void sendInvite(String invitedUserUid, String inviterName, String allianceName) {
         OkHttpClient client = new OkHttpClient();
@@ -298,17 +247,7 @@ public class AllianceViewModel extends ViewModel {
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                /**try (ResponseBody responseBody = response.body()) {
-                    if (response.isSuccessful() && responseBody != null) {
-                        String result = responseBody.string();
-                        Log.d("HTTP", "Response: " + result);
-                        createdResponse.postValue("Response sent: " + action);
-                    } else {
-                        Log.e("HTTP", "Request failed: " + response.code());
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }*/
+
             }
         });
     }

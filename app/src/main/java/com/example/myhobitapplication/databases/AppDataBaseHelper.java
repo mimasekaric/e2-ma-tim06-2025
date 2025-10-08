@@ -181,7 +181,7 @@ public class AppDataBaseHelper extends SQLiteOpenHelper {
                 + COLUMN_EQUIPMENT_UID + " TEXT,"
                 + COLUMN_COEF + " REAL,"
                 + COLUMN_ACTIVATED + " INTEGER,"
-                + COLUMN_EFFECT + " INTEGER,"
+                + COLUMN_EFFECT + " REAL,"
                 + COLUMN_FIGHTS_COUNTER + " INTEGER" + ")";
         db.execSQL(CREATE_USER_EQUIPMENT_TABLE);
 

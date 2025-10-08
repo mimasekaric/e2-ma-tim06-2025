@@ -3,6 +3,7 @@ package com.example.myhobitapplication.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
@@ -16,12 +17,15 @@ import com.example.myhobitapplication.activities.CategoryViewActivity;
 import com.example.myhobitapplication.activities.TaskActivity;
 import com.example.myhobitapplication.databinding.FragmentHomeDashboardBinding;
 import com.example.myhobitapplication.models.Avatar;
+import com.example.myhobitapplication.models.Profile;
 import com.example.myhobitapplication.staticData.AvatarList;
 import com.example.myhobitapplication.viewModels.ProfileViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class HomeDashboardFragment extends Fragment {
     private FragmentHomeDashboardBinding binding;
+    private Profile profile;
+    private boolean isShopAvailable;
     private ProfileViewModel profileViewModel;
 
     @Nullable
@@ -52,7 +56,23 @@ public class HomeDashboardFragment extends Fragment {
 
         String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         profileViewModel.loadProfile(currentUserId);
+        profileViewModel.getProfile().observe(requireActivity(), loadedProfile -> {
+            if (loadedProfile != null && loadedProfile.getuserUid()!=null) {
+                this.profile = loadedProfile;
+                if (profile != null) {
+                        boolean hasPreviousBoss = profileViewModel.userHasPreviousBoss(profile.getuserUid(), profile.getlevel());
+                        if(hasPreviousBoss){
+                            binding.buttonShop.setImageResource(R.mipmap.ic_launcher_coins);
+                           this.isShopAvailable = true;
+                        }
+                       else{
+                            binding.buttonShop.setImageResource(R.mipmap.ic_launcher_statistics);
+                            this.isShopAvailable = false;
+                        }
 
+                }
+            }
+        });
 
         setupClickListeners();
     }
@@ -71,12 +91,20 @@ public class HomeDashboardFragment extends Fragment {
         });
 
         binding.buttonShop.setOnClickListener(v -> {
-
-            requireActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(com.example.myhobitapplication.R.id.fragment_container, new ShopFragment())
-                    .addToBackStack(null)
-                    .commit();
+            if(this.isShopAvailable) {
+                requireActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(com.example.myhobitapplication.R.id.fragment_container, new ShopFragment())
+                        .addToBackStack(null)
+                        .commit();
+            }else{
+                requireActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(com.example.myhobitapplication.R.id.fragment_container, new StatisticsFragment())
+                        .addToBackStack(null)
+                        .commit();
+            }
         });
+
+
     }
 
     @Override

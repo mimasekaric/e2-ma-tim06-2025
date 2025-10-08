@@ -134,18 +134,17 @@ public class StatisticsFragment extends Fragment {
 
             PieData data = new PieData(dataSet);
 
-            // umesto procenta, prikazujemo broj
             data.setValueFormatter(new ValueFormatter() {
                 @Override
                 public String getPieLabel(float value, PieEntry pieEntry) {
-                    return String.valueOf((int) value); // samo broj
+                    return String.valueOf((int) value);
                 }
             });
 
             tasksPieChart.setData(data);
-            tasksPieChart.setUsePercentValues(false); // iskljuci procente
+            tasksPieChart.setUsePercentValues(false);
 
-            // donut stil
+
             tasksPieChart.setDrawHoleEnabled(true);
             tasksPieChart.setHoleRadius(40f);
             tasksPieChart.setTransparentCircleRadius(45f);
@@ -165,7 +164,7 @@ public class StatisticsFragment extends Fragment {
             int index = 0;
             for (CategoryStatsDTO stat : stats) {
                 entries.add(new BarEntry(index, stat.getCount()));
-                colors.add(Color.parseColor(stat.getColour())); // uzimamo boju kategorije
+                colors.add(Color.parseColor(stat.getColour()));
                 labels.add(stat.getName());
                 index++;
             }
@@ -194,7 +193,7 @@ public class StatisticsFragment extends Fragment {
             List<LocalDate> sortedDates = xpMap.keySet().stream().sorted().collect(Collectors.toList());
             for (int i = 0; i < sortedDates.size(); i++) {
                 LocalDate date = sortedDates.get(i);
-                entries.add(new Entry(i + 1, xpMap.get(date))); // i+1 da zadržiš 1-7
+                entries.add(new Entry(i + 1, xpMap.get(date)));
             }
 
             LineDataSet dataSet = new LineDataSet(entries, "XP last 7 days");

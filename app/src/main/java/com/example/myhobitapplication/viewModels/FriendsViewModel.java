@@ -93,10 +93,7 @@ public class FriendsViewModel extends ViewModel {
                                     owner.setValue(user);
                                     continue;
                                 }
-                               /* if (friendList != null && friendList.stream()
-                                        .anyMatch(f -> f.getusername().equals(user.getusername()))) {
-                                    continue;
-                                }*/
+
                                 list.add(user);
                             }
                         }

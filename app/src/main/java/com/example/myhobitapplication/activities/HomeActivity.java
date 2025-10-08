@@ -3,9 +3,6 @@ package com.example.myhobitapplication.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -15,23 +12,20 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.work.WorkManager;
 
 import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.databases.BossRepository;
 import com.example.myhobitapplication.databases.EquipmentRepository;
 import com.example.myhobitapplication.databinding.ActivityHomeBBinding;
-import com.example.myhobitapplication.activities.ProfileActivity;
+import com.example.myhobitapplication.fragments.ProfileFragment;
 import com.example.myhobitapplication.fragments.ActivateEquipmentFragment;
 import com.example.myhobitapplication.fragments.FriendsFragment;
 import com.example.myhobitapplication.fragments.HomeDashboardFragment;
 import com.example.myhobitapplication.fragments.ShopFragment;
 import com.example.myhobitapplication.fragments.StatisticsFragment;
-import com.example.myhobitapplication.fragments.UserProgressFragment;
 import com.example.myhobitapplication.models.Profile;
 import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.EquipmentService;
-import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.viewModels.AllianceViewModel;
 import com.example.myhobitapplication.viewModels.LoginViewModel;
 import com.example.myhobitapplication.viewModels.ProfileViewModel;
@@ -44,22 +38,21 @@ public class HomeActivity extends AppCompatActivity {
     private ActivityHomeBBinding binding;
     private DrawerLayout drawerLayout;
     private LoginViewModel loginViewModel;
+    private NavigationView navigationView;
     private ProfileViewModel profileViewModel;
     private Profile profile;
     private String userId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent intent = getIntent();
-        LoginViewModel viewModel= new LoginViewModel();
-         //userId = intent.getStringExtra("USER_ID");
-        userId=FirebaseAuth.getInstance().getCurrentUser().getUid();
+        LoginViewModel viewModel = new LoginViewModel();
+        userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         OneSignal.setExternalUserId(userId);
         OneSignal.sendTag("user_id", userId);
         AllianceViewModel allianceViewModel = new ViewModelProvider(this).get(AllianceViewModel.class);
         allianceViewModel.getAlliance(FirebaseAuth.getInstance().getCurrentUser().getUid());
         allianceViewModel.getUserAlliance().observe(this, alliance -> {
-            if(alliance != null){
+            if (alliance != null) {
                 String allianceId = alliance.getId();
                 OneSignal.sendTag("alliance_id", allianceId);
             }
@@ -69,7 +62,6 @@ public class HomeActivity extends AppCompatActivity {
                     .replace(R.id.fragment_container, new HomeDashboardFragment())
                     .commit();
         }
-
 
 
         ///  TO DO: ovo otkomentarisati ako se notifikaicja skloni iako ne kliknes na accept/decline nego samo nestane
@@ -107,16 +99,7 @@ public class HomeActivity extends AppCompatActivity {
             String invitedUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
             if ("accept".equals(actionId)) {
-               /* allianceViewModel.respondToInvite(invitedUserUid, inviterUid, "accept");
-                allianceViewModel.addUserToAlliance(inviterUid, invitedUserUid);*/
-
-                //allianceViewModel.getAlliance(inviterUid);
-                //allianceViewModel.getUserAlliance().observe(this, alliance -> {
-                  //  if (alliance != null) {
-                    //    String targetAllianceId = alliance.getId();
-                        allianceViewModel.handleInviteResponse(invitedUserUid, inviterUid, this);
-                    //}
-                //});
+                allianceViewModel.handleInviteResponse(invitedUserUid, inviterUid, this);
             } else if ("decline".equals(actionId)) {
                 allianceViewModel.respondToInvite(invitedUserUid, inviterUid, "decline");
             }
@@ -124,7 +107,7 @@ public class HomeActivity extends AppCompatActivity {
 
         binding = ActivityHomeBBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        navigationView = binding.navView;
         Toolbar toolbar = binding.getRoot().findViewById(R.id.m);
         setSupportActionBar(toolbar);
 
@@ -137,7 +120,7 @@ public class HomeActivity extends AppCompatActivity {
 
         drawerLayout = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
-       profileViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
+        profileViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @NonNull
             @Override
             public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
@@ -156,10 +139,11 @@ public class HomeActivity extends AppCompatActivity {
 
         profileViewModel.loadProfile(userId);
         profileViewModel.getProfile().observe(this, loadedProfile -> {
-                    if (loadedProfile != null) {
-                        this.profile = loadedProfile;
-                    }
-                });
+            if (loadedProfile != null && loadedProfile.getuserUid()!=null) {
+                this.profile = loadedProfile;
+                updateNavigationViewVisibility();
+            }
+        });
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this,
@@ -176,48 +160,44 @@ public class HomeActivity extends AppCompatActivity {
                 int id = item.getItemId();
 
                 if (id == R.id.nav_profile) {
-                    /*Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
-                    intent.putExtra("USER_ID",userId);
-                    startActivity(intent);*/
-
-                    ProfileActivity profileFragment = new ProfileActivity();
-
+                    ProfileFragment profileFragment = new ProfileFragment();
 
                     Bundle args = new Bundle();
                     args.putString("USER_ID", userId);
                     profileFragment.setArguments(args);
-
 
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_container, profileFragment)
                             .addToBackStack(null)
                             .commit();
                 } else if (id == R.id.nav_logout) {
-                    //Toast.makeText(HomeActivity.this, "Logging out...", Toast.LENGTH_SHORT).show();
                     viewModel.logout();
                     Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
                     startActivity(intent);
                     finish();
 
-                }else if(id == R.id.nav_tasks) {
+                } else if (id == R.id.nav_tasks) {
                     Intent intent = new Intent(HomeActivity.this, TaskActivity.class);
                     startActivity(intent);
-                }
-                else if(id == R.id.nav_statistics) {
+                } else if (id == R.id.nav_shop) {
+                    ShopFragment shopFragment = new ShopFragment();
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, shopFragment)
+                            .addToBackStack(null)
+                            .commit();
+                } else if (id == R.id.nav_statistics) {
                     StatisticsFragment statisticsFragment = new StatisticsFragment();
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_container, statisticsFragment)
                             .addToBackStack(null)
                             .commit();
-                }
-                else if(id == R.id.nav_friends) {
+                } else if (id == R.id.nav_friends) {
                     FriendsFragment friendsFragment = new FriendsFragment();
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_container, friendsFragment)
                             .addToBackStack(null)
                             .commit();
-                }
-                else if(id == R.id.nav_activate) {
+                } else if (id == R.id.nav_activate) {
                     ActivateEquipmentFragment activateFragment = new ActivateEquipmentFragment();
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_container, activateFragment)
@@ -233,21 +213,20 @@ public class HomeActivity extends AppCompatActivity {
                 }
 
 
-
                 drawerLayout.closeDrawer(GravityCompat.START);
                 return true;
             }
         });
 
-//        Button btnCancelWorkers = findViewById(R.id.btn_cancel_all_workers);
-//        btnCancelWorkers.setOnClickListener(v -> {
-//            // Poziv koji otkazuje SVE zakazane poslove za vašu aplikaciju
-//            WorkManager.getInstance(getApplicationContext()).cancelAllWork();
-//
-//            // Obavijest da je operacija izvršena
-//            Toast.makeText(HomeActivity.this, "All scheduled workers have been cancelled!", Toast.LENGTH_LONG).show();
-//        });
     }
-
+        private void updateNavigationViewVisibility() {
+            if (profile != null && navigationView != null) {
+                MenuItem shopMenuItem = navigationView.getMenu().findItem(R.id.nav_shop);
+                if (shopMenuItem != null) {
+                    boolean hasPreviousBoss = profileViewModel.userHasPreviousBoss(profile.getuserUid(), profile.getlevel());
+                    shopMenuItem.setVisible(hasPreviousBoss);
+                }
+            }
+        }
 
 }

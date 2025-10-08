@@ -25,6 +25,9 @@ public class BattleService {
 
         return getFirstUndefeatedBoss(userId);
     }
+    public Boss getPreviousBoss(String userId, int userlevel){
+        return bossService.getPreviousBossForUser(userId, userlevel);
+    }
 
     public long updateBoss(BossDTO boss){
 

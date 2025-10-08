@@ -26,20 +26,6 @@ public class AvatarSpinnerAdapter extends ArrayAdapter<Avatar> {
         this.context = context;
         this.avatarList = avatars;
     }
-/*
-    @NonNull
-    @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-
-      View rootView = LayoutInflater.from(context).inflate(R.layout.item_avatar, parent, false);
-
-        ImageView img = rootView.findViewById(R.id.imageView);
-
-        img.setImageResource(avatarList.get(position).getImage());
-        return rootView;
-    }
-*/
-
 
     public int getPosition(Integer value) {
         if (value == null) {

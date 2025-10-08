@@ -110,7 +110,7 @@ public class UserRepository {
                     QuerySnapshot querySnapshot = task.getResult();
                     List<String> friendsList = new ArrayList<>();
                     for (DocumentSnapshot doc : querySnapshot) {
-                        friendsList.add(doc.getId()); // ovde doc.getId() = friendUid
+                        friendsList.add(doc.getId());
                     }
                     return friendsList;
                 });

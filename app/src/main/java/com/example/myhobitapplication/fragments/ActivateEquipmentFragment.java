@@ -76,15 +76,28 @@ public class ActivateEquipmentFragment extends Fragment {
         equipmentList = viewModel.getNotActivatedEquipmentForUser(FirebaseAuth.getInstance().getCurrentUser().getUid());
         RecyclerView recyclerView = binding.shopRecycler;
         recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
-        activateEquipmentAdapter = new ActivateEquipmentAdapter(requireContext(),equipmentList, new ActivateEquipmentAdapter.OnItemButtonClickListener() {
+        activateEquipmentAdapter = new ActivateEquipmentAdapter(requireContext(),viewModel, equipmentList, new ActivateEquipmentAdapter.OnItemButtonClickListener() {
             @Override
             public void onButtonClick(UserEquipmentDTO item) {
                 if(profile!= null) {
                     viewModel.activateEquipment(item, profile);
                     equipmentList = viewModel.getNotActivatedEquipmentForUser(FirebaseAuth.getInstance().getCurrentUser().getUid());
                     activateEquipmentAdapter.updateList(equipmentList);
+                    activateEquipmentAdapter.notifyDataSetChanged();
                     Toast.makeText(requireContext(),"Succesfully activated!", Toast.LENGTH_SHORT).show();
                 }else {
+                    Toast.makeText(requireContext(),"Connection error", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onUpgradeClick(UserEquipmentDTO item) {
+                if (profile != null) {
+                    viewModel.upgradeEquipment( profile, item);
+                    equipmentList = viewModel.getNotActivatedEquipmentForUser(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    activateEquipmentAdapter.updateList(equipmentList);
+                    Toast.makeText(requireContext(),"Equipment upgraded!", Toast.LENGTH_SHORT).show();
+                } else {
                     Toast.makeText(requireContext(),"Connection error", Toast.LENGTH_SHORT).show();
                 }
             }

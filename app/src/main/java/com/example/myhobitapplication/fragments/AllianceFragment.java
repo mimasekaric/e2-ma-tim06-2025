@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
@@ -18,9 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.myhobitapplication.R;
-import com.example.myhobitapplication.activities.ProfileActivity;
 import com.example.myhobitapplication.databinding.FragmentAllianceBinding;
-import com.example.myhobitapplication.databinding.FragmentFriendsBinding;
 import com.example.myhobitapplication.dto.UserInfoDTO;
 import com.example.myhobitapplication.models.Alliance;
 import com.example.myhobitapplication.models.Avatar;
@@ -138,10 +135,6 @@ public class AllianceFragment extends Fragment {
                             });
                 }
 
-                /*if(!alliance.getLeaderId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
-                    binding.destroyButton.setVisibility(View.INVISIBLE);
-                    binding.buttonn66.setVisibility(View.INVISIBLE);
-                }*/
                 binding.allianceName.setText(alliance1.getName());
                 allianceViewModel.getUsersInAlliance();
                 allianceViewModel.checkUserActiveMissionStatus(FirebaseAuth.getInstance().getCurrentUser().getUid());
@@ -275,7 +268,7 @@ public class AllianceFragment extends Fragment {
                     String invitedUserUid = res.getUid();
                     String inviterName = FirebaseAuth.getInstance().getCurrentUser().getEmail();
                     String allianceName = alliance.getName();
-                    //allianceViewModel.sendInviteNotification(invitedUserUid, inviterName,allianceName, FirebaseAuth.getInstance().getCurrentUser().getUid());
+
                     allianceViewModel.sendInvite(invitedUserUid, inviterName, allianceName);
                     allianceViewModel.getCreatedREsponse().observe(getViewLifecycleOwner(),response->{
                         Toast.makeText(requireContext(),response,Toast.LENGTH_SHORT).show();
@@ -287,7 +280,7 @@ public class AllianceFragment extends Fragment {
                 avatarView.setOnClickListener(v -> {
                     Bundle bundle = new Bundle();
                     bundle.putString("USER_ID", res.getUid());
-                    ProfileActivity profileFragment = new ProfileActivity();
+                    ProfileFragment profileFragment = new ProfileFragment();
                     profileFragment.setArguments(bundle);
 
                     requireActivity().getSupportFragmentManager()

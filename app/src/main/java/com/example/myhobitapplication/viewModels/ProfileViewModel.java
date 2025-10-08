@@ -29,7 +29,7 @@ public class ProfileViewModel extends ViewModel {
 
     private final UserEquipmentService userEquipmentService;
     private final ProfileService profileService;
-    private final TaskService taskService;
+    private final BattleService battleService;
     private final MutableLiveData<Profile> profile = new MutableLiveData<>(new Profile());
     private final MutableLiveData<Integer> _levelUpEvent = new MutableLiveData<>();
     public MutableLiveData<Integer> levelUpEvent = _levelUpEvent;
@@ -42,6 +42,7 @@ public class ProfileViewModel extends ViewModel {
     private final MutableLiveData<String> response = new MutableLiveData<>("");
     private final MutableLiveData<Boolean> loadSuccess = new MutableLiveData<>(false);
     private LevelUpListener levelUpListener = new LevelUpListener() {
+
         @Override
         public void onLevelUp(String userUid, int newLevel) {
             Log.d("ProfileViewModel", "Level up event received: " + newLevel);
@@ -50,12 +51,17 @@ public class ProfileViewModel extends ViewModel {
         }
     };
 
+    public boolean userHasPreviousBoss(String userId, int userLevel){
+        if (battleService.getPreviousBoss(userId, userLevel)!=null){
+            return true;
+        }
+        return false;
+    }
 
     public ProfileViewModel(Context context, BossService bossService, EquipmentService equipmentService) {
         this.profileService = ProfileService.getInstance();
-        BattleService battleService = new BattleService(bossService, profileService);
+         this.battleService = new BattleService(bossService, profileService);
         AllianceMissionService missionService = new AllianceMissionService(profileService);
-        this.taskService =  TaskService.getInstance(new TaskRepository(context), profileService, battleService, missionService);
         AllianceMissionService allianceMissionService = new AllianceMissionService(profileService);
       /*  this.profileService.setLevelUpListener(taskService);
 

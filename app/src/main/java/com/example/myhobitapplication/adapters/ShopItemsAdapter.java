@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.dto.EquipmentWithPriceDTO;
+import com.example.myhobitapplication.enums.ClothingTypes;
 import com.example.myhobitapplication.models.Avatar;
 import com.example.myhobitapplication.models.Category;
 import com.example.myhobitapplication.models.Clothing;
@@ -72,6 +73,7 @@ import java.util.List;
             }
 
             public void bind(EquipmentWithPriceDTO ewp) {
+                itemView.findViewById(R.id.upgreButton).setVisibility(View.INVISIBLE);
                 EquipmentWithPriceDTO equipmentWithPrice = ewp;
                 Equipment e = equipmentWithPrice.getEquipment();
                 TextView name = itemView.findViewById(R.id.textView);
@@ -79,8 +81,6 @@ import java.util.List;
                 TextView effect = itemView.findViewById(R.id.textView1);
                 TextView description = itemView.findViewById(R.id.textView8);
                 TextView price = itemView.findViewById(R.id.textView7);
-
-              //  name.setText(equipmentWithPrice.getEquipment().getequipmentType().name());
 
                 if (e instanceof Potion) {
                     Potion potion = (Potion) e;
@@ -99,8 +99,14 @@ import java.util.List;
                     Clothing clothing = (Clothing) e;
                     name.setText(clothing.getType().name());
                     image.setImageResource(clothing.getImage());
-                    effect.setText("+" + clothing.getpowerPercentage() + "% PP");
-                    description.setText("Boosts you pp by " + clothing.getpowerPercentage() + " % ");
+                    effect.setText("+" + clothing.getpowerPercentage() + "% ");
+                    if(clothing.getType().equals(ClothingTypes.SHIELD)){
+                        description.setText("Boosts your hit chance by  " + clothing.getpowerPercentage() + " % ");
+                    }else if(clothing.getType().equals(ClothingTypes.BOOTS)){
+                        description.setText("Adding one additional attack" );
+                    }else {
+                        description.setText("Boosts you pp by " + clothing.getpowerPercentage() + " % ");
+                    }
                     price.setText(String.valueOf(equipmentWithPrice.getPrice()));
                 }
 

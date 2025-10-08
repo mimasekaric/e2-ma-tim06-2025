@@ -23,12 +23,17 @@
 
         <item
             android:id="@+id/nav_friends"
-            android:icon="@mipmap/ic_launcher_witch"
+            android:icon="@mipmap/ic_launcher_search"
             android:title="Friends" />
 
         <item
+            android:id="@+id/nav_shop"
+            android:icon="@mipmap/ic_launcher_coins"
+            android:title="Shop" />
+
+        <item
             android:id="@+id/nav_statistics"
-            android:icon="@mipmap/ic_launcher_witch"
+            android:icon="@mipmap/ic_launcher_boot"
             android:title="Statistics" />
         <item
             android:id="@+id/nav_logout"

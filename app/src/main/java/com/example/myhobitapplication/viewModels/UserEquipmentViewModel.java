@@ -18,6 +18,7 @@ import com.example.myhobitapplication.enums.EquipmentTypes;
 import com.example.myhobitapplication.models.Boss;
 import com.example.myhobitapplication.models.Equipment;
 import com.example.myhobitapplication.models.Profile;
+import com.example.myhobitapplication.models.UserEquipment;
 import com.example.myhobitapplication.services.AllianceMissionService;
 import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.EquipmentService;
@@ -60,6 +61,19 @@ public class UserEquipmentViewModel extends ViewModel {
         service.activateEquipment(equipment, profile);
     }
 
+    public boolean upgradeEquipment (Profile profile,UserEquipmentDTO equipment) {
+        boolean response = service.upgradeEquipment(profile,equipment);
+        if (response){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public UserEquipment getById(long id){
+        return service.getById(id);
+    }
     public boolean buyEquipment(Profile profile, Equipment equipment){
         boolean response = service.buyEquipment(profile,equipment);
         if (response){
@@ -69,7 +83,7 @@ public class UserEquipmentViewModel extends ViewModel {
         else{
             return false;
         }
-        }
+    }
 
 
 }
