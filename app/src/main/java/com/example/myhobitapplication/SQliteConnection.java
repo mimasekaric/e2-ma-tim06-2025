@@ -14,7 +14,7 @@ public class SQliteConnection extends SQLiteOpenHelper {
     private Context context;
     private static final String DATABASE_NAME = "Hobit.db";
     private static final int DATABASE_VERSION = 1;
-    
+
     private static final String TABLE_NAME = "users";
 
     private static final String COLUMN_ID = "id";

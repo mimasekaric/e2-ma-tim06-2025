@@ -3,9 +3,6 @@ package com.example.myhobitapplication.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -15,22 +12,19 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.work.WorkManager;
 
 import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.databases.BossRepository;
 import com.example.myhobitapplication.databases.EquipmentRepository;
 import com.example.myhobitapplication.databinding.ActivityHomeBBinding;
-import com.example.myhobitapplication.activities.ProfileActivity;
+import com.example.myhobitapplication.fragments.ProfileFragment;
 import com.example.myhobitapplication.fragments.ActivateEquipmentFragment;
 import com.example.myhobitapplication.fragments.FriendsFragment;
 import com.example.myhobitapplication.fragments.ShopFragment;
 import com.example.myhobitapplication.fragments.StatisticsFragment;
-import com.example.myhobitapplication.fragments.UserProgressFragment;
 import com.example.myhobitapplication.models.Profile;
 import com.example.myhobitapplication.services.BossService;
 import com.example.myhobitapplication.services.EquipmentService;
-import com.example.myhobitapplication.services.ProfileService;
 import com.example.myhobitapplication.viewModels.AllianceViewModel;
 import com.example.myhobitapplication.viewModels.LoginViewModel;
 import com.example.myhobitapplication.viewModels.ProfileViewModel;
@@ -173,7 +167,7 @@ public class HomeActivity extends AppCompatActivity {
                     intent.putExtra("USER_ID",userId);
                     startActivity(intent);*/
 
-                    ProfileActivity profileFragment = new ProfileActivity();
+                    ProfileFragment profileFragment = new ProfileFragment();
 
 
                     Bundle args = new Bundle();

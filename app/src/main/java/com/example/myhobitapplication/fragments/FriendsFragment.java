@@ -3,7 +3,6 @@ package com.example.myhobitapplication.fragments;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.app.Dialog;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -18,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,19 +25,15 @@ import com.example.myhobitapplication.viewModels.AllianceViewModel;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 import com.example.myhobitapplication.R;
-import com.example.myhobitapplication.activities.ProfileActivity;
 import com.example.myhobitapplication.databinding.FragmentFriendsBinding;
-import com.example.myhobitapplication.databinding.FragmentShopBinding;
 import com.example.myhobitapplication.dto.UserInfoDTO;
 import com.example.myhobitapplication.models.Avatar;
-import com.example.myhobitapplication.models.Equipment;
 import com.example.myhobitapplication.models.User;
 import com.example.myhobitapplication.staticData.AvatarList;
 import com.example.myhobitapplication.viewModels.FriendsViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 
 
-import java.util.Date;
 import java.util.List;
 
 public class FriendsFragment extends Fragment {
@@ -227,7 +221,7 @@ public class FriendsFragment extends Fragment {
                 avatarView.setOnClickListener(v -> {
                     Bundle bundle = new Bundle();
                     bundle.putString("USER_ID", res.getUid());
-                    ProfileActivity profileFragment = new ProfileActivity();
+                    ProfileFragment profileFragment = new ProfileFragment();
                     profileFragment.setArguments(bundle);
 
                     requireActivity().getSupportFragmentManager()
@@ -267,7 +261,7 @@ public class FriendsFragment extends Fragment {
                         Bundle bundle = new Bundle();
                         bundle.putString("USER_ID",scannedUserId);
 
-                        ProfileActivity profileFragment = new ProfileActivity();
+                        ProfileFragment profileFragment = new ProfileFragment();
                         profileFragment.setArguments(bundle);
 
                         requireActivity().getSupportFragmentManager()

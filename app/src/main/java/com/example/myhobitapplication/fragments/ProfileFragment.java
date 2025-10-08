@@ -1,7 +1,6 @@
-package com.example.myhobitapplication.activities;
+package com.example.myhobitapplication.fragments;
 
 import android.app.Dialog;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -25,13 +24,10 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.databases.BossRepository;
 import com.example.myhobitapplication.databases.EquipmentRepository;
-import com.example.myhobitapplication.databases.TaskRepository;
 import com.example.myhobitapplication.databinding.ActivityProfileBinding;
 import com.example.myhobitapplication.dto.UserInfoDTO;
-import com.example.myhobitapplication.enums.Title;
 import com.example.myhobitapplication.models.Avatar;
 import com.example.myhobitapplication.models.Badge;
-import com.example.myhobitapplication.models.Boss;
 import com.example.myhobitapplication.models.Equipment;
 import com.example.myhobitapplication.models.Profile;
 import com.example.myhobitapplication.services.AllianceMissionService;
@@ -47,11 +43,10 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
-import com.onesignal.OneSignal;
 
 import java.util.List;
 
-public class ProfileActivity extends Fragment {
+public class ProfileFragment extends Fragment {
 
     private LoginViewModel loginViewModel;
     private ProfileViewModel viewModel;

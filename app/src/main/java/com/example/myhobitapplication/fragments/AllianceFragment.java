@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
@@ -18,9 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.myhobitapplication.R;
-import com.example.myhobitapplication.activities.ProfileActivity;
 import com.example.myhobitapplication.databinding.FragmentAllianceBinding;
-import com.example.myhobitapplication.databinding.FragmentFriendsBinding;
 import com.example.myhobitapplication.dto.UserInfoDTO;
 import com.example.myhobitapplication.models.Alliance;
 import com.example.myhobitapplication.models.Avatar;
@@ -283,7 +280,7 @@ public class AllianceFragment extends Fragment {
                 avatarView.setOnClickListener(v -> {
                     Bundle bundle = new Bundle();
                     bundle.putString("USER_ID", res.getUid());
-                    ProfileActivity profileFragment = new ProfileActivity();
+                    ProfileFragment profileFragment = new ProfileFragment();
                     profileFragment.setArguments(bundle);
 
                     requireActivity().getSupportFragmentManager()

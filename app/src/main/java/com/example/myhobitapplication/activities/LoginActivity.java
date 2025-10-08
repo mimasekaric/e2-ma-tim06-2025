@@ -69,6 +69,7 @@ public class LoginActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
                 binding.buttonn.setVisibility(View.VISIBLE);
+                binding.buttonnText.setVisibility(View.VISIBLE);
                 animationView.setVisibility(View.GONE);
                 animationView.cancelAnimation();
             }
@@ -112,6 +113,7 @@ public class LoginActivity extends AppCompatActivity {
 
         binding.buttonn.setOnClickListener(v -> {
             binding.buttonn.setVisibility(View.INVISIBLE);
+            binding.buttonnText.setVisibility(View.INVISIBLE);
             animationView.setVisibility(View.VISIBLE);
             animationView.playAnimation();
             loginViewModel.loginUser();
