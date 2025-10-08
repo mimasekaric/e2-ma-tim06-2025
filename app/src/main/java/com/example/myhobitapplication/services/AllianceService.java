@@ -66,7 +66,6 @@ public class AllianceService {
                                         failed[0] = true;
                                     }
 
-
                                     if (completed[0] == totalUsers) {
                                         if (failed[0]) {
                                             tcs.setException(new Exception("Failed to clear some users’ allianceId"));

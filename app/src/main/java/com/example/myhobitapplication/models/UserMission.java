@@ -15,6 +15,7 @@ public class UserMission {
     private int uncompletedTasksCount;
     private Date todayDate;
     private boolean isMessageSent;
+    private int messageCount;
 
     public UserMission() {
     }
@@ -34,7 +35,7 @@ public class UserMission {
     }
 
 
-    public UserMission(String userId, String allianceId, int purchaseCount, int successfulAttackCount, int easyTaskCompleteCount, int totalDamage, int hardTaskCompleteCount, int uncompletedTasksCount, Date todayDate, boolean isMessageSent) {
+    public UserMission(String userId, String allianceId, int purchaseCount, int successfulAttackCount, int easyTaskCompleteCount, int totalDamage, int hardTaskCompleteCount, int uncompletedTasksCount, Date todayDate, boolean isMessageSent, int messageCount) {
         this.userId = userId;
         this.allianceId = allianceId;
         this.purchaseCount = purchaseCount;
@@ -45,8 +46,16 @@ public class UserMission {
         this.uncompletedTasksCount = uncompletedTasksCount;
         this.todayDate = todayDate;
         this.isMessageSent = isMessageSent;
+        this.messageCount = messageCount;
     }
 
+    public int getMessageCount() {
+        return messageCount;
+    }
+
+    public void setMessageCount(int messageCount) {
+        this.messageCount = messageCount;
+    }
 
     public String getId() {
         return id;

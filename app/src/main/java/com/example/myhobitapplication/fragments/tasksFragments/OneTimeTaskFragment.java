@@ -287,8 +287,7 @@ public class OneTimeTaskFragment extends Fragment {
                 getParentFragmentManager().setFragmentResult("taskAddedRequest", new Bundle());
                 getParentFragmentManager().setFragmentResult("for_list_signal", new Bundle());
 
-                // Opciono: Očisti formu ili se vrati na prethodni ekran
-                // getParentFragmentManager().popBackStack();
+
                 taskViewModel.onSaveSuccessEventHandled();
             }
         });

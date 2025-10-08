@@ -76,7 +76,7 @@ public class MissionCompletionWorker extends Worker {
         Log.d("MissionWorker", "Starting check for mission: " + missionId);
 
 
-        AllianceMissionUserService userMissionService = new AllianceMissionUserService(userService,battleService,userEquipmentService);
+        AllianceMissionUserService userMissionService = new AllianceMissionUserService(userService,battleService,taskService,userEquipmentService);
 
         try {
 

@@ -20,6 +20,7 @@ import com.example.myhobitapplication.databinding.ActivityHomeBBinding;
 import com.example.myhobitapplication.fragments.ProfileFragment;
 import com.example.myhobitapplication.fragments.ActivateEquipmentFragment;
 import com.example.myhobitapplication.fragments.FriendsFragment;
+import com.example.myhobitapplication.fragments.HomeDashboardFragment;
 import com.example.myhobitapplication.fragments.ShopFragment;
 import com.example.myhobitapplication.fragments.StatisticsFragment;
 import com.example.myhobitapplication.models.Profile;
@@ -56,6 +57,11 @@ public class HomeActivity extends AppCompatActivity {
                 OneSignal.sendTag("alliance_id", allianceId);
             }
         });
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new HomeDashboardFragment())
+                    .commit();
+        }
 
 
         ///  TO DO: ovo otkomentarisati ako se notifikaicja skloni iako ne kliknes na accept/decline nego samo nestane
@@ -213,12 +219,13 @@ public class HomeActivity extends AppCompatActivity {
                             .replace(R.id.fragment_container, activateFragment)
                             .addToBackStack(null)
                             .commit();
-                } else if (id == R.id.nav_boss_battle) {
-                    Intent intent = new Intent(HomeActivity.this, BossActivity.class);
-                    startActivity(intent);
-                } else if (id == R.id.nav_category) {
-                    Intent intent = new Intent(HomeActivity.this, CategoryViewActivity.class);
-                    startActivity(intent);
+                }
+                else if(id == R.id.nav_dashboard) {
+                    HomeDashboardFragment homeDashboardFragment = new HomeDashboardFragment();
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, homeDashboardFragment)
+                            .addToBackStack(null)
+                            .commit();
                 }
 
 

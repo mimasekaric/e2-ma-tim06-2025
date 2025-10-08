@@ -56,6 +56,7 @@ public class CategoryRepository {
         return deletedRows;
     }
 
+
     public List<Category> getAllCategories() {
         List<Category> categories = new ArrayList<>();
 

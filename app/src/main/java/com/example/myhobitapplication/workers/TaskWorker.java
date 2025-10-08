@@ -18,26 +18,19 @@ public class TaskWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        // Ovaj kod se izvršava u pozadini, na posebnom thread-u.
+
 
         try {
-            // 1. Dobij instancu repozitorijuma.
-            //    getApplicationContext() je siguran način da se dobije Context ovde.
+
             TaskRepository repository = new TaskRepository(getApplicationContext());
 
-            // 2. Pozovi metodu u repozitorijumu koja radi sav posao.
+
             int updatedRows = repository.updateOutdatedTasksToNotDone();
 
-            // Logiraj rezultat (opciono, ali korisno za debagovanje)
-          //  Log.d("UpdateTaskStatusWorker", "Broj zadataka ažuriranih u 'NOT_DONE': " + updatedRows);
-
-            // 3. Javi sistemu da je posao uspešno završen.
             return Result.success();
 
         } catch (Exception e) {
-            // Ako se desi bilo kakva greška, javi sistemu da posao nije uspeo.
-            // WorkManager može pokušati ponovo kasnije.
-           // Log.e("UpdateTaskStatusWorker", "Greška prilikom ažuriranja statusa zadataka", e);
+
             return Result.failure();
         }
     }

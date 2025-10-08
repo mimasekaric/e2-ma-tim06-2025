@@ -323,8 +323,6 @@ public class RecurringTaskFragment extends Fragment {
 
                 requireActivity().getSupportFragmentManager().setFragmentResult("taskAddedRequest", new Bundle());
                 requireActivity().getSupportFragmentManager().setFragmentResult("taskUpdated_ForList", new Bundle());
-                // Opciono: Očisti formu ili se vrati na prethodni ekran
-                // getParentFragmentManager().popBackStack();
                 taskViewModel.onSaveSuccessEventHandled();
             }
         });

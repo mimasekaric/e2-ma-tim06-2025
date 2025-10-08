@@ -14,6 +14,7 @@ public class UserProgressDTO {
     private int easyTaskCompleteCount;
     private int hardTaskCompleteCount;
     private boolean messageSentToday;
+    private int messageCount;
 
     public UserProgressDTO() {
     }
@@ -32,6 +33,7 @@ public class UserProgressDTO {
             this.easyTaskCompleteCount = missionProgress.getEasyTaskCompleteCount();
             this.hardTaskCompleteCount = missionProgress.getHardTaskCompleteCount();
             this.messageSentToday = missionProgress.isMessageSent();
+            this.messageCount = missionProgress.getMessageCount();
         } else {
 
             this.totalDamage = 0;
@@ -40,6 +42,7 @@ public class UserProgressDTO {
             this.easyTaskCompleteCount = 0;
             this.hardTaskCompleteCount = 0;
             this.messageSentToday = false;
+            this.messageCount = 0;
         }
     }
 
@@ -113,5 +116,13 @@ public class UserProgressDTO {
 
     public void setMessageSentToday(boolean messageSentToday) {
         this.messageSentToday = messageSentToday;
+    }
+
+    public int getMessageCount() {
+        return messageCount;
+    }
+
+    public void setMessageCount(int messageCount) {
+        this.messageCount = messageCount;
     }
 }

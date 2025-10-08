@@ -61,9 +61,8 @@ public class CategoryListAdapter extends BaseAdapter {
             holder.colorView = convertView.findViewById(R.id.categoryColorView);
             holder.nameTextView = convertView.findViewById(R.id.categoryNameTextView);
 
-            // --- NOVI DEO: Pronađi i korenski element reda ---
-            // Treba nam referenca na ceo red da bismo mu promenili pozadinu
-            holder.rootLayout = convertView; // Pretpostavka da je koren LinearLayout ili slično
+
+            holder.rootLayout = convertView;
 
             convertView.setTag(holder);
         } else {
