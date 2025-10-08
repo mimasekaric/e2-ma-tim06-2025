@@ -58,24 +58,15 @@ public class TaskSlotCalendarFragment extends Fragment {
 
     private TaskCalendarViewModel taskCalendarViewModel;
 
-//    public static TaskSlotCalendarFragment newInstance(LocalDate date) {
-//        TaskSlotCalendarFragment fragment = new TaskSlotCalendarFragment();
-//        Bundle args = new Bundle();
-//        args.putSerializable(ARG_DATE, date);
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
 
-    // REGISTRUJ LAUNCHER za detalje zadatka
     private final ActivityResultLauncher<Intent> taskDetailsLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
-                // Ovaj kod se izvršava kada se vratimo iz TaskDetailActivity
+
                 if (result.getResultCode() == Activity.RESULT_OK) {
-                    // Stigao je signal da su se podaci promenili!
+
                     Toast.makeText(getContext(), "Lista se osvjezavaaa nakon edita...", Toast.LENGTH_SHORT).show();
 
-                    // Pokreni mehanizam osvežavanja koji već imaš
                     taskCalendarViewModel.refreshScheduledTasks();
                     LocalDate currentDate = taskCalendarViewModel.getSelectedDate().getValue();
                     if (currentDate != null) {
@@ -179,12 +170,9 @@ public class TaskSlotCalendarFragment extends Fragment {
 
             taskCalendarViewModel.refreshScheduledTasks();
 
-            // 3. NATERAJ POSTOJEĆI OBSERVER DA SE PONOVO AKTIVIRA!
-            //    Kako? Tako što ćemo ponovo "gurnuti" poslednju poznatu vrednost datuma u LiveData.
-            //    Ovo će pokrenuti onChanged metodu i osvežiti listu.
             LocalDate currentDate = taskCalendarViewModel.getSelectedDate().getValue();
             if (currentDate != null) {
-                taskCalendarViewModel.selectDate(currentDate); // Trik: ponovo postavi istu vrednost!
+                taskCalendarViewModel.selectDate(currentDate);
             }
         });
 
@@ -195,12 +183,11 @@ public class TaskSlotCalendarFragment extends Fragment {
         taskCalendarViewModel.getSelectedDate().observe(getViewLifecycleOwner(), new Observer<LocalDate>() {
             @Override
             public void onChanged(LocalDate selectedDate) {
-                // Ova metoda će se automatski pozvati svaki put kada se datum u ViewModelu promeni.
+
                 if (selectedDate != null) {
-                    // 1. Dobavi nove zadatke za taj datum
+
                     List<Task> newTasks = taskCalendarViewModel.getTasksForDate(selectedDate);
 
-                    // 2. Očisti staru listu i dodaj nove podatke
                     tasks.clear();
                     tasks.addAll(newTasks);
 

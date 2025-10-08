@@ -158,6 +158,18 @@
                     android:fontFamily="@font/educursiveregular"
                     android:textColor="@color/white"
                     tools:text="2025-01-01" />
+                <TextView
+                    style="@style/DetailHeader"
+                    android:fontFamily="@font/educursivebold"
+                    android:text="End Date:"
+                    android:textColor="#fca103" />
+
+                <TextView
+                    android:id="@+id/end_date_text_view"
+                    style="@style/DetailValue"
+                    android:fontFamily="@font/educursiveregular"
+                    android:textColor="@color/white"
+                    tools:text="2025-01-01" />
 
 
                 <TextView

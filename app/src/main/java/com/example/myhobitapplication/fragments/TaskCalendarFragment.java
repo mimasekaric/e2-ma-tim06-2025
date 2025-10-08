@@ -2,6 +2,7 @@ package com.example.myhobitapplication.fragments;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -92,21 +93,7 @@ public class TaskCalendarFragment extends Fragment {
 
         calendarViewModel = new ViewModelProvider(requireActivity(), factory).get(TaskCalendarViewModel.class);
 
-//        getParentFragmentManager().setFragmentResultListener("taskAddedRequest", getViewLifecycleOwner(), (requestKey, bundle) -> {
-//
-//            // Signal je primljen!
-//            Toast.makeText(getContext(), "Kalendar se osvežava...", Toast.LENGTH_SHORT).show();
-//
-//            // 1. Naredi ViewModel-u da osveži svoje interne podatke iz baze.
-//            //    Ovo je važno da oba fragmenta rade sa istim, svežim podacima.
-//            calendarViewModel.refreshScheduledTasks();
-//
-//            // 2. Naredi UI-ju (samom kalendaru) da se ponovo iscrta.
-//            //    Ovo će naterati biblioteku da ponovo pozove `bind` metodu za sve vidljive dane.
-//            if (calendarView != null) {
-//                calendarView.notifyCalendarChanged();
-//            }
-//        });
+
 
         requireActivity().getSupportFragmentManager().setFragmentResultListener("taskAddedRequest", getViewLifecycleOwner(), (requestKey, bundle) -> {
             Toast.makeText(getContext(), "Kalendar je primio signal!", Toast.LENGTH_SHORT).show();
@@ -116,18 +103,7 @@ public class TaskCalendarFragment extends Fragment {
             }
         });
 
-//        getParentFragmentManager().setFragmentResultListener("taskAddedRequest", getViewLifecycleOwner(), (requestKey, bundle) -> {
-//            // Ovaj kod će se izvršiti KADA RecurringTaskFragment pošalje signal
-//
-//
-//
-//            // 2. KORAK: Naredi UI-ju (kalendaru) da se ponovo iscrta sa svežim podacima
-//            if (calendarView != null) {
-//                calendarView.notifyCalendarChanged();
-//            }
-//
-//            Toast.makeText(getContext(), "Kalendar osvežen!", Toast.LENGTH_SHORT).show();
-//        });
+
 
 
 
@@ -152,7 +128,19 @@ public class TaskCalendarFragment extends Fragment {
                 if (day.getPosition() == DayPosition.MonthDate) {
                     container.getView().setVisibility(View.VISIBLE);
 
-                    container.getCalendarDayText().setTextColor(Color.parseColor("#fca103"));
+
+
+                    if (calendarViewModel.hasTasksForDate(day.getDate())) {
+
+                        container.getCalendarDayText().setTypeface(null, Typeface.BOLD);
+                        container.getCalendarDayText().setTextColor(Color.parseColor("#fca103"));
+
+                    } else {
+
+                        container.getCalendarDayText().setTypeface(null, Typeface.NORMAL);
+                        container.getCalendarDayText().setTextColor(Color.WHITE);
+
+                    }
 
                     if (day.equals(selectedDate)) {
                         container.getCalendarDayText().setBackgroundColor(Color.WHITE);

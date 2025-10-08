@@ -130,6 +130,8 @@ public class RecurringTaskDetailsFragment extends Fragment {
         );
 
 
+
+
     }
 
     @Nullable
@@ -153,10 +155,11 @@ public class RecurringTaskDetailsFragment extends Fragment {
                 binding.difficultyTextView.setText(String.valueOf(task.getDifficulty()));
                 binding.importanceTextView.setText(String.valueOf(task.getImportance()));
                 binding.recurrenceTextView.setText(String.valueOf(task.getRecurrenceInterval()));
-                binding.endDateTextView.setText(task.getEndDate().toString());
+                binding.endDateTextView.setText(task.getFinishDate().toString());
                 binding.startDateTextView.setText(task.getStartDate().toString());
                 binding.timeTextView.setText(task.getExecutionTime().toString());
                 binding.rctStatus.setText(String.valueOf(task.getStatus()));
+
 
                 try {
                    int color = Color.parseColor(task.getCategoryColour());
@@ -174,6 +177,7 @@ public class RecurringTaskDetailsFragment extends Fragment {
                 if(isTaskInThePast){
                     binding.editTaskButton.setVisibility(View.GONE);
                     binding.deleteTaskButton.setVisibility(View.GONE);
+                    binding.btnRctaskUnpause.setVisibility(View.GONE);
                 }
 
                 if (status == RecurringTaskStatus.COMPLETED || status == RecurringTaskStatus.PAUSED_COMPLETED ||
@@ -290,6 +294,11 @@ public class RecurringTaskDetailsFragment extends Fragment {
                     getActivity().finish();
                 }
                 taskDetailsViewModel.onTaskDeletedEventHandled();
+            }
+        });
+        taskDetailsViewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
+            if (error != null && !error.isEmpty()) {
+                Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
             }
         });
     }

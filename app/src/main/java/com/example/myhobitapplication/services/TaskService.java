@@ -1110,6 +1110,13 @@ public void markOneTimeTaskAsDone(int taskId, String userId) {
 
     }
 
+    public int countAllOverdueTasks(String userId) {
+        int overdueOneTime = repository.countOverdueOneTimeTasks(userId);
+        int overdueRecurring = repository.countOverdueRecurringTasks(userId);
+
+        return overdueOneTime + overdueRecurring;
+    }
+
 
 
 }

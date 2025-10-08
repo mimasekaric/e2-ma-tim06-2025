@@ -228,15 +228,13 @@ public class RecurringTaskEditFragment extends Fragment {
 
             requireActivity().getSupportFragmentManager().setFragmentResult("taskAddedRequest", new Bundle());
             requireActivity().getSupportFragmentManager().setFragmentResult("for_list_signal", new Bundle());
-            // --- NOVI DEO: VRATI REZULTAT ---
-            // Kreiraj prazan Intent. Ne trebaju nam podaci, samo signal.
+
             Intent resultIntent = new Intent();
 
-            // Postavi rezultat na "USPEŠNO" (RESULT_OK) i priloži Intent
-            // getActivity() se odnosi na EditTaskActivity
+
             getActivity().setResult(Activity.RESULT_OK, resultIntent);
 
-            // Zatvori EditTaskActivity. Ovo će automatski poslati rezultat nazad.
+
             getActivity().finish();
         });
 

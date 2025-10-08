@@ -142,7 +142,21 @@ public class CategoryService {
         );
     }
 
-    public long deleteCategory(CategoryDTO categoryDto){
+//    public long deleteCategory(CategoryDTO categoryDto){
+//        Category category = new Category();
+//        category.setColour(categoryDto.getColour());
+//        category.setName(categoryDto.getName());
+//        category.setId(categoryDto.getId());
+//
+//        return repository.deleteCategory(category);
+//    }
+    public long deleteCategory(CategoryDTO categoryDto) throws ValidationException {
+
+        if (taskRepository.isCategoryInUse(categoryDto.getColour())) {
+
+            throw new ValidationException("Cannot delete category '" + categoryDto.getName() + "' because it is currently in use by one or more tasks.");
+        }
+
         Category category = new Category();
         category.setColour(categoryDto.getColour());
         category.setName(categoryDto.getName());
