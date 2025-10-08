@@ -43,7 +43,7 @@ public class MessageFragment extends Fragment {
 
         allianceId = getArguments().getString("ALLIANCE_ID");
 
-        // Adapter sa praznom listom
+       
         adapter = new MessagesAdapter(new ArrayList<>(), getContext());
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);

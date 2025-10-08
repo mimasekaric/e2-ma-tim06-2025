@@ -139,7 +139,7 @@ public class FriendsFragment extends Fragment {
                 Alliance alliance= new Alliance(editName.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getUid(),false,null,null);
                 allianceViewModel.createAlliance(alliance);
                 dialog.hide();
-               // Toast.makeText(requireContext(),"Alliance "+editName.getText().toString()+" made succesfully", Toast.LENGTH_SHORT).show();
+
                 allianceViewModel.getCreatedAlliance().observe(getViewLifecycleOwner(), alliancee -> {
                     if (alliancee != null) {
                         Toast.makeText(requireContext(), "Alliance created: " + alliancee.getName(), Toast.LENGTH_SHORT).show();

@@ -138,10 +138,6 @@ public class AllianceFragment extends Fragment {
                             });
                 }
 
-                /*if(!alliance.getLeaderId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
-                    binding.destroyButton.setVisibility(View.INVISIBLE);
-                    binding.buttonn66.setVisibility(View.INVISIBLE);
-                }*/
                 binding.allianceName.setText(alliance1.getName());
                 allianceViewModel.getUsersInAlliance();
                 allianceViewModel.checkUserActiveMissionStatus(FirebaseAuth.getInstance().getCurrentUser().getUid());
@@ -275,7 +271,7 @@ public class AllianceFragment extends Fragment {
                     String invitedUserUid = res.getUid();
                     String inviterName = FirebaseAuth.getInstance().getCurrentUser().getEmail();
                     String allianceName = alliance.getName();
-                    //allianceViewModel.sendInviteNotification(invitedUserUid, inviterName,allianceName, FirebaseAuth.getInstance().getCurrentUser().getUid());
+
                     allianceViewModel.sendInvite(invitedUserUid, inviterName, allianceName);
                     allianceViewModel.getCreatedREsponse().observe(getViewLifecycleOwner(),response->{
                         Toast.makeText(requireContext(),response,Toast.LENGTH_SHORT).show();

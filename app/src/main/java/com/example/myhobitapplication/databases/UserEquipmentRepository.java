@@ -13,7 +13,7 @@ import java.util.List;
 
 public class UserEquipmentRepository {
     private final AppDataBaseHelper dbHelper;
-   // private SQLiteDatabase database;
+
 
     public UserEquipmentRepository(Context context){
 
@@ -21,7 +21,6 @@ public class UserEquipmentRepository {
     }
 
     public void open() throws SQLException {
-       // database = dbHelper.getWritableDatabase();
     }
 
     public void close() {
@@ -39,67 +38,44 @@ public class UserEquipmentRepository {
 
 
         long res= database.insert(AppDataBaseHelper.TABLE_USER_EQUIPMENT, null, values);
-       // database.close();
         return res;
     }
-/*
+
     public int updateUserEquipment(UserEquipment ue) {
+        Log.d("DB_DEBUG", "Trying to update UE: id=" + ue.getId()
+                + " activated=" + ue.getActivated()
+                + " counter=" + ue.getFightsCounter()
+                + " coef=" + ue.getCoef()
+                + " effect=" + ue.getEffect());
+
+        if (ue == null || ue.getId() == null) return 0;
+
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+
         ContentValues values = new ContentValues();
         values.put(AppDataBaseHelper.COLUMN_ACTIVATED, ue.getActivated() ? 1 : 0);
         values.put(AppDataBaseHelper.COLUMN_FIGHTS_COUNTER, ue.getFightsCounter());
         values.put(AppDataBaseHelper.COLUMN_COEF, ue.getCoef());
         values.put(AppDataBaseHelper.COLUMN_EFFECT, ue.getEffect());
+        Log.d("DB_DEBUG", "Updating UE with id=" + ue.getId());
 
-        String whereClause = AppDataBaseHelper.COLUMN_USER_EQUIPMENT_ID + "=?";
-        String[] whereArgs = { String.valueOf(ue.getId()) };
+        UserEquipment testUE = getById(ue.getId());
+        if (testUE == null) {
+            Log.e("DB_DEBUG", "⚠️ No record found with that ID in DB!");
+        } else {
+            Log.d("DB_DEBUG", "✅ Record exists before update: effect=" + testUE.getEffect());
+        }
 
-        int rows=  database.update(
+        int rows = database.update(
                 AppDataBaseHelper.TABLE_USER_EQUIPMENT,
                 values,
-                whereClause,
-                whereArgs
+                AppDataBaseHelper.COLUMN_USER_EQUIPMENT_ID + "=?",
+                new String[]{String.valueOf(ue.getId())}
         );
+
         Log.d("DB_UPDATE", "Rows updated: " + rows);
         return rows;
-    }*/
-public int updateUserEquipment(UserEquipment ue) {
-    Log.d("DB_DEBUG", "Trying to update UE: id=" + ue.getId()
-            + " activated=" + ue.getActivated()
-            + " counter=" + ue.getFightsCounter()
-            + " coef=" + ue.getCoef()
-            + " effect=" + ue.getEffect());
-
-    if (ue == null || ue.getId() == null) return 0;
-
-    SQLiteDatabase database = dbHelper.getWritableDatabase();
-
-    ContentValues values = new ContentValues();
-    values.put(AppDataBaseHelper.COLUMN_ACTIVATED, ue.getActivated() ? 1 : 0);
-    values.put(AppDataBaseHelper.COLUMN_FIGHTS_COUNTER, ue.getFightsCounter());
-    values.put(AppDataBaseHelper.COLUMN_COEF, ue.getCoef());
-    values.put(AppDataBaseHelper.COLUMN_EFFECT, ue.getEffect());
-    Log.d("DB_DEBUG", "Updating UE with id=" + ue.getId());
-
-    UserEquipment testUE = getById(ue.getId());
-    if (testUE == null) {
-        Log.e("DB_DEBUG", "⚠️ No record found with that ID in DB!");
-    } else {
-        Log.d("DB_DEBUG", "✅ Record exists before update: effect=" + testUE.getEffect());
     }
-
-    int rows = database.update(
-            AppDataBaseHelper.TABLE_USER_EQUIPMENT,
-            values,
-            AppDataBaseHelper.COLUMN_USER_EQUIPMENT_ID + "=?",
-            new String[]{String.valueOf(ue.getId())}
-    );
-
-
-
-   // database.close();
-    Log.d("DB_UPDATE", "Rows updated: " + rows);
-    return rows;
-}
 
 
 
@@ -129,12 +105,11 @@ public int updateUserEquipment(UserEquipment ue) {
                 list.add(ue);
             }
             cursor.close();
-           // database.close();
         }
         return list;
     }
-    /// ova dole metoda moze samoo za Weapon da se poziva !!!!
-    public UserEquipment getByEquipmentId(String id) {
+
+    public UserEquipment getByEquipmentId(String id) { /// samo za Weapon
         SQLiteDatabase database = dbHelper.getWritableDatabase();
         UserEquipment ue = null;
         Cursor cursor = database.query(
@@ -187,7 +162,6 @@ public int updateUserEquipment(UserEquipment ue) {
                 ue.setEffect(cursor.getDouble(cursor.getColumnIndexOrThrow(AppDataBaseHelper.COLUMN_EFFECT)));
             }
             cursor.close();
-          //  database.close();
         }
         return ue;
     }
@@ -199,7 +173,6 @@ public int updateUserEquipment(UserEquipment ue) {
                 AppDataBaseHelper.COLUMN_USER_EQUIPMENT_ID + "=?",
                 new String[]{String.valueOf(userEquipment.getId())}
         );
-        //database.close();
     }
 
 }

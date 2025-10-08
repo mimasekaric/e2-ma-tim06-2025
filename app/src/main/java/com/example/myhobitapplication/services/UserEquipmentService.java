@@ -32,11 +32,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
-/// /vidi mozda ako vec ima aktiviran clothes istog tipa al da nije counterfight 0 i effect 0 ... p=mozda i tu treba sabirati ucinak?
-/// PROVJERI RADI LI ZA STIT
-///kad gainuje isto oruyje povecava s evjerovatnocaa
-/// ///NAMJESTI KAD POBIJEDI DA SE LOADUJE PROFIL OPET i vidi dal na dobrom ide u won
-/// namjestiiiii da radi luk i strijelaa
 
 public class UserEquipmentService {
 
@@ -140,8 +135,6 @@ public class UserEquipmentService {
     public UserEquipment getById(Integer id){ return repository.getById(id);}
 
 
-    //za sad obradjeno samo za aktivaciju napitaka i rukavica!!
-    //efekat cizama i stita je hendlovan u battleviewmodel
    public boolean activateEquipment(UserEquipmentDTO userEquipDTO,Profile profile )
    {
        UserEquipment userEquipment =  repository.getById(userEquipDTO.getUserEquipmentId());

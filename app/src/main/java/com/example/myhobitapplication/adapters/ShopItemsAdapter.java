@@ -82,8 +82,6 @@ import java.util.List;
                 TextView description = itemView.findViewById(R.id.textView8);
                 TextView price = itemView.findViewById(R.id.textView7);
 
-              //  name.setText(equipmentWithPrice.getEquipment().getequipmentType().name());
-
                 if (e instanceof Potion) {
                     Potion potion = (Potion) e;
                     name.setText(potion.getType().name());

@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.myhobitapplication.R;
 import com.example.myhobitapplication.databases.BossRepository;
 import com.example.myhobitapplication.databases.EquipmentRepository;
@@ -57,6 +58,7 @@ public class ProfileActivity extends Fragment {
 
     private UserEquipmentViewModel userEquipmentViewModel;
     private ActivityProfileBinding binding;
+    LottieAnimationView animationView;
 
     private String profileUrl = "";
     private UserInfoDTO userInfo;
@@ -77,10 +79,15 @@ public class ProfileActivity extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        animationView = binding.stars;
+        animationView.setAnimation(R.raw.stars);
+        animationView.playAnimation();
+
         if (getArguments() != null) {
             userId = getArguments().getString("USER_ID");
 
         }
+
         BossRepository bossRepository = new BossRepository(requireContext());
         EquipmentRepository equipmentRepository = new EquipmentRepository(requireContext());
         ProfileService profileService = ProfileService.getInstance();
@@ -113,6 +120,8 @@ public class ProfileActivity extends Fragment {
         profileUrl = "https://myhobbitapplication/profil/" + userId;
 
         binding.imageButton.setOnClickListener(v -> showDialog());
+
+
 
         try {
             Bitmap qrCodeBitmap = generateQRCode(profileUrl);
@@ -151,6 +160,9 @@ public class ProfileActivity extends Fragment {
                 }
                 if (profile.getxp() != null) {
                     binding.putxp.setText(profile.getxp().toString());
+                }
+                if (profile.getXpRequired() != 0) {
+                    binding.needed.setText("/"+String.valueOf(profile.getXpRequired())+ " PP");
                 }
 
                 if (profile.getTitle() != null) {
@@ -326,60 +338,6 @@ public class ProfileActivity extends Fragment {
         }
     }
 
-//    private void displayBadges(List<Badge> badges) {
-//
-//        LinearLayout badgesLayout = binding.imgLayout1;
-//
-//
-//        badgesLayout.removeAllViews();
-//
-//        if (badges == null || badges.isEmpty()) {
-//            return;
-//        }
-//
-//        for (Badge badge : badges) {
-//            ImageView badgeImageView = new ImageView(getContext());
-//
-//            int imageResource;
-//            if(badge.getType()!=null){
-//                switch (badge.getType()) {
-//                    case "GOLD":
-//                        imageResource = R.drawable.gold_badge_removebg_previewc;
-//                        break;
-//                    case "SILVER":
-//                        imageResource = R.drawable.silver_badge_removebg_previewc;
-//                        break;
-//                    default:
-//                        imageResource = R.drawable.bronze_badge_removebg_previewc;
-//                        break;
-//                }
-//                badgeImageView.setImageResource(imageResource);
-//
-//                int widthInDp = 100;
-//
-//
-//                float scale = getResources().getDisplayMetrics().density;
-//                int widthInPx = (int) (widthInDp * scale + 0.5f);
-//
-//                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-//                        widthInPx,
-//                        LinearLayout.LayoutParams.MATCH_PARENT
-//                );
-//
-//                int marginInDp = 8;
-//                int marginInPx = (int) (marginInDp * scale + 0.5f);
-//                params.setMarginEnd(marginInPx);
-//
-//                badgeImageView.setLayoutParams(params);
-//
-//                badgeImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-//                badgeImageView.setPadding(0, 8, 0, 8);
-//
-//                badgesLayout.addView(badgeImageView);
-//            }
-//
-//        }
-//    }
 
 
 }

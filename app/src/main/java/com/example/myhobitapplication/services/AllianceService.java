@@ -66,12 +66,12 @@ public class AllianceService {
                                         failed[0] = true;
                                     }
 
-                                    // Kad su svi korisnici obrađeni
+
                                     if (completed[0] == totalUsers) {
                                         if (failed[0]) {
                                             tcs.setException(new Exception("Failed to clear some users’ allianceId"));
                                         } else {
-                                            // 3. Kad je gotovo, brišemo alijansu
+
                                             allianceRepository.getAlliance(allianceId).addOnSuccessListener(snapshot -> {
                                                 if (snapshot.exists()) {
                                                     snapshot.getReference().delete()
@@ -92,7 +92,7 @@ public class AllianceService {
                     }
                 }
             } else {
-                // Ako nema korisnika, samo brišemo alijansu
+
                 allianceRepository.getAlliance(allianceId).addOnSuccessListener(snapshot -> {
                     if (snapshot.exists()) {
                         snapshot.getReference().delete()

@@ -64,13 +64,9 @@ public class LoginActivity extends AppCompatActivity {
             if (message != null && !message.isEmpty()) {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
                 if (isSuccess) {
-             //       Intent intent = new Intent(LoginActivity.this, ProfileActivity.class);
                     Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                    //Toast.makeText(this,FirebaseAuth.getInstance().getCurrentUser().getUid(),SHORT)
                     intent.putExtra("USER_ID", FirebaseAuth.getInstance().getCurrentUser().getUid());
                     startActivity(intent);
-                   /* Intent intent = new Intent(LoginActivity.this, TaskActivity.class);
-                    startActivity(intent);*/
                 }
                 binding.buttonn.setVisibility(View.VISIBLE);
                 animationView.setVisibility(View.GONE);
