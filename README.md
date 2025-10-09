@@ -34,8 +34,8 @@ Aplikacija zahtijeva Firebase za autentifikaciju i bazu podataka.
 1.  **Kreirajte Firebase projekat:**
     -   Idite na [Firebase konzolu](https://console.firebase.google.com/) i kreirajte novi projekat.
     -   Unutar projekta, dodajte novu **Android aplikaciju**. Kao `package name` unesite:
-        ```        com.example.myhobitapplication
-        ```
+                com.example.myhobitapplication
+    
 
 2.  **Preuzmite i kopirajte `google-services.json`:**
     -   Preuzmite `google-services.json` datoteku koju vam Firebase ponudi nakon registracije aplikacije.
