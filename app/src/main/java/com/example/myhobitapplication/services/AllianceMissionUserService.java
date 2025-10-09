@@ -268,31 +268,44 @@ public class AllianceMissionUserService {
                             return missionRef.update("status", MissionStatus.FINISHED_FAILURE);
                         }
 
+
+                        WriteBatch initialBatch = db.batch();
                         int totalBonusDamage = 0;
+
                         for (User member : members) {
+
                             int overdueTasksCount = taskService.countAllOverdueTasks(member.getUid());
+
+
+                            DocumentReference userProgressRef = missionRef.collection("userProgress").document(member.getUid());
+                            initialBatch.update(userProgressRef, "uncompletedTasksCount", overdueTasksCount);
+
                             if (overdueTasksCount == 0) {
                                 totalBonusDamage += 10;
                             }
                         }
 
 
-                        final int finalBonusDamage = totalBonusDamage;
-                        return missionRef.update("currentBossHp", FieldValue.increment(-finalBonusDamage))
-                                .onSuccessTask(aVoid -> {
+                        if (totalBonusDamage > 0) {
+                            initialBatch.update(missionRef, "currentBossHp", FieldValue.increment(-totalBonusDamage));
+                        }
 
-                                    return missionRef.get().onSuccessTask(updatedMissionSnapshot -> {
-                                        AllianceMission finalMission = updatedMissionSnapshot.toObject(AllianceMission.class);
 
-                                        if (finalMission.getCurrentBossHp() <= 0) {
-                                            Log.d("MissionCompletion", "Finalni HP bosa je <= 0. Misija uspješna.");
-                                            return grantRewards(finalMission, members);
-                                        } else {
-                                            Log.d("MissionCompletion", "Finalni HP bosa (" + finalMission.getCurrentBossHp() + ") je > 0. Misija neuspješna.");
-                                            return missionRef.update("status", MissionStatus.FINISHED_FAILURE);
-                                        }
-                                    });
-                                });
+                        return initialBatch.commit().onSuccessTask(aVoid -> {
+
+
+                            return missionRef.get().onSuccessTask(updatedMissionSnapshot -> {
+                                AllianceMission finalMission = updatedMissionSnapshot.toObject(AllianceMission.class);
+
+                                if (finalMission.getCurrentBossHp() <= 0) {
+                                    Log.d("MissionCompletion", "Finalni HP bosa je <= 0. Misija uspješna.");
+                                    return grantRewards(finalMission, members);
+                                } else {
+                                    Log.d("MissionCompletion", "Finalni HP bosa (" + finalMission.getCurrentBossHp() + ") je > 0. Misija neuspješna.");
+                                    return missionRef.update("status", MissionStatus.FINISHED_FAILURE);
+                                }
+                            });
+                        });
                     });
         });
     }
@@ -396,9 +409,9 @@ public class AllianceMissionUserService {
             completedCategories++;
         }
 
-//        if (progress.getUncompletedTasksCount() == 0) {
-//            completedCategories++;
-//        }
+        if (progress.getUncompletedTasksCount() == 0) {
+            completedCategories++;
+        }
 
         return completedCategories;
     }

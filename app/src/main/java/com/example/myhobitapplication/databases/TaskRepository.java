@@ -1500,7 +1500,7 @@ public class TaskRepository {
         String selection = AppDataBaseHelper.COLUMN_USER_ID + " = ? AND (" +
                 AppDataBaseHelper.COLUMN_STATUS + " = ? OR " +
                 AppDataBaseHelper.COLUMN_STATUS + " = ?) AND " +
-                AppDataBaseHelper.COLUMN_FINISHED_DATE + " < ?";
+                AppDataBaseHelper.COLUMN_START_DATE + " = ?";
 
         String today = LocalDate.now().toString();
 
@@ -1531,7 +1531,7 @@ public class TaskRepository {
         String selection = AppDataBaseHelper.COLUMN_USER_ID + " = ? AND (" +
                 AppDataBaseHelper.COLUMN_STATUS + " = ? OR " +
                 AppDataBaseHelper.COLUMN_STATUS + " = ?) AND " +
-                AppDataBaseHelper.COLUMN_FINISHED_DATE + " < ?";
+                AppDataBaseHelper.COLUMN_START_DATE + " = ?";
 
         String today = LocalDate.now().toString();
 
