@@ -47,6 +47,7 @@ public class AllianceMissionService {
         this.missionRepository = new AllianceMissionRepository();
     }
 
+
     //int[0] su zapoceti a [1]zavrseni
     public Task<int[]> getStartedAndCompletedMissions(String userId) {
         TaskCompletionSource<int[]> tcs = new TaskCompletionSource<>();

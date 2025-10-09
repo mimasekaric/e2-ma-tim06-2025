@@ -12,6 +12,7 @@ import com.example.myhobitapplication.models.Message;
 import com.example.myhobitapplication.models.User;
 import com.example.myhobitapplication.services.AllianceMissionService;
 import com.example.myhobitapplication.services.ProfileService;
+import com.example.myhobitapplication.services.UserService;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 
@@ -32,12 +33,13 @@ public class MessageViewModel extends ViewModel {
     private final MessageRepository messageRepo;
     private final UserRepository userRepo;
     private final AllianceMissionService missionService;
-
+    private final UserService userService;
     private final MutableLiveData<List<Message>> messages = new MutableLiveData<>(new ArrayList<>());
     private final Map<String, String> uidToUsername = new HashMap<>();
 
     public MessageViewModel() {
         messageRepo = new MessageRepository();
+        userService = new UserService();
         userRepo = new UserRepository();
         missionService = new AllianceMissionService(ProfileService.getInstance());
     }
@@ -85,48 +87,57 @@ public class MessageViewModel extends ViewModel {
         list.add(msg);
         messages.setValue(new ArrayList<>(list));
     }
+    
     private void sendOneSignalNotification(String senderName, String messageText, String allianceId) {
-        new Thread(() -> {
-            try {
-                URL url = new URL("https://onesignal.com/api/v1/notifications");
-                HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                con.setUseCaches(false);
-                con.setDoOutput(true);
-                con.setDoInput(true);
-                con.setRequestMethod("POST");
-                con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-                con.setRequestProperty("Authorization", "Basic os_v2_app_2y2zge5mdjewxpqsa7grrxh2i3ye6vue5whebmn7s7kgc3mti37hshnpce54cqw3zwnkebf3scikm4f2sjsgdgu6i5vyrn4vloqpslq");
+        userService.getUsersInAlliance(allianceId).addOnSuccessListener(queryDocumentSnapshots -> {
+            List<String> recipients = new ArrayList<>();
+            String senderUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-                JSONObject body = new JSONObject();
-                body.put("app_id", "d6359313-ac1a-496b-be12-07cd18dcfa46");
-
-                JSONArray filters = new JSONArray();
-                filters.put(new JSONObject().put("field", "tag").put("key", "alliance_id").put("relation", "=").put("value", allianceId));
-                /// Ako ne radi, skloni narednih 7 linija koda ali ce onda slati notifikaciju i senderu
-               filters.put(new JSONObject().put("operator", "AND"));
-                filters.put(new JSONObject()
-                        .put("field", "tag")
-                        .put("key", "user_id")
-                        .put("relation", "!=")
-                        .put("value", FirebaseAuth.getInstance().getCurrentUser().getUid())
-                );
-                body.put("filters", filters);
-
-                body.put("headings", new JSONObject().put("en", "New Message"));
-                body.put("contents", new JSONObject().put("en", senderName + " sent a new message!"));
-
-                OutputStreamWriter writer = new OutputStreamWriter(con.getOutputStream());
-                writer.write(body.toString());
-                writer.flush();
-                writer.close();
-
-                int responseCode = con.getResponseCode();
-                Log.d("OneSignal", "Response: " + responseCode);
-            } catch (Exception e) {
-                e.printStackTrace();
+            for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                User user = doc.toObject(User.class);
+                if (user != null && !user.getUid().equals(senderUid)) {
+                    recipients.add(user.getUid());
+                }
             }
-        }).start();
+
+            if (recipients.isEmpty()) return;
+
+            Log.d("OneSignalDebug", "Sender UID: " + senderUid);
+            Log.d("OneSignalDebug", "Recipients collected: " + recipients.size());
+            for (String uid : recipients) {
+                Log.d("OneSignalDebug", "Recipient UID: " + uid);
+            }
+            new Thread(() -> {
+                try {
+                    URL url = new URL("https://onesignal.com/api/v1/notifications");
+                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                    con.setUseCaches(false);
+                    con.setDoOutput(true);
+                    con.setDoInput(true);
+                    con.setRequestMethod("POST");
+                    con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                    con.setRequestProperty("Authorization", "Basic os_v2_app_2y2zge5mdjewxpqsa7grrxh2i3ye6vue5whebmn7s7kgc3mti37hshnpce54cqw3zwnkebf3scikm4f2sjsgdgu6i5vyrn4vloqpslq");
+
+                    JSONObject body = new JSONObject();
+                    body.put("app_id", "d6359313-ac1a-496b-be12-07cd18dcfa46");
+                    body.put("include_external_user_ids", new JSONArray(recipients));
+                    body.put("headings", new JSONObject().put("en", "New Message"));
+                    body.put("contents", new JSONObject().put("en", senderName + " sent a new message"));
+
+                    OutputStreamWriter writer = new OutputStreamWriter(con.getOutputStream());
+                    writer.write(body.toString());
+                    writer.flush();
+                    writer.close();
+
+                    int responseCode = con.getResponseCode();
+                    Log.d("OneSignal", "Response: " + responseCode);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }).start();
+        });
     }
+
 
     public void sendMessage(String allianceId, String text) {
         String currentUid = com.google.firebase.auth.FirebaseAuth.getInstance().getUid();

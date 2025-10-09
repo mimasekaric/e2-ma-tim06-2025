@@ -1,6 +1,8 @@
 package com.example.myhobitapplication.activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -8,6 +10,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModel;
@@ -62,23 +67,31 @@ public class HomeActivity extends AppCompatActivity {
                     .replace(R.id.fragment_container, new HomeDashboardFragment())
                     .commit();
         }
-
-
         ///  TO DO: ovo otkomentarisati ako se notifikaicja skloni iako ne kliknes na accept/decline nego samo nestane
-/*OneSignal.setNotificationOpenedHandler(result -> {
+OneSignal.setNotificationOpenedHandler(result -> {
     String actionId = result.getAction().getActionId();
 
     if (actionId == null || actionId.isEmpty()) {
 
         NotificationCompat.Builder builder =
-            new NotificationCompat.Builder(context, "invite_channel")
-                .setSmallIcon(R.drawable.ic_notification)
+            new NotificationCompat.Builder(this, "invite_channel")
+                .setSmallIcon(R.drawable.edit_icon)
                 .setContentTitle("New alliance invite")
                 .setContentText("You must Accept or Decline!")
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(false);
 
-        NotificationManagerCompat.from(context).notify(1001, builder.build());
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        NotificationManagerCompat.from(this).notify(1001, builder.build());
         return;
     }
 
@@ -92,7 +105,7 @@ public class HomeActivity extends AppCompatActivity {
         allianceViewModel.respondToInvite(invitedUserUid, inviterUid, "decline");
     }
 });
-*/
+
         OneSignal.setNotificationOpenedHandler(result -> {
             String actionId = result.getAction().getActionId();
             String inviterUid = result.getNotification().getAdditionalData().optString("inviterUid", "");

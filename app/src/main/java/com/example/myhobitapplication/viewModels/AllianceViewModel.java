@@ -158,8 +158,8 @@ public class AllianceViewModel extends ViewModel {
 
         RequestBody body = RequestBody.create(jsonBody, JSON);
         Request request = new Request.Builder()
-                /// TO DO: ne zaboravi pormijeniti i[ ovdje a i u res/xml/network_security_config]
                 .url("http://192.168.1.130:3001/api/notifications/invite")
+                //.url("http://192.168.0.43:3001/api/notifications/invite")
                 .post(body)
                 .build();
 

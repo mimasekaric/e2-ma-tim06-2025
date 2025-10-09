@@ -10,7 +10,7 @@ const ONESIGNAL_REST_API_KEY = "os_v2_app_2y2zge5mdjewxpqsa7grrxh2i3ye6vue5whebm
 
 
 app.post("/api/notifications/invite", async (req, res) => {
-  const { invitedUserUid, inviterName, allianceName } = req.body;
+  const { invitedUserUid, inviterName, allianceName, inviterUid} = req.body;
 
   console.log("Received invite request:", req.body)
 
@@ -30,7 +30,9 @@ app.post("/api/notifications/invite", async (req, res) => {
           { id: "accept", text: "Accept" },
           { id: "decline", text: "Decline" }
         ],
+        data: { inviterUid: inviterUid },
         persist_notification: true
+
       },
       {
         headers: {
@@ -76,4 +78,4 @@ app.post("/api/notifications/respond", async (req, res) => {
   res.json({ ok: true });
 });
 
-app.listen(3000, () => console.log("Server running on port 3000"));
+app.listen(3001, () => console.log("Server running on port 3001"));
